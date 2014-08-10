@@ -1,0 +1,33 @@
+{
+    "name": "jfusion/framework",
+    "type": "jfusion-framework",
+    "description": "JFusion Framework, used to create user integration and DSLO",
+    "keywords": ["jfusion", "framework"],
+    "homepage": "https://github.com/jfusion/org.jfusion.framework",
+    "license": "GPL-2.0+",
+    "require": {
+        "php": ">=5.3.10",
+        "joomla/archive": "~1.0",
+        "joomla/database": "~1.0",
+        "joomla/date": "~1.0",
+        "joomla/event": "~1.0",
+        "joomla/filesystem": "~1.0",
+        "joomla/filter": "~1.0",
+        "joomla/form": "~1.0",
+        "joomla/input": "~1.0",
+        "joomla/language": "~1.0",
+        "joomla/registry": "~1.0",
+        "joomla/string": "~1.0",
+        "joomla/uri": "~1.0",
+        "joomla/utilities": "~1.0",
+        "symfony/yaml": "~2.0"
+    },
+    "require-dev": {
+        "jfusion/platform-joomla": "~1.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "JFusion\\": "src/"
+        }
+    }
+}
