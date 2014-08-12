@@ -25,7 +25,7 @@ use JFusion\Factory;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link      http://www.jfusion.org
  */
-class Plugin_Front extends Plugin
+class Front extends Plugin
 {
 	var $helper;
 

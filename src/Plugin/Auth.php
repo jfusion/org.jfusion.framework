@@ -26,7 +26,7 @@ use JFusion\User\Userinfo;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link      http://www.jfusion.org
  */
-class Plugin_Auth extends Plugin
+class Auth extends Plugin
 {
 	var $helper;
 

@@ -18,11 +18,11 @@ use JFusion\Debugger\Debugger;
 use JFusion\Application\Application;
 use JFusion\Session\Session;
 use JFusion\Router\Router;
-use JFusion\Plugin\Plugin_Front;
-use JFusion\Plugin\Plugin_Admin;
-use JFusion\Plugin\Plugin_Auth;
-use JFusion\Plugin\Plugin_User;
-use JFusion\Plugin\Plugin_Platform;
+use JFusion\Plugin\Front;
+use JFusion\Plugin\Admin;
+use JFusion\Plugin\Auth;
+use JFusion\Plugin\User;
+use JFusion\Plugin\Platform;
 
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseFactory;
@@ -151,7 +151,7 @@ class Factory
 	 *
 	 * @param string $instance name of the JFusion plugin used
 	 *
-	 * @return Plugin_Front object for the JFusion plugin
+	 * @return Front object for the JFusion plugin
 	 */
 	public static function &getFront($instance)
 	{
@@ -165,7 +165,7 @@ class Factory
 
 			$class = '\JFusion\Plugins\\'.$name.'\Front';
 			if (!class_exists($class)) {
-				$class = '\JFusion\Plugin\Plugin_Front';
+				$class = '\JFusion\Plugin\Front';
 			}
 			$instances[$instance] = new $class($instance);
 		}
@@ -176,7 +176,7 @@ class Factory
 	 *
 	 * @param string $instance name of the JFusion plugin used
 	 *
-	 * @return Plugin_Admin object for the JFusion plugin
+	 * @return Admin object for the JFusion plugin
 	 */
 	public static function &getAdmin($instance)
 	{
@@ -189,7 +189,7 @@ class Factory
 			$name = static::getNameFromInstance($instance);
 			$class = '\JFusion\Plugins\\'.$name.'\Admin';
 			if (!class_exists($class)) {
-				$class = '\JFusion\Plugin\Plugin_Admin';
+				$class = '\JFusion\Plugin\Admin';
 			}
 			$instances[$instance] = new $class($instance);
 		}
@@ -201,7 +201,7 @@ class Factory
 	 *
 	 * @param string $instance name of the JFusion plugin used
 	 *
-	 * @return Plugin_Auth JFusion Authentication class for the JFusion plugin
+	 * @return Auth JFusion Authentication class for the JFusion plugin
 	 */
 	public static function &getAuth($instance)
 	{
@@ -215,7 +215,7 @@ class Factory
 
 			$class = '\JFusion\Plugins\\'.$name.'\Auth';
 			if (!class_exists($class)) {
-				$class = '\JFusion\Plugin\Plugin_Auth';
+				$class = '\JFusion\Plugin\Auth';
 			}
 			$instances[$instance] = new $class($instance);
 		}
@@ -227,7 +227,7 @@ class Factory
 	 *
 	 * @param string $instance name of the JFusion plugin used
 	 *
-	 * @return Plugin_User JFusion User class for the JFusion plugin
+	 * @return User JFusion User class for the JFusion plugin
 	 */
 	public static function &getUser($instance)
 	{
@@ -241,7 +241,7 @@ class Factory
 
 			$class = '\JFusion\Plugins\\'.$name.'\User';
 			if (!class_exists($class)) {
-				$class = '\JFusion\Plugin\Plugin_User';
+				$class = '\JFusion\Plugin\User';
 			}
 			$instances[$instance] = new $class($instance);
 		}
@@ -254,7 +254,7 @@ class Factory
 	 * @param string $platform
 	 * @param string $instance name of the JFusion plugin used
 	 *
-	 * @return Plugin_Platform JFusion Thread class for the JFusion plugin
+	 * @return Platform JFusion Thread class for the JFusion plugin
 	 */
 	public static function &getPlayform($platform, $instance)
 	{
@@ -274,7 +274,7 @@ class Factory
 				$class = '\JFusion\Plugin\Platform\\' . $platform;
 			}
 			if (!class_exists($class)) {
-				$class = '\JFusion\Plugin\Plugin_Platform';
+				$class = '\JFusion\Plugin\Platform';
 			}
 			$instances[$platform][$instance] = new $class($instance);
 		}

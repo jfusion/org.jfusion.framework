@@ -146,10 +146,10 @@ class Plugin
 		 * TODO: FIX ISSUE DETERMINE IF A FUNCTION EXISTS OR NOT for Platform_XXX_Platform
 		 */
 		//if the class name is the abstract class then return false
-		$abstractClassNames = array('JFusion\Plugin\Plugin_Admin',
-			'JFusion\Plugin\Plugin_Auth',
-			'JFusion\Plugin\Plugin_Front',
-			'JFusion\Plugin\Plugin_User',
+		$abstractClassNames = array('JFusion\Plugin\Admin',
+			'JFusion\Plugin\Auth',
+			'JFusion\Plugin\Front',
+			'JFusion\Plugin\User',
 			'JFusion\Plugin\Plugin');
 		$return = false;
 		if (!in_array($name, $abstractClassNames)) {

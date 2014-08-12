@@ -33,7 +33,7 @@ use Exception;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link      http://www.jfusion.org
  */
-class Plugin_Admin extends Plugin
+class Admin extends Plugin
 {
 	var $helper;
 

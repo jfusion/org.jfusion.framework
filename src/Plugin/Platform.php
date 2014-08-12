@@ -1,7 +1,7 @@
 <?php namespace JFusion\Plugin;
 
 /**
- * Abstract Plugin_Platform class for JFusion
+ * Abstract Platform class for JFusion
  *
  * PHP version 5
  *
@@ -25,7 +25,7 @@ use stdClass;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link      http://www.jfusion.org
  */
-class Plugin_Platform extends Plugin
+class Platform extends Plugin
 {
 	var $helper;
 
