@@ -43,7 +43,7 @@ class Platform extends Base {
 	{
 		$type = ucfirst(strtolower($type));
 		if (!isset(self::$instances[$type])) {
-			$class = 'Platform_' . $type;
+			$class = 'JFusion\\Api\\Platform\\' . $type;
 			self::$instances[$type] = new $class();
 		}
 		return self::$instances[$type];
