@@ -28,6 +28,9 @@
     "autoload": {
         "psr-4": {
             "JFusion\\": "src/"
+        },
+        "psr-0": {
+            "JFusion\\": "src/"
         }
     }
 }
