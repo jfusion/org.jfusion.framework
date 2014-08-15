@@ -109,7 +109,7 @@ class Plugin
 		            $this->name = $name;
 
 		            // installation path
-		            $this->installer->setPath('extension_root', JFUSION_PLUGIN_PATH . DIRECTORY_SEPARATOR . $name);
+		            $this->installer->setPath('extension_root', Framework::getPluginPath($name));
 		            // get files to copy
 
 		            /**
@@ -315,7 +315,7 @@ class Plugin
 		    $event->addArgument('jname', $jname);
 		    Factory::getDispatcher()->triggerEvent($event);
 
-		    $dir = JFUSION_PLUGIN_PATH . DIRECTORY_SEPARATOR . $jname;
+		    $dir = Framework::getPluginPath($jname);
 
 		    if (!$jname || !is_dir(Path::clean($dir))) {
 			    throw new RuntimeException(Text::_('UNINSTALL_ERROR_PATH'));
@@ -489,8 +489,11 @@ class Plugin
     {
         $filesArray = array();
         $files = Folder::files($folder, null, false, true);
+
+	    $path = Framework::getPluginPath($jname);
+
         foreach ($files as $file) {
-            $file = str_replace(JFUSION_PLUGIN_PATH . DIRECTORY_SEPARATOR . $jname . DIRECTORY_SEPARATOR, '', $file);
+            $file = str_replace($path . DIRECTORY_SEPARATOR, '', $file);
             $data = file_get_contents($file);
             $filesArray[] = array('name' => $file, 'data' => $data);
         }

@@ -125,8 +125,6 @@ class Cookies {
 	    				}
 	    			}
 	    		}
-		
-				require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_jfusion' . DIRECTORY_SEPARATOR . 'jfusionapi.php');
 
                 $api = null;
                 $data = array();

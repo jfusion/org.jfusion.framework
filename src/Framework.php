@@ -839,4 +839,21 @@ class Framework
 		$url = $params->get('url');
 		return strtolower(rtrim(parse_url($url, PHP_URL_HOST) . parse_url($url, PHP_URL_PATH), '/'));
 	}
+
+	/**
+	 * @static
+	 *
+	 * @param string $jname
+	 *
+	 * @return string
+	 */
+	public static function getPluginPath($jname)
+	{
+		$params = Factory::getConfig();
+		$path = $params->get('plugin-path');
+		if ($jname != null) {
+			$path = $path . DIRECTORY_SEPARATOR . $jname;
+		}
+		return $path;
+	}
 }

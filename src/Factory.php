@@ -163,7 +163,9 @@ class Factory
 		if (!isset($instances[$instance])) {
 			$name = static::getNameFromInstance($instance);
 
-			$class = '\JFusion\Plugins\\'.$name.'\Front';
+			static::pluginAutoLoad($name);
+
+			$class = '\JFusion\Plugins\\' . $name . '\Front';
 			if (!class_exists($class)) {
 				$class = '\JFusion\Plugin\Front';
 			}
@@ -187,7 +189,10 @@ class Factory
 		//only create a new plugin instance if it has not been created before
 		if (!isset($instances[$instance])) {
 			$name = static::getNameFromInstance($instance);
-			$class = '\JFusion\Plugins\\'.$name.'\Admin';
+
+			static::pluginAutoLoad($name);
+
+			$class = '\JFusion\Plugins\\' . $name . '\Admin';
 			if (!class_exists($class)) {
 				$class = '\JFusion\Plugin\Admin';
 			}
@@ -213,7 +218,9 @@ class Factory
 		if (!isset($instances[$instance])) {
 			$name = static::getNameFromInstance($instance);
 
-			$class = '\JFusion\Plugins\\'.$name.'\Auth';
+			static::pluginAutoLoad($name);
+
+			$class = '\JFusion\Plugins\\' . $name . '\Auth';
 			if (!class_exists($class)) {
 				$class = '\JFusion\Plugin\Auth';
 			}
@@ -239,7 +246,9 @@ class Factory
 		if (!isset($instances[$instance])) {
 			$name = static::getNameFromInstance($instance);
 
-			$class = '\JFusion\Plugins\\'.$name.'\User';
+			static::pluginAutoLoad($name);
+
+			$class = '\JFusion\Plugins\\' . $name . '\User';
 			if (!class_exists($class)) {
 				$class = '\JFusion\Plugin\User';
 			}
@@ -268,6 +277,8 @@ class Factory
 		//only create a new thread instance if it has not been created before
 		if (!isset($instances[$platform][$instance])) {
 			$name = static::getNameFromInstance($instance);
+
+			static::pluginAutoLoad($name);
 
 			$class = '\JFusion\Plugins\\' . $name . '\Platform\\' . $platform . '\\Platform';
 			if (!class_exists($class)) {
@@ -298,7 +309,9 @@ class Factory
 		if (!isset($instances[$instance])) {
 			$name = static::getNameFromInstance($instance);
 
-			$class = '\JFusion\Plugins\\'.$name.'\Helper';
+			static::pluginAutoLoad($name);
+
+			$class = '\JFusion\Plugins\\' . $name . '\Helper';
 			if (!class_exists($class)) {
 				$instances[$instance] = false;
 			} else {
@@ -306,6 +319,17 @@ class Factory
 			}
 		}
 		return $instances[$instance];
+	}
+
+	public static function pluginAutoLoad($name)
+	{
+		$path = Framework::getPluginPath($name);
+		if (file_exists($path . DIRECTORY_SEPARATOR . 'autoloader.php')) {
+			include_once($path . DIRECTORY_SEPARATOR . 'autoloader.php');
+		}
+		if (file_exists($path . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoloader.php')) {
+			include_once($path . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoloader.php');
+		}
 	}
 
 	/**
