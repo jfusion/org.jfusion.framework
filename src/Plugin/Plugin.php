@@ -15,6 +15,7 @@
 
 use JFusion\Factory;
 use JFusion\Debugger\Debugger;
+use JFusion\Framework;
 use Joomla\Event\Event;
 use Joomla\Language\Text;
 use Joomla\Registry\Registry;
@@ -57,6 +58,12 @@ class Plugin
 	 */
 	private $name = null;
 
+
+	/**
+	 * @var string
+	 */
+	public $path = null;
+
 	/**
 	 * @param string $instance instance name of this plugin
 	 */
@@ -69,8 +76,10 @@ class Plugin
 		$jname = $this->getJname();
 		if (!empty($jname)) {
 			//get the params object
-			$this->params = &Factory::getParams($jname);
-			$this->debugger = &Factory::getDebugger($jname);
+			$this->params = Factory::getParams($jname);
+			$this->debugger = Factory::getDebugger($jname);
+
+			$this->path = Framework::getPluginPath($this->getName());
 
 			if (!isset(static::$language[$jname])) {
 				$db = Factory::getDBO();

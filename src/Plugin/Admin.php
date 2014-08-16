@@ -16,10 +16,12 @@
 use JFusion\Api\Api;
 use JFusion\Factory;
 use JFusion\Framework;
+
 use Joomla\Registry\Registry;
 use Joomla\Language\Text;
 
 use Psr\Log\LogLevel;
+
 use RuntimeException;
 use Exception;
 

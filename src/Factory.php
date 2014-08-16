@@ -321,6 +321,9 @@ class Factory
 		return $instances[$instance];
 	}
 
+	/**
+	 * @param $name
+	 */
 	public static function pluginAutoLoad($name)
 	{
 		$path = Framework::getPluginPath($name);

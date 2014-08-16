@@ -17,10 +17,12 @@ use JFusion\Curl\Curl;
 use JFusion\Factory;
 use JFusion\Framework;
 use JFusion\User\Userinfo;
+
 use Joomla\Language\Text;
 use Joomla\Registry\Registry;
 
 use Psr\Log\LogLevel;
+
 use \RuntimeException;
 use \Exception;
 use \stdClass;

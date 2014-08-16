@@ -626,7 +626,7 @@ class Framework
 		$base = strlen($salt);
 		$makepass = '';
 
-		/*
+		/**
 		 * Start with a cryptographic strength random string, then convert it to
 		 * a string with the numeric base of the salt.
 		 * Shift the base conversion on each character so the character
@@ -659,13 +659,12 @@ class Framework
 		$length = (int) $length;
 		$sslStr = '';
 
-		/*
+		/**
 		 * If a secure randomness generator exists and we don't
 		 * have a buggy PHP version use it.
 		 */
 		if (function_exists('openssl_random_pseudo_bytes')
-			&& (version_compare(PHP_VERSION, '5.3.4') >= 0 || IS_WIN))
-		{
+			&& (version_compare(PHP_VERSION, '5.3.4') >= 0 || strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')) {
 			$sslStr = openssl_random_pseudo_bytes($length, $strong);
 
 			if ($strong)
@@ -674,7 +673,7 @@ class Framework
 			}
 		}
 
-		/*
+		/**
 		 * Collect any entropy available in the system along with a number
 		 * of time measurements of operating system randomness.
 		 */
@@ -704,7 +703,7 @@ class Framework
 			$bytes = ($total > $shaHashLength)? $shaHashLength : $total;
 			$total -= $bytes;
 
-			/*
+			/**
 			 * Collect any entropy available from the PHP system and filesystem.
 			 * If we have ssl data that isn't strong, we use it once.
 			 */
@@ -720,7 +719,7 @@ class Framework
 			}
 			else
 			{
-				/*
+				/**
 				 * There is no external source of entropy so we repeat calls
 				 * to mt_rand until we are assured there's real randomness in
 				 * the result.
@@ -753,13 +752,13 @@ class Framework
 
 				$duration = $duration / $samples;
 
-				/*
+				/**
 				 * Based on the average time, determine the total rounds so that
 				 * the total running time is bounded to a reasonable number.
 				 */
 				$rounds = (int) (($maxTimeMicro / $duration) * 50);
 
-				/*
+				/**
 				 * Take additional measurements. On average we can expect
 				 * at least $bitsPerRound bits of entropy from each measurement.
 				 */
@@ -811,7 +810,7 @@ class Framework
 			curl_close($crl);
 			if ($FileInfo['http_code'] != 200) {
 				//there was an error
-				Framework::raise(LogLevel::WARNING, $FileInfo['http_code'] . ' error for file:' . $url);
+				Framework::raise(LogLevel::WARNING, $FileInfo['http_code'] . ' error for file: ' . $url);
 				$FileData = false;
 			}
 		} else {
@@ -843,16 +842,16 @@ class Framework
 	/**
 	 * @static
 	 *
-	 * @param string $jname
+	 * @param string $name
 	 *
 	 * @return string
 	 */
-	public static function getPluginPath($jname)
+	public static function getPluginPath($name)
 	{
 		$params = Factory::getConfig();
 		$path = $params->get('plugin-path');
-		if ($jname != null) {
-			$path = $path . DIRECTORY_SEPARATOR . $jname;
+		if ($name != null) {
+			$path = $path . DIRECTORY_SEPARATOR . $name;
 		}
 		return $path;
 	}

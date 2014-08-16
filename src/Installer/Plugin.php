@@ -13,15 +13,16 @@
  * @link      http://www.jfusion.org
  */
 
-use Exception;
-use Joomla\Filesystem\File;
-use Joomla\Filesystem\Folder;
 use JFusion\Factory;
 use JFusion\Framework;
+
+use Joomla\Filesystem\Folder;
 use Joomla\Event\Event;
 use Joomla\Filesystem\Path;
 use Joomla\Language\Text;
 use Joomla\Filter\InputFilter;
+
+use Exception;
 use RuntimeException;
 use SimpleXMLElement;
 use stdClass;
@@ -141,21 +142,6 @@ class Plugin
 			            $this->installer->abort();
 			            throw new RuntimeException($name . ': ' . Text::_('PLUGIN') . ' ' . $name . ' ' . Text::_('INSTALL') . ': ' . Text::_('FAILED'));
 		            } else {
-			            /**
-			             * ---------------------------------------------------------------------------------------------
-			             * Language files Processing Section
-			             * ---------------------------------------------------------------------------------------------
-			             */
-			            $languageFolder = $dir . DIRECTORY_SEPARATOR  .  'language';
-			            if (is_dir(Path::clean($languageFolder))) {
-				            $files = Folder::files($languageFolder);
-				            foreach ($files as $file) {
-					            $dest = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_jfusion' . DIRECTORY_SEPARATOR . 'language' . DIRECTORY_SEPARATOR . substr($file, 0, 5);
-					            Folder::create($dest);
-					            File::copy($languageFolder . DIRECTORY_SEPARATOR . $file, $dest . DIRECTORY_SEPARATOR . $file);
-				            }
-			            }
-
 			            /**
 			             * ---------------------------------------------------------------------------------------------
 			             * Database Processing Section
@@ -292,13 +278,8 @@ class Plugin
 
 		    $db->setQuery($query);
 		    $plugin = $db->loadObject();
-		    $removeLanguage = true;
-		    if (!$plugin || $plugin->original_name) {
-			    $removeLanguage = false;
-		    }
 
 		    // delete raw
-
 		    $query = $db->getQuery(true)
 			    ->delete('#__jfusion')
 			    ->where('name = ' . $db->quote($jname));
@@ -315,43 +296,34 @@ class Plugin
 		    $event->addArgument('jname', $jname);
 		    Factory::getDispatcher()->triggerEvent($event);
 
-		    $dir = Framework::getPluginPath($jname);
+		    if ($plugin || !$plugin->original_name) {
+			    $dir = Framework::getPluginPath($jname);
 
-		    if (!$jname || !is_dir(Path::clean($dir))) {
-			    throw new RuntimeException(Text::_('UNINSTALL_ERROR_PATH'));
-		    } else {
-			    /**
-			     * ---------------------------------------------------------------------------------------------
-			     * Remove Language files Processing Section
-			     * ---------------------------------------------------------------------------------------------
-			     */
-			    // Get the extension manifest object
-			    $manifest = $this->getManifest($dir);
-			    if (is_null($manifest)) {
-				    throw new RuntimeException(Text::_('INSTALL_NOT_VALID_PLUGIN'));
+			    if (!$jname || !is_dir(Path::clean($dir))) {
+				    throw new RuntimeException(Text::_('UNINSTALL_ERROR_PATH'));
 			    } else {
-				    $this->manifest = $manifest;
-
-				    if ($removeLanguage) {
-					    $languageFolder = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_jfusion' . DIRECTORY_SEPARATOR . 'language';
-					    if (is_dir(Path::clean($languageFolder))) {
-						    $files = Folder::files(JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_jfusion' . DIRECTORY_SEPARATOR . 'language',  'com_jfusion.plg_' . $jname . '.ini', true);
-						    foreach ($files as $file) {
-							    $file = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_jfusion' . DIRECTORY_SEPARATOR . 'language' . DIRECTORY_SEPARATOR . substr($file, 0, 5) . DIRECTORY_SEPARATOR . $file;
-							    File::delete($file);
-						    }
-					    }
-				    }
-
-				    // remove files
-				    if (!Folder::delete($dir)) {
-					    throw new RuntimeException(Text::_('UNINSTALL_ERROR_DELETE'));
+				    /**
+				     * ---------------------------------------------------------------------------------------------
+				     * Remove Language files Processing Section
+				     * ---------------------------------------------------------------------------------------------
+				     */
+				    // Get the extension manifest object
+				    $manifest = $this->getManifest($dir);
+				    if (is_null($manifest)) {
+					    throw new RuntimeException(Text::_('INSTALL_NOT_VALID_PLUGIN'));
 				    } else {
-					    //return success
-					    $msg = Text::_('PLUGIN') . ' ' . $jname . ' ' . Text::_('UNINSTALL') . ': ' . Text::_('SUCCESS');
-					    $result['message'] = $msg;
-					    $result['status'] = true;
-					    $result['jname'] = $jname;
+					    $this->manifest = $manifest;
+
+					    // remove files
+					    if (!Folder::delete($dir)) {
+						    throw new RuntimeException(Text::_('UNINSTALL_ERROR_DELETE'));
+					    } else {
+						    //return success
+						    $msg = Text::_('PLUGIN') . ' ' . $jname . ' ' . Text::_('UNINSTALL') . ': ' . Text::_('SUCCESS');
+						    $result['message'] = $msg;
+						    $result['status'] = true;
+						    $result['jname'] = $jname;
+					    }
 				    }
 			    }
 		    }

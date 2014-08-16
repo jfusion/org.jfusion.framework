@@ -13,6 +13,7 @@
  * @link      http://www.jfusion.org
  */
 use JFusion\Factory;
+
 use stdClass;
 
 /**

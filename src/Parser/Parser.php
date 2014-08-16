@@ -13,6 +13,7 @@
  */
 
 use JFusion\Factory;
+
 use Joomla\Event\Event;
 
 /**
