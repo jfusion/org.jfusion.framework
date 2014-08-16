@@ -142,6 +142,14 @@ class Plugin
 			            $this->installer->abort();
 			            throw new RuntimeException($name . ': ' . Text::_('PLUGIN') . ' ' . $name . ' ' . Text::_('INSTALL') . ': ' . Text::_('FAILED'));
 		            } else {
+			            $vendor = $dir . DIRECTORY_SEPARATOR . 'vendor';
+			            if (is_dir(Path::clean($vendor))) {
+							Folder::copy($vendor, $this->installer->getPath('extension_root') . DIRECTORY_SEPARATOR . 'vendor');
+			            }
+			            $language = $dir . DIRECTORY_SEPARATOR . 'language';
+			            if (is_dir(Path::clean($language))) {
+				            Folder::copy($language, $this->installer->getPath('extension_root') . DIRECTORY_SEPARATOR . 'language');
+			            }
 			            /**
 			             * ---------------------------------------------------------------------------------------------
 			             * Database Processing Section
