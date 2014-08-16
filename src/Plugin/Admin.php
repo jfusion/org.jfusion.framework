@@ -162,7 +162,7 @@ class Admin extends Plugin
 	    } else {
 		    //added check for missing files of copied plugins after upgrade
 
-		    $path = Framework::getPluginPath($this->getName()) . DIRECTORY_SEPARATOR;
+		    $path = Framework::getPluginPath($this->getName()) . '/';
 		    if (!file_exists($path . 'admin.php')) {
 			    throw new RuntimeException(Text::_('NO_FILES') . ' admin.php');
 		    } else if (!file_exists($path . 'user.php')) {

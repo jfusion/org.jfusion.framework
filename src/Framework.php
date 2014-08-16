@@ -851,8 +851,30 @@ class Framework
 		$params = Factory::getConfig();
 		$path = $params->get('plugin-path');
 		if ($name != null) {
-			$path = $path . DIRECTORY_SEPARATOR . $name;
+			$path = $path . '/' . $name;
 		}
 		return $path;
+	}
+
+
+	/**
+	 * @param $libery
+	 *
+	 * @return stdClass|null
+	 */
+	public static function getComposerInfo($libery = 'jfusion/framework')
+	{
+		$lib = null;
+		$installed = __DIR__ . '/../../../composer/installed.json';
+		if (file_exists($installed)) {
+			$json = json_decode(file_get_contents($installed));
+			foreach($json as $node) {
+				if ($node->name === $libery) {
+					$lib = $node;
+					break;
+				}
+			}
+		}
+		return $lib;
 	}
 }

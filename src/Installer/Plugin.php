@@ -84,7 +84,7 @@ class Plugin
             } else {
                 $this->manifest = $manifest;
 
-	            $file = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_jfusion' . DIRECTORY_SEPARATOR . 'jfusion.xml';
+	            $file = JPATH_ADMINISTRATOR . '/components/com_jfusion/jfusion.xml';
 	            if (file_exists($file)) {
 		            $jfusionxml = Framework::getXml($file);
 	            } else {
@@ -142,13 +142,13 @@ class Plugin
 			            $this->installer->abort();
 			            throw new RuntimeException($name . ': ' . Text::_('PLUGIN') . ' ' . $name . ' ' . Text::_('INSTALL') . ': ' . Text::_('FAILED'));
 		            } else {
-			            $vendor = $dir . DIRECTORY_SEPARATOR . 'vendor';
+			            $vendor = $dir . '/vendor';
 			            if (is_dir(Path::clean($vendor))) {
-							Folder::copy($vendor, $this->installer->getPath('extension_root') . DIRECTORY_SEPARATOR . 'vendor');
+							Folder::copy($vendor, $this->installer->getPath('extension_root') . '/vendor');
 			            }
-			            $language = $dir . DIRECTORY_SEPARATOR . 'language';
+			            $language = $dir . '/language';
 			            if (is_dir(Path::clean($language))) {
-				            Folder::copy($language, $this->installer->getPath('extension_root') . DIRECTORY_SEPARATOR . 'language');
+				            Folder::copy($language, $this->installer->getPath('extension_root') . '/language');
 			            }
 			            /**
 			             * ---------------------------------------------------------------------------------------------
@@ -430,7 +430,7 @@ class Plugin
         /**
          * @TODO DISCUSS if we should allow flexible naming for installation file
          */
-        $file = $dir . DIRECTORY_SEPARATOR . 'jfusion.xml';
+        $file = $dir . '/jfusion.xml';
         $this->installer->setPath('manifest', $file);
         // If we cannot load the xml file return null
 

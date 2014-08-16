@@ -327,11 +327,11 @@ class Factory
 	public static function pluginAutoLoad($name)
 	{
 		$path = Framework::getPluginPath($name);
-		if (file_exists($path . DIRECTORY_SEPARATOR . 'autoloader.php')) {
-			include_once($path . DIRECTORY_SEPARATOR . 'autoloader.php');
+		if (file_exists($path . '/autoloader.php')) {
+			include_once($path . '/autoloader.php');
 		}
-		if (file_exists($path . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoloader.php')) {
-			include_once($path . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoloader.php');
+		if (file_exists($path . '/vendor/autoloader.php')) {
+			include_once($path . '/vendor/autoloader.php');
 		}
 	}
 
@@ -398,7 +398,7 @@ class Factory
 		$db->setQuery($query);
 		$params = $db->loadResult();
 		//get the parameters from the XML file
-		//$file = JFUSION_PLUGIN_PATH . DIRECTORY_SEPARATOR . $jname . DIRECTORY_SEPARATOR . 'jfusion.xml';
+		//$file = JFUSION_PLUGIN_PATH . '/' . $jname . '/jfusion.xml';
 		//$parametersInstance = new Registry('', $file );
 		//now load params without XML files, as this creates overhead when only values are needed
 		$parametersInstance = new Registry($params);
