@@ -856,7 +856,6 @@ class Framework
 		return $path;
 	}
 
-
 	/**
 	 * @param $libery
 	 *

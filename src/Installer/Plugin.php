@@ -39,7 +39,7 @@ use stdClass;
  */
 class Plugin
 {
-    var $manifest;
+	var $manifest;
 
 	var $name;
 
@@ -84,12 +84,7 @@ class Plugin
             } else {
                 $this->manifest = $manifest;
 
-	            $file = JPATH_ADMINISTRATOR . '/components/com_jfusion/jfusion.xml';
-	            if (file_exists($file)) {
-		            $jfusionxml = Framework::getXml($file);
-	            } else {
-		            $jfusionxml = false;
-	            }
+	            $framework = Framework::getComposerInfo();
 
 	            $version = $this->getAttribute($this->manifest, 'version');
 
@@ -105,7 +100,7 @@ class Plugin
 	            $name = $this->manifest->name;
 	            $name = $this->filterInput->clean($name, 'string');
 
-	            if (!$jfusionxml || !$version || version_compare($jfusionxml->version, $version) >= 0) {
+	            if (!$framework || !$version || version_compare($framework->version, $version) >= 0) {
 		            $result['jname'] = $name;
 		            $this->name = $name;
 
