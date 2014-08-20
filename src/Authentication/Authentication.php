@@ -7,6 +7,7 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+use JFusion\Debugger\Debugger;
 use JFusion\Factory;
 use JFusion\Framework;
 
@@ -156,7 +157,7 @@ class Authentication
 		// Create authentication response
 		$response = new Response;
 
-		$debugger = Factory::getDebugger('jfusion-authentication');
+		$debugger = Debugger::getInstance('jfusion-authentication');
 		$debugger->set(null, array());
 
 		$db = Factory::getDBO();

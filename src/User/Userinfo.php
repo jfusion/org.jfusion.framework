@@ -100,6 +100,10 @@ class Userinfo {
 						$value = array();
 					}
 					break;
+				case 'registerDate';
+				case 'lastvisitDate';
+					$value = (int)$value;
+					break;
 
 			}
 			$this->userinfo->$name = $value;
@@ -134,6 +138,9 @@ class Userinfo {
 	 */
 	public function __unset($name)
 	{
+		/**
+		 * TODO: FIGURE OUT CORRECT CODE. if any ?
+		 */
 		switch($name) {
 			case 'block' :
 				break;
@@ -161,7 +168,7 @@ class Userinfo {
 	/**
 	 * hides sensitive information
 	 *
-	 * @return string parsed userinfo object
+	 * @return stdClass parsed userinfo object
 	 */
 	public function getAnonymizeed()
 	{

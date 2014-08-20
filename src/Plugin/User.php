@@ -13,6 +13,7 @@
  * @link      http://www.jfusion.org
  */
 
+use JFusion\Application\Application;
 use JFusion\Curl\Curl;
 use JFusion\Factory;
 use JFusion\Framework;
@@ -820,7 +821,7 @@ class User extends Plugin
 		// if the curl routines are not used, the same check must be performed in the
 		// create session routine in the user.php file of the plugin concerned.
 		// In version 2.0 we will never reach this point as the user plugin will handle this
-		$jnodeid = strtolower(Factory::getApplication()->input->get('jnodeid'));
+		$jnodeid = strtolower(Application::getInstance()->input->get('jnodeid'));
 		if (!empty($jnodeid)) {
 			if($jnodeid == Factory::getPluginNodeId($this->getJname())) {
 				// do not create a session, this integration started the log in and the user is already logged in
@@ -1004,7 +1005,7 @@ class User extends Plugin
 		// if the curl routines are not used, the same check must be performed in the
 		// destroysession routine in the user.php file of the plugin concerned.
 		// In version 2.0 we will never reach this point as the user plugin will handle this
-		$jnodeid = strtolower(Factory::getApplication()->input->get('jnodeid'));
+		$jnodeid = strtolower(Application::getInstance()->input->get('jnodeid'));
 		if (!empty($jnodeid)) {
 			if($jnodeid == Factory::getPluginNodeId($this->getJname())) {
 				// do not delete a session, this integration started the log out and the user is already logged out

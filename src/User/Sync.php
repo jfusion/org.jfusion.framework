@@ -1,4 +1,4 @@
-<?php namespace JFusion\Sync;
+<?php namespace JFusion\User;
 
 /**
  * Model that handles the usersync
@@ -18,6 +18,7 @@ use JFusion\Framework;
 use JFusion\User\Userinfo;
 use Joomla\Language\Text;
 
+use Joomla\Registry\Registry;
 use Psr\Log\LogLevel;
 use RuntimeException;
 
@@ -63,7 +64,7 @@ class Sync
      *
      * @return string nothing
      */
-    public static function getLogData($syncid, $type = 'all', $limitstart, $limit, $sort, $dir)
+    public static function getLogData($syncid, $type = 'all', $limitstart = null, $limit = null, $sort = 'id', $dir = 'ASC')
     {
         $db = Factory::getDBO();
 
@@ -79,6 +80,7 @@ class Sync
         if ($type != 'all') {
 	        $query->where('action = ' . $db->quote($type));
         }
+
         $db->setQuery($query, $limitstart, $limit);
         $results = $db->loadObjectList('id');
 
@@ -106,24 +108,24 @@ class Sync
 	        $query->where('action = ' . $db->quote($type));
         }
         $db->setQuery($query);
-        return $db->loadResult();
+        return (int)$db->loadResult();
     }
 
     /**
      * Save sync data
      *
-     * @param string &$syncdata the actual syncdata
+     * @param Registry &$syncdata the actual syncdata
      *
      * @return string nothing
      */
-    public static function saveSyncdata(&$syncdata)
+    public static function saveSyncdata(Registry $syncdata)
     {
         //serialize the $syncdata to allow storage in a SQL field
-        $serialized = base64_encode(serialize($syncdata));
-        $db = Factory::getDBO();
+//        $serialized = base64_encode(serialize($syncdata));
 
+        $db = Factory::getDBO();
 	    $data = new stdClass;
-	    $data->syncdata = $serialized;
+	    $data->syncdata = $syncdata->toString();
 	    $data->syncid = $syncdata['syncid'];
 	    $data->time_start = time();
 	    $data->action = $syncdata['action'];
@@ -134,20 +136,16 @@ class Sync
     /**
      * Update syncdata
      *
-     * @param string &$syncdata the actual syncdata
-     *
-     * @return string nothing
+     * @param Registry &$syncdata the actual syncdata
      */
-	public static function updateSyncdata(&$syncdata)
+	public static function updateSyncdata(Registry $syncdata)
     {
-        //serialize the $syncdata to allow storage in a SQL field
-        $serialized = base64_encode(serialize($syncdata));
         //find out if the syncid already exists
         $db = Factory::getDBO();
 
 	    $query = $db->getQuery(true)
 		    ->update('#__jfusion_sync')
-		    ->set('syncdata = ' . $db->quote($serialized))
+		    ->set('syncdata = ' . $db->quote($syncdata->toString()))
 		    ->where('syncid = ' . $db->quote($syncdata['syncid']));
 
         $db->setQuery($query);
@@ -159,7 +157,7 @@ class Sync
      *
      * @param string $syncid the usersync id
      *
-     * @return array
+     * @return Registry
      */
     public static function getSyncdata($syncid)
     {
@@ -171,12 +169,7 @@ class Sync
 		    ->where('syncid = ' . $db->quote($syncid));
 
         $db->setQuery($query);
-        $serialized = $db->loadResult();
-        $syncdata = unserialize(base64_decode($serialized));
-        //note we do not want to append the errors as then it gets saved to the database as well in syncExecute
-        //get the errors and append it
-        //$syncdata['errors'] = \JFusion\Usersync\Usersync::getLogData($syncid);
-        return $syncdata;
+	    return new Registry($db->loadResult());
     }
 
 	/**
@@ -526,7 +519,7 @@ class Sync
      * @param string $syncid
      * @return int|mixed
      */
-    public static function getSyncStatus($syncid = '') {
+    public static function getSyncStatus($syncid) {
         if (!empty($syncid)) {
             $db = Factory::getDBO();
 
@@ -536,8 +529,7 @@ class Sync
 		        ->where('syncid = ' . $db->quote($syncid));
 
             $db->setQuery($query);
-            $status = $db->loadResult();
-            return $status;
+            return (int)$db->loadResult();
         }
         return 0;
     }

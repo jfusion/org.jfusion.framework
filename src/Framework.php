@@ -13,6 +13,8 @@
  * @link      http://www.jfusion.org
  */
 
+use JFusion\Application\Application;
+use Joomla\Crypt\Crypt;
 use Joomla\Language\Text;
 
 
@@ -21,7 +23,7 @@ use Psr\Log\LogLevel;
 use \stdClass;
 use \SimpleXMLElement;
 use \Exception;
-use \RuntimeException;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 
 /**
@@ -39,7 +41,7 @@ class Framework
 	/**
 	 * Returns the JFusion plugin name of the software that is currently the master of user management
 	 *
-	 * @return object master details
+	 * @return stdClass master details
 	 */
 	public static function getMaster()
 	{
@@ -62,7 +64,7 @@ class Framework
 	/**
 	 * Returns the JFusion plugin name of the software that are currently the slaves of user management
 	 *
-	 * @return object slave details
+	 * @return stdClass[] slave details
 	 */
 	public static function getSlaves()
 	{
@@ -97,16 +99,12 @@ class Framework
 	    //Delete old user data in the lookup table
 	    $db = Factory::getDBO();
 
-	    try {
-		    $query = $db->getQuery(true)
-			    ->delete('#__jfusion_users_plugin')
-			    ->where('userid = ' . $userinfo->userid);
-	        $db->setQuery($query);
+	    $query = $db->getQuery(true)
+		    ->delete('#__jfusion_users_plugin')
+		    ->where('userid = ' . $db->quote($userinfo->userid));
+	    $db->setQuery($query);
 
-		    $db->execute();
-	    } catch (Exception $e) {
-		    static::raise(LogLevel::WARNING, $e);
-	    }
+	    $db->execute();
     }
 
     /**
@@ -145,7 +143,7 @@ class Framework
 	 */
 	public static function getAltAvatar($software, $userinfo)
 	{
-		$application = Factory::getApplication();
+		$application = Application::getInstance();
 		try {
 			if (!$userinfo) {
 				//no user was found
@@ -167,85 +165,6 @@ class Framework
 	}
 
     /**
-     * Converts a string to all ascii characters
-     *
-     * @param string $input str to convert
-     *
-     * @return string converted string
-     */
-    public static function strtoascii($input)
-    {
-        $output = '';
-        foreach (str_split($input) as $char) {
-            $output.= '&#' . ord($char) . ';';
-        }
-        return $output;
-    }
-
-	/**
-	 * Convert a utf-8 joomla string in to a valid encoding matching the table/filed it will be sent to
-	 *
-	 * @static
-	 *
-	 * @param string $string string to convert
-	 * @param string $jname  used to get the database object, and point to the static stored data
-	 * @param string $table  table that we will be looking at
-	 * @param string $field  field that we will be looking at
-	 *
-	 * @throws RuntimeException
-	 * @return bool|string
-	 */
-    public static function encodeDBString($string, $jname, $table, $field) {
-        static $data;
-	    if (!isset($data)) {
-		    $data = array();
-	    }
-
-        if (!isset($data[$jname][$table])) {
-            $db = Factory::getDatabase($jname);
-            $query = 'SHOW FULL FIELDS FROM ' . $table;
-            $db->setQuery($query);
-            $fields = $db->loadObjectList();
-
-            foreach ($fields as $f) {
-                if ($f->Collation) {
-                    $data[$jname][$table][$f->Field] = $f->Collation;
-                }
-            }
-        }
-
-        if (isset($data[$jname][$table][$field]) ) {
-	        $encoding = false;
-        	list($charset) = explode('_', $data[$jname][$table][$field]);
-            switch ($charset) {
-                case 'latin1':
-                	$encoding = 'ISO-8859-1';
-                    break;
-                case 'utf8':
-                    break;
-                default:
-	                throw new RuntimeException('JFusion Encoding support missing: ' . $charset);
-                    break;
-            }
-            if ($encoding) {
-	            if (function_exists ('iconv')) {
-                    $converted = iconv('utf-8', $encoding, $string);
-	            } else if (function_exists('mb_convert_encoding')) {
-                    $converted = mb_convert_encoding($string, $encoding, 'utf-8');
-                } else {
-		            throw new RuntimeException('JFusion: missing iconv or mb_convert_encoding');
-                }
-                if ($converted !== false) {
-                	$string = $converted;
-                } else {
-	                throw new RuntimeException('JFusion Encoding failed ' . $charset);
-                }
-            }
-        }
-        return $string;
-    }
-
-    /**
      * Check if feature exists
      *
      * @static
@@ -257,28 +176,11 @@ class Framework
     public static function hasFeature($jname, $feature) {
         $return = false;
 	    $admin = Factory::getAdmin($jname);
-	    $public = Factory::getFront($jname);
 	    $user = Factory::getUser($jname);
         switch ($feature) {
             //Admin Features
             case 'wizard':
 	            $return = $admin->methodDefined('setupFromPath');
-                break;
-            //Public Features
-            case 'search':
-                $return = ($public->methodDefined('getSearchQuery') || $public->methodDefined('getSearchResults'));
-                break;
-            case 'whosonline':
-                $return = $public->methodDefined('getOnlineUserQuery');
-                break;
-            case 'breadcrumb':
-                $return = $public->methodDefined('getPathWay');
-                break;
-            case 'frontendlanguage':
-                $return = $public->methodDefined('setLanguageFrontEnd');
-                break;
-            case 'frameless':
-                $return = $public->methodDefined('getBuffer');
                 break;
             //User Features
             case 'useractivity':
@@ -324,12 +226,13 @@ class Framework
 	/**
 	 * Checks to see if a JFusion plugin is properly configured
 	 *
-	 * @param string $data file path or file content
+	 * @param string  $data   file path or file content
 	 * @param boolean $isFile load from file
 	 *
+	 * @throws \Symfony\Component\Yaml\Exception\RuntimeException
 	 * @return SimpleXMLElement returns true if plugin is correctly configured
 	 */
-	public static function getXml($data, $isFile=true)
+	public static function getXml($data, $isFile = true)
 	{
 		// Disable libxml errors and allow to fetch error information as needed
 		libxml_use_internal_errors(true);
@@ -343,14 +246,17 @@ class Framework
 		}
 
 		if ($xml === false) {
-			static::raise(LogLevel::ERROR, Text::_('JLIB_UTIL_ERROR_XML_LOAD'));
-
+			$message = null;
 			if ($isFile) {
-				static::raise(LogLevel::ERROR, $data);
+				$message = Text::_('FILE') . ': ' . $data;
 			}
 			foreach (libxml_get_errors() as $error) {
-				static::raise(LogLevel::ERROR, $error->message);
+				if ($message) {
+					$message .= ' ';
+				}
+				$message .= ' '. Text::_('MESSAGE') . ': ' . $error->message;
 			}
+			throw new RuntimeException(Text::_('ERROR_XML_LOAD') . ' : ' . $message);
 		}
 		return $xml;
 	}
@@ -374,7 +280,7 @@ class Framework
 				static::raise($type, $msg, $msgtype);
 			}
 		} else {
-			$app = Factory::getApplication();
+			$app = Application::getInstance();
 			if ($message instanceof Exception) {
 				$message = $message->getMessage();
 			}
@@ -564,7 +470,7 @@ class Framework
 	}
 
 	/**
-	 * @return stdClass;
+	 * @return stdClass
 	 */
 	public static function getUpdateUserGroups() {
 		$params = Factory::getConfig();
@@ -580,26 +486,6 @@ class Framework
 	 * @return boolean
 	 */
 	public static function updateUsergroups($jname) {
-		$updateusergroups = static::getUpdateUserGroups();
-		$advanced = false;
-		if (isset($updateusergroups->{$jname}) && $updateusergroups->{$jname}) {
-			$master = Framework::getMaster();
-			if ($master->name != $jname) {
-				$advanced = true;
-			}
-		}
-		return $advanced;
-	}
-
-	/**
-	 * authenticate a user/password
-	 *
-	 * @param string $username username
-	 * @param string $password password
-	 *
-	 * @return boolean
-	 */
-	public static function authenticate($username, $password) {
 		$updateusergroups = static::getUpdateUserGroups();
 		$advanced = false;
 		if (isset($updateusergroups->{$jname}) && $updateusergroups->{$jname}) {
@@ -633,7 +519,7 @@ class Framework
 		 * distribution is even, and randomize the start shift so it's not
 		 * predictable.
 		 */
-		$random = static::genRandomBytes($length + 1);
+		$random =  Crypt::genRandomBytes($length + 1);
 		$shift = ord($random[0]);
 
 		for ($i = 1; $i <= $length; ++$i)
@@ -643,150 +529,6 @@ class Framework
 		}
 
 		return $makepass;
-	}
-
-	/**
-	 * Generate random bytes.
-	 *
-	 * @param   integer  $length  Length of the random data to generate
-	 *
-	 * @return  string  Random binary data
-	 *
-	 * @since  12.1
-	 */
-	public static function genRandomBytes($length = 16)
-	{
-		$length = (int) $length;
-		$sslStr = '';
-
-		/**
-		 * If a secure randomness generator exists and we don't
-		 * have a buggy PHP version use it.
-		 */
-		if (function_exists('openssl_random_pseudo_bytes')
-			&& (version_compare(PHP_VERSION, '5.3.4') >= 0 || strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')) {
-			$sslStr = openssl_random_pseudo_bytes($length, $strong);
-
-			if ($strong)
-			{
-				return $sslStr;
-			}
-		}
-
-		/**
-		 * Collect any entropy available in the system along with a number
-		 * of time measurements of operating system randomness.
-		 */
-		$bitsPerRound = 2;
-		$maxTimeMicro = 400;
-		$shaHashLength = 20;
-		$randomStr = '';
-		$total = $length;
-
-		// Check if we can use /dev/urandom.
-		$urandom = false;
-		$handle = null;
-
-		// This is PHP 5.3.3 and up
-		if (function_exists('stream_set_read_buffer') && @is_readable('/dev/urandom'))
-		{
-			$handle = @fopen('/dev/urandom', 'rb');
-
-			if ($handle)
-			{
-				$urandom = true;
-			}
-		}
-
-		while ($length > strlen($randomStr))
-		{
-			$bytes = ($total > $shaHashLength)? $shaHashLength : $total;
-			$total -= $bytes;
-
-			/**
-			 * Collect any entropy available from the PHP system and filesystem.
-			 * If we have ssl data that isn't strong, we use it once.
-			 */
-			$entropy = rand() . uniqid(mt_rand(), true) . $sslStr;
-			$entropy .= implode('', @fstat(fopen(__FILE__, 'r')));
-			$entropy .= memory_get_usage();
-			$sslStr = '';
-
-			if ($urandom)
-			{
-				stream_set_read_buffer($handle, 0);
-				$entropy .= @fread($handle, $bytes);
-			}
-			else
-			{
-				/**
-				 * There is no external source of entropy so we repeat calls
-				 * to mt_rand until we are assured there's real randomness in
-				 * the result.
-				 *
-				 * Measure the time that the operations will take on average.
-				 */
-				$samples = 3;
-				$duration = 0;
-
-				for ($pass = 0; $pass < $samples; ++$pass)
-				{
-					$microStart = microtime(true) * 1000000;
-					$hash = sha1(mt_rand(), true);
-
-					for ($count = 0; $count < 50; ++$count)
-					{
-						$hash = sha1($hash, true);
-					}
-
-					$microEnd = microtime(true) * 1000000;
-					$entropy .= $microStart . $microEnd;
-
-					if ($microStart >= $microEnd)
-					{
-						$microEnd += 1000000;
-					}
-
-					$duration += $microEnd - $microStart;
-				}
-
-				$duration = $duration / $samples;
-
-				/**
-				 * Based on the average time, determine the total rounds so that
-				 * the total running time is bounded to a reasonable number.
-				 */
-				$rounds = (int) (($maxTimeMicro / $duration) * 50);
-
-				/**
-				 * Take additional measurements. On average we can expect
-				 * at least $bitsPerRound bits of entropy from each measurement.
-				 */
-				$iter = $bytes * (int) ceil(8 / $bitsPerRound);
-
-				for ($pass = 0; $pass < $iter; ++$pass)
-				{
-					$microStart = microtime(true);
-					$hash = sha1(mt_rand(), true);
-
-					for ($count = 0; $count < $rounds; ++$count)
-					{
-						$hash = sha1($hash, true);
-					}
-
-					$entropy .= $microStart . microtime(true);
-				}
-			}
-
-			$randomStr .= sha1($entropy, true);
-		}
-
-		if ($urandom)
-		{
-			@fclose($handle);
-		}
-
-		return substr($randomStr, 0, $length);
 	}
 
 	/**
@@ -846,7 +588,7 @@ class Framework
 	 *
 	 * @return string
 	 */
-	public static function getPluginPath($name)
+	public static function getPluginPath($name = null)
 	{
 		$params = Factory::getConfig();
 		$path = $params->get('plugin-path');

@@ -28,6 +28,29 @@ class Debugger {
 	private $callback = null;
 
 	/**
+	 * Debugger instances container.
+	 *
+	 * @var    Debugger
+	 */
+	protected static $instance = array();
+
+	/**
+	 * Returns the global Session object, only creating it
+	 * if it doesn't already exist.
+	 *
+	 * @param $key
+	 *
+	 * @return  Debugger  The Session object.
+	 */
+	public static function getInstance($key)
+	{
+		if (!isset(self::$instance[$key])) {
+			self::$instance[$key] = new Debugger();
+		}
+		return self::$instance[$key];
+	}
+
+	/**
 	 * @param string $key
 	 * @param $value
 	 */

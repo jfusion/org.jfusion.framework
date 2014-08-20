@@ -28,14 +28,23 @@
         "joomla/string": "~1.0",
         "joomla/uri": "~1.0",
         "joomla/utilities": "~1.0",
+        "joomla/crypt": "~1.0",
         "symfony/yaml": "~2.0"
-    },
-    "require-dev": {
-        "jfusion/platform-joomla": "~1.0.0"
     },
     "autoload": {
         "psr-4": {
             "JFusion\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JFusion\\Tests\\": "Tests/"
+        }
+    },
+    "require-dev": {
+        "jfusion/platform-joomla": "dev-master",
+        "jfusion/plugin-phpbb3": "dev-master",
+        "phpunit/phpunit": "3.7.*",
+        "phpunit/dbunit": "1.3.*"
     }
 }

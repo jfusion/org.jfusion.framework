@@ -8,6 +8,8 @@
  */
 
 use Exception;
+use JFusion\Application\Application;
+use JFusion\Debugger\Debugger;
 use JFusion\Factory;
 use JFusion\Framework;
 use Joomla\Language\Text;
@@ -67,7 +69,7 @@ class User
 	public function login($credentials, $options = array())
 	{
 		$success = 0;
-		$debugger = Factory::getDebugger('jfusion-loginchecker');
+		$debugger = Debugger::getInstance('jfusion-loginchecker');
 		$debugger->set(null, array());
 		$debugger->set('init', array());
 		ob_start();
@@ -88,7 +90,7 @@ class User
 			}
 
 			//allow for the detection of external mods to exclude jfusion plugins
-			$jnodeid = Factory::getApplication()->input->get('jnodeid', null);
+			$jnodeid = Application::getInstance()->input->get('jnodeid', null);
 			if ($jnodeid) {
 				$jnodeid = strtolower($jnodeid);
 				$JFusionActivePlugin = $jnodeid;
@@ -336,7 +338,7 @@ class User
 		//allow for the detection of external mods to exclude jfusion plugins
 		global $JFusionActivePlugin;
 
-		$jnodeid = strtolower(Factory::getApplication()->input->get('jnodeid'));
+		$jnodeid = strtolower(Application::getInstance()->input->get('jnodeid'));
 		if (!empty($jnodeid)) {
 			$JFusionActivePlugin = $jnodeid;
 			$options['skipplugin'][] = $jnodeid;
@@ -345,7 +347,7 @@ class User
 		//prevent any output by the plugins (this could prevent cookies from being passed to the header)
 		ob_start();
 		//logout from the JFusion plugins if done through frontend
-		$debugger = Factory::getDebugger('jfusion-loginchecker');
+		$debugger = Debugger::getInstance('jfusion-loginchecker');
 
 		//get the JFusion master
 		$master = Framework::getMaster();
@@ -444,7 +446,7 @@ class User
 	{
 		$result = false;
 
-		$debugger = Factory::getDebugger('jfusion-deleteuser');
+		$debugger = Debugger::getInstance('jfusion-deleteuser');
 		$debugger->set(null, array());
 
 		//create an array to store the debug info
@@ -537,7 +539,7 @@ class User
 	 */
 	public function save(Userinfo $userinfo, Userinfo $olduserinfo = null, $new = false)
 	{
-		$debugger = Factory::getDebugger('jfusion-saveuser');
+		$debugger = Debugger::getInstance('jfusion-saveuser');
 		$debugger->set(null, array());
 
 		//create an array to store the debug info

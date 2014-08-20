@@ -77,7 +77,8 @@ class Plugin
 		if (!empty($jname)) {
 			//get the params object
 			$this->params = Factory::getParams($jname);
-			$this->debugger = Factory::getDebugger($jname);
+
+			$this->debugger = Debugger::getInstance($jname);
 
 			$this->path = Framework::getPluginPath($this->getName());
 

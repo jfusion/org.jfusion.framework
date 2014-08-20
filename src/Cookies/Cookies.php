@@ -2,7 +2,7 @@
 // Check to ensure this file is within the rest of the framework
 
 use JFusion\Api\Api;
-use JFusion\Factory;
+use JFusion\Application\Application;
 use Joomla\Language\Text;
 
 /**
@@ -74,9 +74,9 @@ class Cookies {
 		if ($cookie_httponly == true) {
 			$cookie .= '; HttpOnly';
 		}
-		
+
 		if ($url) {
-			$mainframe = Factory::getApplication();
+			$mainframe = Application::getInstance();
 			if ( !$mainframe->isAdmin() ) {
 				$this->_cookies[$url][] = $cookie;
 			}
@@ -112,11 +112,11 @@ class Cookies {
      * @param string $return
      */
     function executeRedirect($source_url = null, $return = null) {
-    	$mainframe = Factory::getApplication();
+    	$mainframe = Application::getInstance();
     	if (!$mainframe->isAdmin() || !$this->secret) {
 	    	if(count($this->_cookies)) {
 	    		if (empty($return)) {
-                    $return = Factory::getApplication()->input->getBase64('return', '');
+                    $return = Application::getInstance()->input->getBase64('return', '');
 	    			if ($return) {
 	    				$return = base64_decode($return);
 	    				if( stripos($return, 'http://') === false && stripos($return, 'https://') === false ) {

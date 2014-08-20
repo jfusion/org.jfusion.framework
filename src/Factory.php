@@ -14,10 +14,9 @@
 	 */
 
 use JFusion\Cookies\Cookies;
-use JFusion\Debugger\Debugger;
 use JFusion\Application\Application;
+use JFusion\Plugin\Plugin;
 use JFusion\Session\Session;
-use JFusion\Router\Router;
 use JFusion\Plugin\Front;
 use JFusion\Plugin\Admin;
 use JFusion\Plugin\Auth;
@@ -29,7 +28,6 @@ use Joomla\Database\DatabaseFactory;
 use Joomla\Registry\Registry;
 
 use Joomla\Language\Language;
-use Joomla\Language\Text;
 use Joomla\Date\Date;
 use Joomla\Event\Dispatcher;
 
@@ -138,10 +136,11 @@ class Factory
 
 			$db->setQuery($query);
 			$name = $db->loadResult();
-			if ($name) {
-				$instance = $name;
+
+			if (!$name) {
+				$name = $instance;
 			}
-			$namnes[$instance] = $instance;
+			$namnes[$instance] = $name;
 		}
 		return $namnes[$instance];
 	}
@@ -265,7 +264,7 @@ class Factory
 	 *
 	 * @return Platform JFusion Thread class for the JFusion plugin
 	 */
-	public static function &getPlayform($platform, $instance)
+	public static function &getPlatform($platform, $instance)
 	{
 		static $instances;
 		if (!isset($instances)) {
@@ -297,7 +296,7 @@ class Factory
 	 *
 	 * @param string $instance name of the JFusion plugin used
 	 *
-	 * @return object JFusionHelper JFusion Helper class for the JFusion plugin
+	 * @return Plugin|false JFusion Helper class for the JFusion plugin
 	 */
 	public static function &getHelper($instance)
 	{
@@ -385,7 +384,7 @@ class Factory
 	 * @throws RuntimeException
 	 * @return Registry JParam object for the JFusion plugin
 	 */
-	public static function &createParams($jname)
+	public static function createParams($jname)
 	{
 		//get the current parameters from the jfusion table
 		$db = self::getDBO();
@@ -397,16 +396,7 @@ class Factory
 
 		$db->setQuery($query);
 		$params = $db->loadResult();
-		//get the parameters from the XML file
-		//$file = JFUSION_PLUGIN_PATH . '/' . $jname . '/jfusion.xml';
-		//$parametersInstance = new Registry('', $file );
-		//now load params without XML files, as this creates overhead when only values are needed
-		$parametersInstance = new Registry($params);
-
-		if (!is_object($parametersInstance)) {
-			throw new RuntimeException(Text::_('NO_FORUM_PARAMETERS'));
-		}
-		return $parametersInstance;
+		return new Registry($params);
 	}
 	/**
 	 * Acquires a database connection to the database of the software integrated by JFusion
@@ -438,9 +428,11 @@ class Factory
 
 			$db = DatabaseFactory::getInstance()->getDriver($driver, $options);
 
-			//add support for UTF8
-			$db->setQuery('SET names ' . $db->quote($charset));
-			$db->execute();
+			if ($driver != 'sqlite') {
+				//add support for UTF8
+				$db->setQuery('SET names ' . $db->quote($charset));
+				$db->execute();
+			}
 
 			//get the debug configuration setting
 			$db->setDebug(self::getConfig()->get('debug'));
@@ -452,12 +444,12 @@ class Factory
 	 * returns array of plugins depending on the arguments
 	 *
 	 * @param string $criteria the type of plugins to retrieve Use: master | slave | both
-	 * @param boolean $joomla should we exclude joomla_int
+	 * @param string|boolean $exclude should we exclude joomla_int
 	 * @param boolean $active only active plugins
 	 *
 	 * @return array plugin details
 	 */
-	public static function getPlugins($criteria = 'both', $joomla = false, $active = true)
+	public static function getPlugins($criteria = 'both', $exclude = false, $active = true)
 	{
 		static $instances;
 		if (!isset($instances)) {
@@ -480,10 +472,10 @@ class Factory
 				$query->where('(slave = 1 OR master = 1)');
 				break;
 		}
-		$key = $criteria . '_' . $joomla . '_' . $active;
+		$key = $criteria . '_' . $exclude . '_' . $active;
 		if (!isset($instances[$key])) {
-			if (!$joomla) {
-				$query->where('name NOT LIKE ' . $db->quote('joomla_int'));
+			if ($exclude) {
+				$query->where('name NOT LIKE ' . $db->quote($exclude));
 			}
 			if ($active) {
 				$query->where('status = 1');
@@ -540,25 +532,6 @@ class Factory
 	}
 
 	/**
-	 * @param string $jname
-	 *
-	 * @return Debugger
-	 */
-	public static function &getDebugger($jname)
-	{
-		static $instances;
-
-		if (!isset($instances)) {
-			$instances = array();
-		}
-
-		if (!isset($instances[$jname])) {
-			$instances[$jname] = new Debugger();
-		}
-		return $instances[$jname];
-	}
-
-	/**
 	 * Get a database object.
 	 *
 	 * Returns the global {@link Driver} object, only creating it if it doesn't already exist.
@@ -592,26 +565,11 @@ class Factory
 	}
 
 	/**
-	 * Get a application object.
-	 *
-	 * Returns the global {@link JApplicationCms} object, only creating it if it doesn't already exist.
-	 *
-	 * @return  Application object
-	 */
-	public static function getApplication()
-	{
-		if (!self::$application)
-		{
-			self::$application = Application::getInstance();
-		}
-		return self::$application;
-	}
-
-	/**
 	 * Get a configuration object
 	 *
 	 * Returns the global {@link Registry} object, only creating it if it doesn't already exist.
 	 *
+	 * @throws \RuntimeException
 	 * @return  Registry
 	 *
 	 * @see     Registry
@@ -619,6 +577,9 @@ class Factory
 	 */
 	public static function getConfig()
 	{
+		if (!self::$config instanceof Registry) {
+			throw new RuntimeException('NO_CONFIG');
+		}
 		return self::$config;
 	}
 
@@ -713,37 +674,5 @@ class Factory
 			self::$dispatcher = new Dispatcher();
 		}
 		return self::$dispatcher;
-	}
-
-	/**
-	 * Method to get the application session object.
-	 *
-	 * @return  Session  The session object
-	 *
-	 * @since   11.3
-	 */
-	public static function getSession()
-	{
-		if (!self::$session)
-		{
-			self::$session = Session::getInstance();
-		}
-		return self::$session;
-	}
-
-	/**
-	 * Method to get the application session object.
-	 *
-	 * @return  Router  The session object
-	 *
-	 * @since   11.3
-	 */
-	public static function getRouter()
-	{
-		if (!self::$session)
-		{
-			self::$session = Router::getInstance();
-		}
-		return self::$session;
 	}
 }
