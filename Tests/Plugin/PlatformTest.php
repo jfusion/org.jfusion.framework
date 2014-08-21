@@ -1,4 +1,4 @@
-<?php namespace JFusion\Tests\User;
+<?php namespace JFusion\Tests\Plugin;
 /**
  * Model that handles the usersync
  *
@@ -12,19 +12,7 @@
  * @link      http://www.jfusion.org
  */
 
-use JFusion\Factory;
-use JFusion\Framework;
-use JFusion\Tests\Abstracts\FrameworkTestCase;
-use JFusion\User\Sync;
-use JFusion\User\Userinfo;
-use Joomla\Language\Text;
-
-use Joomla\Registry\Registry;
-use Psr\Log\LogLevel;
-use RuntimeException;
-
-use stdClass;
-use Exception;
+use JFusion\Plugin\Platform;
 
 /**
  * Class for usersync JFusion functions
@@ -36,25 +24,31 @@ use Exception;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link      http://www.jfusion.org
  */
-class UserTest extends FrameworkTestCase
+class PlatformTest extends PluginTest
 {
-	public function test_getInstance() {
+	public function test___construct() {
 		$this->markTestSkipped();
 	}
 
-	public function test_login() {
+	public function test_hasFile() {
+		$plugin = new Platform('none_exsisting_plugin');
+		$this->assertFalse($plugin->hasFile('foo.php'));
+
+		$file = $plugin->hasFile('Platform.php');
+
+		$this->assertStringEndsWith('Platform.php', $file);
+	}
+
+	public function test_uninstall() {
+		$plugin = new Platform('none_exsisting_plugin');
+		$this->assertCount(2, $plugin->uninstall());
+	}
+
+	public function test_parseRoute() {
 		$this->markTestSkipped();
 	}
 
-	public function test_logout() {
-		$this->markTestSkipped();
-	}
-
-	public function test_delete() {
-		$this->markTestSkipped();
-	}
-
-	public function test_save() {
+	public function test_buildRoute() {
 		$this->markTestSkipped();
 	}
 }

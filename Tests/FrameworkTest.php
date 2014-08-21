@@ -18,16 +18,16 @@ class FrameworkTest extends FrameworkTestCase
 	{
 		$master = Framework::getMaster();
 
-		$this->assertEquals('phpbb3', $master->name, 'should be  phpbb3');
+		$this->assertSame('phpbb3', $master->name);
 	}
 
 	public function test_getSlaves()
 	{
 		$slaves = Framework::getSlaves();
 
-		$this->assertEquals('phpbb3_1', $slaves[0]->name, 'should be  phpbb3');
+		$this->assertSame('phpbb3_1', $slaves[0]->name);
 
-		$this->assertCount(1, $slaves, 'Expected 1 slave');
+		$this->assertCount(1, $slaves);
 	}
 
 	public function test_removeUser()
@@ -38,12 +38,12 @@ class FrameworkTest extends FrameworkTestCase
 
 	public function test_parseCode()
 	{
-		$this->markTestIncomplete('parseCode');
+		$this->markTestIncomplete();
 	}
 
 	public function test_getAltAvatar()
 	{
-		$this->markTestIncomplete('getAltAvatar');
+		$this->markTestIncomplete();
 	}
 
 	public function test_hasFeature()
@@ -63,7 +63,7 @@ class FrameworkTest extends FrameworkTestCase
 			'deleteuser');
 
 		foreach($features as $feature) {
-			$this->assertFalse(Framework::hasFeature('none_exsisting_plugin', $feature), 'should NOT have ' . $feature);
+			$this->assertFalse(Framework::hasFeature('none_exsisting_plugin', $feature));
 		}
 
 		$features = array('wizard',
@@ -80,57 +80,57 @@ class FrameworkTest extends FrameworkTestCase
 			'deleteuser');
 
 		foreach($features as $feature) {
-			$this->assertTrue(Framework::hasFeature('phpbb3', $feature), 'should have ' . $feature);
+			$this->assertTrue(Framework::hasFeature('phpbb3', $feature));
 		}
 	}
 
 	public function test_getXml() {
 		$xml = Framework::getXml('<root><test>hello world!!</test></root>', false);
 
-		$this->assertEquals('hello world!!', $xml->test, 'should: hello world!!');
+		$this->assertSame('hello world!!', (string)$xml->test);
 	}
 
 	public function test_raise() {
-		$this->markTestSkipped('Skipping: raise');
+		$this->markTestSkipped();
 	}
 
 	public function test_getImageSize() {
-		$this->markTestSkipped('Skipping: getImageSize');
+		$this->markTestSkipped();
 	}
 
 	public function test_getHash() {
 		$hash = Framework::getHash('test');
 
-		$this->assertEquals('ea2d966cf3f13addb32c1accfcaccd12', $hash, 'hash incorrect!!');
+		$this->assertSame('ea2d966cf3f13addb32c1accfcaccd12', $hash);
 	}
 
 	public function test_getUpdateUserGroups() {
-		$this->markTestIncomplete('getUpdateUserGroups');
+		$this->markTestIncomplete();
 	}
 
 	public function test_updateUsergroups() {
-		$this->markTestIncomplete('updateUsergroups');
+		$this->markTestIncomplete();
 	}
 
 	public function test_genRandomPassword() {
 		$password = Framework::genRandomPassword();
-		$this->assertTrue(strlen($password) === 8, 'Random pass not 8');
+		$this->assertSame(8, strlen($password));
 	}
 
 	public function test_getNodeID() {
 		$node = Framework::getNodeID();
-		$this->assertEquals('localhost/path/to/framework', $node, 'node incorrect');
+		$this->assertSame('localhost/path/to/framework', $node);
 	}
 
 	public function test_getPluginPath() {
 		$root = Framework::getPluginPath();
-		$this->assertEquals('/fake/path/to/plugins', $root, 'Plugin path incorrect');
+		$this->assertSame('/fake/path/to/plugins', $root);
 
 		$plugin = Framework::getPluginPath('plugin');
-		$this->assertEquals('/fake/path/to/plugins/plugin', $plugin, 'Plugin path incorrect');
+		$this->assertSame('/fake/path/to/plugins/plugin', $plugin);
 	}
 
 	public function test_getComposerInfo() {
-		$this->markTestSkipped('Skipping: getComposerInfo');
+		$this->markTestSkipped();
 	}
 }

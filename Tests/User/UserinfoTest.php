@@ -27,68 +27,67 @@ class UserinfoTest extends \PHPUnit_Framework_TestCase
 		$userinfo->activation = 'test1234567890';
 
 
-		$this->assertEquals('plugin', $userinfo->getJname());
-
-		$this->assertTrue($userinfo->userid === 200);
-		$this->assertEquals('test_username', $userinfo->username, 'username');
-		$this->assertEquals('user@email.com', $userinfo->email, 'email');
-		$this->assertEquals('Real Name', $userinfo->name, 'name');
-		$this->assertEquals('test1234567890', $userinfo->password, 'password');
-		$this->assertEquals('test1234567890', $userinfo->password_salt, 'password_salt');
-		$this->assertEquals('test1234567890', $userinfo->password_clear, 'password_clear');
-		$this->assertEquals('test1234567890', $userinfo->activation, 'activation');
+		$this->assertSame('plugin', $userinfo->getJname());
+		$this->assertSame(200, $userinfo->userid);
+		$this->assertSame('test_username', $userinfo->username);
+		$this->assertSame('user@email.com', $userinfo->email);
+		$this->assertSame('Real Name', $userinfo->name);
+		$this->assertSame('test1234567890', $userinfo->password);
+		$this->assertSame('test1234567890', $userinfo->password_salt);
+		$this->assertSame('test1234567890', $userinfo->password_clear);
+		$this->assertSame('test1234567890', $userinfo->activation);
 
 
 		$userinfo->block = '1';
-		$this->assertTrue($userinfo->block, 'block');
+		$this->assertTrue($userinfo->block);
 		$userinfo->block = 1;
-		$this->assertTrue($userinfo->block, 'block');
+		$this->assertTrue($userinfo->block);
 		$userinfo->block = 0;
-		$this->assertFalse($userinfo->block, 'block');
+		$this->assertFalse($userinfo->block);
 		$userinfo->block = '0';
-		$this->assertFalse($userinfo->block, 'block');
+		$this->assertFalse($userinfo->block);
 
 
 		$foo = array('foo','baa');
 
 		$userinfo->groups = 'invalid';
-		$this->assertTrue(is_array($userinfo->groups), 'groups');
+		$this->assertTrue(is_array($userinfo->groups));
 		$userinfo->groups = $foo;
-		$this->assertSame($foo , $userinfo->groups, 'groups');
+		$this->assertSame($foo , $userinfo->groups);
 
 
 		$userinfo->groupnames = 'invalid';
-		$this->assertTrue(is_array($userinfo->groupnames), 'groupnames');
+		$this->assertTrue(is_array($userinfo->groupnames));
 		$userinfo->groupnames = $foo;
-		$this->assertSame($foo , $userinfo->groupnames, 'groupnames');
+		$this->assertSame($foo , $userinfo->groupnames);
 
 
 		$userinfo->registerDate = 10000;
-		$this->assertTrue($userinfo->registerDate === 10000, 'registerDate');
+		$this->assertSame(10000, $userinfo->registerDate);
 		$userinfo->registerDate = 'foobaa';
-		$this->assertTrue($userinfo->registerDate === 0, 'registerDate');
+		$this->assertSame(0, $userinfo->registerDate);
 
 
 		$userinfo->lastvisitDate = 10000;
-		$this->assertTrue($userinfo->lastvisitDate === 10000, 'lastvisitDate');
+		$this->assertSame(10000, $userinfo->lastvisitDate);
 		$userinfo->lastvisitDate = 'foobaa';
-		$this->assertTrue($userinfo->lastvisitDate === 0, 'lastvisitDate');
+		$this->assertSame(0, $userinfo->lastvisitDate);
 
 
 		$userinfo->language = 'en-GB';
-		$this->assertEquals('en-GB', $userinfo->language, 'Language');
+		$this->assertSame('en-GB', $userinfo->language);
 
 
-		$anon = $userinfo->getAnonymizeed();
-		$this->assertEquals('******', $anon->password_clear, 'anno: password_clear');
-		$this->assertEquals('test12********', $anon->password, 'anno: password');
-		$this->assertEquals('test*****', $anon->password_salt, 'anno: password_salt');
+		$anonymizeed = $userinfo->getAnonymizeed();
+		$this->assertSame('******', $anonymizeed->password_clear);
+		$this->assertSame('test12********', $anonymizeed->password);
+		$this->assertSame('test*****', $anonymizeed->password_salt);
 	}
 
 	public function test_bind() {
 		$userinfo = new Userinfo('plugin');
 
-		$foo = array('foo','baa');
+		$foo = array('foo', 'baa');
 
 		$info = new \stdClass();
 		$info->userid = 200;
@@ -110,45 +109,41 @@ class UserinfoTest extends \PHPUnit_Framework_TestCase
 
 		$userinfo->bind($info);
 
-
-
-
-		$this->assertEquals('plugin', $userinfo->getJname());
-
-		$this->assertTrue($userinfo->userid === 200);
-		$this->assertEquals('test_username', $userinfo->username, 'username');
-		$this->assertEquals('user@email.com', $userinfo->email, 'email');
-		$this->assertEquals('Real Name', $userinfo->name, 'name');
-		$this->assertEquals('test1234567890', $userinfo->password, 'password');
-		$this->assertEquals('test1234567890', $userinfo->password_salt, 'password_salt');
-		$this->assertEquals('test1234567890', $userinfo->password_clear, 'password_clear');
-		$this->assertEquals('test1234567890', $userinfo->activation, 'activation');
-		$this->assertTrue($userinfo->block, 'block');
-		$this->assertSame($foo , $userinfo->groups, 'groups');
-		$this->assertSame($foo , $userinfo->groupnames, 'groupnames');
-		$this->assertTrue($userinfo->registerDate === 10000, 'registerDate');
-		$this->assertTrue($userinfo->lastvisitDate === 10000, 'lastvisitDate');
-		$this->assertEquals('en-GB', $userinfo->language, 'Language');
-		$this->assertEquals('costume field', $userinfo->costume, 'costume');
+		$this->assertSame('plugin', $userinfo->getJname());
+		$this->assertSame(200, $userinfo->userid);
+		$this->assertSame('test_username', $userinfo->username);
+		$this->assertSame('user@email.com', $userinfo->email);
+		$this->assertSame('Real Name', $userinfo->name);
+		$this->assertSame('test1234567890', $userinfo->password);
+		$this->assertSame('test1234567890', $userinfo->password_salt);
+		$this->assertSame('test1234567890', $userinfo->password_clear);
+		$this->assertSame('test1234567890', $userinfo->activation);
+		$this->assertTrue($userinfo->block);
+		$this->assertSame($foo , $userinfo->groups);
+		$this->assertSame($foo , $userinfo->groupnames);
+		$this->assertSame(10000, $userinfo->registerDate);
+		$this->assertSame(10000, $userinfo->lastvisitDate);
+		$this->assertSame('en-GB', $userinfo->language);
+		$this->assertSame('costume field', $userinfo->costume);
 	}
 
 	public function test___isset() {
 		$userinfo = new Userinfo('plugin');
 		$userinfo->userid = 1000;
-		$this->assertTrue(isset($userinfo->userid), 'isset');
+		$this->assertTrue(isset($userinfo->userid));
 	}
 
 	public function test_getJname() {
 		$userinfo = new Userinfo('plugin');
-		$this->assertEquals('plugin', $userinfo->getJname());
+		$this->assertSame('plugin', $userinfo->getJname());
 	}
 
 	public function test_toObject() {
 		$userinfo = new Userinfo('plugin');
 		$object = $userinfo->toObject();
 
-		$this->assertInstanceOf('\stdClass', $object, 'object');
+		$this->assertInstanceOf('\stdClass', $object);
 
-		$this->assertEquals('plugin', $object->jname);
+		$this->assertSame('plugin', $object->jname);
 	}
 }

@@ -40,30 +40,30 @@ class SyncTest extends FrameworkTestCase
 {
 	public function test_getLogData() {
 		$log = Sync::getLogData('asdf125');
-		$this->assertCount(3, $log, 'countLogData: not size');
+		$this->assertCount(3, $log);
 
 		$log = Sync::getLogData('asdf125', 'created');
-		$this->assertCount(1, $log, 'countLogData: not size');
+		$this->assertCount(1, $log);
 
 		$log = Sync::getLogData('asdf125', 'error');
-		$this->assertCount(1, $log, 'countLogData: not size');
+		$this->assertCount(1, $log);
 
 		$log = Sync::getLogData('asdf125', 'unchanged');
-		$this->assertCount(1, $log, 'countLogData: not size');
+		$this->assertCount(1, $log);
 	}
 
 	public function test_countLogData() {
 		$count = Sync::countLogData('asdf125');
-		$this->assertSame(3, $count, 'countLogData: not expected');
+		$this->assertSame(3, $count);
 
 		$count = Sync::countLogData('asdf125', 'created');
-		$this->assertSame(1, $count, 'countLogData: not expected');
+		$this->assertSame(1, $count);
 
 		$count = Sync::countLogData('asdf125', 'error');
-		$this->assertSame(1, $count, 'countLogData: not expected');
+		$this->assertSame(1, $count);
 
 		$count = Sync::countLogData('asdf125', 'unchanged');
-		$this->assertSame(1, $count, 'countLogData: not expected');
+		$this->assertSame(1, $count);
 	}
 
 	public function test_saveSyncdata() {
@@ -76,7 +76,7 @@ class SyncTest extends FrameworkTestCase
 
 		$data = Sync::getSyncdata('foobaa');
 
-		$this->assertSame('foobaa', $data->get('syncid', null), 'saveSyncdata: not the same');
+		$this->assertSame('foobaa', $data->get('syncid', null));
 	}
 
 	public function test_updateSyncdata() {
@@ -88,45 +88,45 @@ class SyncTest extends FrameworkTestCase
 
 		$data = Sync::getSyncdata('asdf125');
 
-		$this->assertSame('World', $data->get('data', null), 'updateSyncdata: not the same');
+		$this->assertSame('World', $data->get('data', null));
 	}
 
 	public function test_getSyncdata() {
 		$data = Sync::getSyncdata('asdf125');
-		$this->assertSame('asdf125', $data->get('syncid', null), 'getSyncdata: not the same');
+		$this->assertSame('asdf125', $data->get('syncid', null));
 	}
 
 
 	public function test_syncError() {
-		$this->markTestSkipped('syncError: skipped for now');
+		$this->markTestSkipped();
 	}
 
 	public function test_markResolved() {
 		$log = Sync::getLogData('asdf125', 'error');
-		$this->assertCount(1, $log, 'markResolved: not size');
+		$this->assertCount(1, $log);
 
 		Sync::markResolved(2);
 
 		$log = Sync::getLogData('asdf125', 'error');
-		$this->assertCount(0, $log, 'markResolved: not size');
+		$this->assertCount(0, $log);
 	}
 
 	public function test_syncExecute() {
-		$this->markTestSkipped('syncExecute: skipped for now');
+		$this->markTestSkipped();
 	}
 
 	public function test_changeSyncStatus() {
 		$status = Sync::getSyncStatus('asdf125');
-		$this->assertSame(1, $status, 'changeSyncStatus: not the same');
+		$this->assertSame(1, $status);
 
 		Sync::changeSyncStatus('asdf125', 0);
 
 		$status = Sync::getSyncStatus('asdf125');
-		$this->assertSame(0, $status, 'changeSyncStatus: not the same');
+		$this->assertSame(0, $status);
 	}
 
 	public function test_getSyncStatus() {
 		$status = Sync::getSyncStatus('asdf125');
-		$this->assertSame(1, $status, 'getSyncStatus: not the same');
+		$this->assertSame(1, $status);
 	}
 }

@@ -16,63 +16,63 @@ class FactoryTest extends FrameworkTestCase
 	public function test_getNameFromInstance()
 	{
 		$name = Factory::getNameFromInstance('none_exsisting_plugin');
-		$this->assertEquals('none_exsisting_plugin', $name , 'result should be: none_exsisting_plugin');
+		$this->assertSame('none_exsisting_plugin', $name);
 
 		$name = Factory::getNameFromInstance('phpbb3');
-		$this->assertEquals('phpbb3', $name, 'result should be: phpbb3');
+		$this->assertSame('phpbb3', $name);
 
 		$name = Factory::getNameFromInstance('test');
-		$this->assertEquals('phpbb3', $name, 'result should be: phpbb3');
+		$this->assertSame('phpbb3', $name);
 	}
 
 	public function test_getFront()
 	{
 		$front = Factory::getFront('none_exsisting_plugin');
 
-		$this->assertInstanceOf('\JFusion\Plugin\Front', $front, '\JFusion\Plugin\Front Is expected');
+		$this->assertInstanceOf('\JFusion\Plugin\Front', $front);
 
 		$front = Factory::getFront('phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Front', $front, 'Not instanceof \JFusion\Plugins\phpbb3\Front');
+		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Front', $front);
 	}
 
 	public function test_getAdmin()
 	{
 		$admin = Factory::getAdmin('none_exsisting_plugin');
 
-		$this->assertInstanceOf('\JFusion\Plugin\Admin', $admin, '\JFusion\Plugin\Admin Is expected');
+		$this->assertInstanceOf('\JFusion\Plugin\Admin', $admin);
 
 		$admin = Factory::getAdmin('phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Admin', $admin, 'Not instanceof \JFusion\Plugins\phpbb3\Admin');
+		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Admin', $admin);
 	}
 
 	public function test_getAuth()
 	{
 		$auth = Factory::getAuth('none_exsisting_plugin');
 
-		$this->assertInstanceOf('\JFusion\Plugin\Auth', $auth, '\JFusion\Plugin\Auth Is expected');
+		$this->assertInstanceOf('\JFusion\Plugin\Auth', $auth);
 
 		$auth = Factory::getAuth('phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Auth', $auth, 'Not instanceof \JFusion\Plugins\phpbb3\Auth');
+		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Auth', $auth);
 	}
 
 	public function test_getUser()
 	{
 		$user = Factory::getUser('none_exsisting_plugin');
 
-		$this->assertInstanceOf('\JFusion\Plugin\User', $user, '\JFusion\Plugin\Auth Is expected');
+		$this->assertInstanceOf('\JFusion\Plugin\User', $user);
 
 		$user = Factory::getUser('phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\User', $user, 'Not instanceof \JFusion\Plugins\phpbb3\User');
+		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\User', $user);
 	}
 
 	public function test_getPlatform()
 	{
 		$platform = Factory::getPlatform('Joomla','none_exsisting_plugin');
 
-		$this->assertInstanceOf('\JFusion\Plugin\Platform\Joomla', $platform, '\JFusion\Plugin\Platform\Joomla Is expected');
+		$this->assertInstanceOf('\JFusion\Plugin\Platform\Joomla', $platform);
 
 		$platform = Factory::getPlatform('Joomla','phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Platform\Joomla\Platform', $platform, 'Not instanceof \JFusion\Plugins\phpbb3\Platform\Joomla\Platform');
+		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Platform\Joomla\Platform', $platform);
 	}
 
 	public function test_getHelper()
@@ -82,86 +82,86 @@ class FactoryTest extends FrameworkTestCase
 		$this->assertFalse($helper, 'expected to be false');
 
 		$helper = Factory::getHelper('phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Helper', $helper, 'Not instanceof \JFusion\Plugins\phpbb3\Helper');
+		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Helper', $helper);
 	}
 
 	public function test_getDatabase() {
 		$driver = Factory::getDatabase('phpbb3');
 
-		$this->assertInstanceOf('\Joomla\Database\DatabaseDriver', $driver, 'Not instanceof \Joomla\Database\DatabaseDriver');
+		$this->assertInstanceOf('\Joomla\Database\DatabaseDriver', $driver);
 	}
 
 	public function test_pluginAutoLoad() {
-		$this->markTestSkipped('Skipped pluginAutoLoad');
+		$this->markTestSkipped();
 	}
 
 	public function test_getParams() {
 		$params = Factory::getParams('phpbb3');
 
-		$this->assertInstanceOf('\Joomla\Registry\Registry', $params, 'Not instanceof \Joomla\Registry\Registry');
+		$this->assertInstanceOf('\Joomla\Registry\Registry', $params);
 
-		$this->assertEquals('sqlite', $params->get('database_type'), 'Not sqlite');
+		$this->assertSame('sqlite', $params->get('database_type'));
 	}
 
 	public function test_createParams() {
-		$this->markTestSkipped('Skipped createParams');
+		$this->markTestSkipped();
 	}
 
 	public function test_createDatabase() {
-		$this->markTestSkipped('Skipped createDatabase');
+		$this->markTestSkipped();
 	}
 
 	public function test_getPlugins() {
 		$plugins = Factory::getPlugins();
 
-		$this->assertEquals('phpbb3', $plugins[0]->name, 'Expected: phpbb3');
-		$this->assertEquals('phpbb3_1', $plugins[1]->name, 'Expected: phpbb3_1');
+		$this->assertSame('phpbb3', $plugins[0]->name);
+		$this->assertSame('phpbb3_1', $plugins[1]->name);
 
 		$plugins = Factory::getPlugins('master');
-		$this->assertEquals('phpbb3', $plugins[0]->name, 'Expected: phpbb3');
+		$this->assertSame('phpbb3', $plugins[0]->name);
 
 		$plugins = Factory::getPlugins('slave');
-		$this->assertEquals('phpbb3_1', $plugins[0]->name, 'Expected: phpbb3');
+		$this->assertSame('phpbb3_1', $plugins[0]->name);
 
 		$plugins = Factory::getPlugins('both', 'phpbb3');
-		$this->assertEquals('phpbb3_1', $plugins[0]->name, 'Expected: phpbb3_1');
+		$this->assertSame('phpbb3_1', $plugins[0]->name);
 	}
 
 	public function test_getPluginNodeId() {
 		$nodeid = Factory::getPluginNodeId('phpbb3');
-		$this->assertEquals('localhost/path/to/phpbb3', $nodeid, 'Expected: localhost/path/to/phpbb3');
+		$this->assertSame('localhost/path/to/phpbb3', $nodeid);
 	}
 
 	public function test_getPluginNameFromNodeId() {
 		$plugin = Factory::getPluginNameFromNodeId('localhost/path/to/phpbb3');
-		$this->assertEquals('phpbb3', $plugin, 'Expected: phpbb3');
+		$this->assertSame('phpbb3', $plugin);
 	}
 
 	public function test_getCookies() {
 		$cookie = Factory::getCookies();
 
-		$this->assertInstanceOf('\JFusion\Cookies\Cookies', $cookie, 'Not instanceof \JFusion\Cookies\Cookies');
+		$this->assertInstanceOf('\JFusion\Cookies\Cookies', $cookie);
 	}
 
 	public function test_getDbo() {
-		$this->markTestSkipped('Skipped createParams');
+		$this->markTestSkipped();
 	}
 
 	public function test_getConfig() {
 		$config = Factory::getConfig();
 
-		$this->assertEquals('sqlite', $config->get('dbtype'), 'Expected: sqlite');
+		$this->assertSame('sqlite', $config->get('dbtype'));
 	}
 
 	public function test_getLanguage() {
-		$this->markTestIncomplete('getLanguage');
+		$this->markTestIncomplete();
 		/**
 		 * TODO ADD ME
 		 */
 	}
 
 	public function test_getDate() {
-		$this->markTestIncomplete('getDate');
+		$this->markTestIncomplete();
 		/**
 		 * TODO ADD ME
 		 */
@@ -169,6 +169,6 @@ class FactoryTest extends FrameworkTestCase
 
 	public function test_getDispatcher() {
 		$dispatcher = Factory::getDispatcher();
-		$this->assertInstanceOf('\Joomla\Event\Dispatcher', $dispatcher, 'Not instanceof \Joomla\Event\Dispatcher');
+		$this->assertInstanceOf('\Joomla\Event\Dispatcher', $dispatcher);
 	}
 }

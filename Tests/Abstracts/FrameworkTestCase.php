@@ -203,7 +203,7 @@ abstract class FrameworkTestCase extends \PHPUnit_Extensions_Database_TestCase
 	{
 		if (empty(Factory::$database))
 		{
-			$this->markTestSkipped('There is no database driver.');
+			$this->markTestSkipped();
 		}
 
 		parent::setUp();

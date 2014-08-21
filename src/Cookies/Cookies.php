@@ -18,12 +18,17 @@ use Joomla\Language\Text;
  */
 class Cookies {
 	/**
-     * Variable to store cookie data
+     * @var array $cookies
      */
-	var $_cookies = array ();
+	private $cookies = array();
+
+	/**
+	 * @var string $secret
+	 */
+	private $secret = null;
 
     /**
-     * @param null $secret
+     * @param null|string $secret
      */
     public function __construct($secret = null)
 	{
@@ -78,7 +83,7 @@ class Cookies {
 		if ($url) {
 			$mainframe = Application::getInstance();
 			if ( !$mainframe->isAdmin() ) {
-				$this->_cookies[$url][] = $cookie;
+				$this->cookies[$url][] = $cookie;
 			}
 		} else {
 			header('Set-Cookie: ' . $cookie, false);
@@ -114,7 +119,7 @@ class Cookies {
     function executeRedirect($source_url = null, $return = null) {
     	$mainframe = Application::getInstance();
     	if (!$mainframe->isAdmin() || !$this->secret) {
-	    	if(count($this->_cookies)) {
+	    	if(count($this->cookies)) {
 	    		if (empty($return)) {
                     $return = Application::getInstance()->input->getBase64('return', '');
 	    			if ($return) {
@@ -128,7 +133,7 @@ class Cookies {
 
                 $api = null;
                 $data = array();
-		    	foreach($this->_cookies as $key => $cookies) {
+		    	foreach($this->cookies as $key => $cookies) {
 		    		$api = new Api($key, $this->secret);
 		    		if ($api->set('Cookie', 'Cookies', $cookies)) {
 		    			$data['url'][$api->url] = $api->sid;
@@ -178,7 +183,7 @@ class Cookies {
 				break;
 			case 'string':
 			default:
-				return $this->implodeCookies($_COOKIE, ';');
+				return $this->implodeCookies($_COOKIE);
 			break;
 		}
 	}
@@ -199,17 +204,23 @@ class Cookies {
      *
      * @return string
 	 */
-	public function implodeCookies($array, $delimeter, $keyssofar = '') {
+	public function implodeCookies($array, $delimeter = ';', $keyssofar = null) {
 		$output = '';
 		foreach ($array as $key => $value) {
-			if (! is_array($value)) {
-				if ($keyssofar) $pair = $keyssofar . '[' . $key . ']=' . urlencode($value) . $delimeter;
-				else $pair = $key . '=' . urlencode($value) . $delimeter;
-				if ($output != '') $output .= ' ';
+			if (!is_array($value)) {
+				if ($keyssofar) {
+					$pair = $keyssofar . '[' . $key . ']=' . urlencode($value) . $delimeter;
+				} else {
+					$pair = $key . '=' . urlencode($value) . $delimeter;
+				}
+				if ($output != '') {
+					$output .= ' ';
+				}
 				$output .= $pair;
-			}
-			else {
-				if ($output != '') $output .= ' ';
+			} else {
+				if ($output != '') {
+					$output .= ' ';
+				}
 				$output .= $this->implodeCookies($value, $delimeter, $key . $keyssofar);
 			}
 		}

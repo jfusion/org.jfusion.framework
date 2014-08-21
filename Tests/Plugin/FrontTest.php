@@ -1,4 +1,4 @@
-<?php namespace JFusion\Tests\User;
+<?php namespace JFusion\Tests\Plugin;
 /**
  * Model that handles the usersync
  *
@@ -12,19 +12,8 @@
  * @link      http://www.jfusion.org
  */
 
-use JFusion\Factory;
-use JFusion\Framework;
-use JFusion\Tests\Abstracts\FrameworkTestCase;
-use JFusion\User\Sync;
-use JFusion\User\Userinfo;
-use Joomla\Language\Text;
-
-use Joomla\Registry\Registry;
-use Psr\Log\LogLevel;
-use RuntimeException;
-
-use stdClass;
-use Exception;
+use JFusion\Plugin\Front;
+use JFusion\Plugin\Platform;
 
 /**
  * Class for usersync JFusion functions
@@ -36,25 +25,24 @@ use Exception;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link      http://www.jfusion.org
  */
-class UserTest extends FrameworkTestCase
+class FrontTest extends PluginTest
 {
-	public function test_getInstance() {
+	public function test___construct() {
 		$this->markTestSkipped();
 	}
 
-	public function test_login() {
-		$this->markTestSkipped();
+	public function test_getLostPasswordURL() {
+		$plugin = new Front('none_exsisting_plugin');
+		$this->assertSame('', $plugin->getLostPasswordURL());
 	}
 
-	public function test_logout() {
-		$this->markTestSkipped();
+	public function test_getLostUsernameURL() {
+		$plugin = new Front('none_exsisting_plugin');
+		$this->assertSame('', $plugin->getLostUsernameURL());
 	}
 
-	public function test_delete() {
-		$this->markTestSkipped();
-	}
-
-	public function test_save() {
-		$this->markTestSkipped();
+	public function test_getRegistrationURL() {
+		$plugin = new Front('none_exsisting_plugin');
+		$this->assertSame('', $plugin->getRegistrationURL());
 	}
 }

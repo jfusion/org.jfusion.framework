@@ -56,6 +56,7 @@ class Platform extends Plugin
 	{
 		$helloReflection = new \ReflectionClass($this);
 		$dir = dirname($helloReflection->getFilename());
+
 		if(file_exists($dir . '/' . $file)) {
 			return $dir . '/' . $file;
 		}
@@ -70,5 +71,24 @@ class Platform extends Plugin
 	function uninstall()
 	{
 		return array(true, '');
+	}
+
+	/**
+	 * extends JFusion's parseRoute function to reconstruct the SEF URL
+	 *
+	 * @param array &$vars vars already parsed by JFusion's router.php file
+	 *
+	 */
+	function parseRoute(&$vars)
+	{
+	}
+
+	/**
+	 * extends JFusion's buildRoute function to build the SEF URL
+	 *
+	 * @param array &$segments query already prepared by JFusion's router.php file
+	 */
+	function buildRoute(&$segments)
+	{
 	}
 }

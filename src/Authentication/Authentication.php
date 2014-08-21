@@ -80,14 +80,6 @@ class Authentication
 	protected $observers = array();
 
 	/**
-	 * The state of the observable object
-	 *
-	 * @var    mixed
-	 * @since  12.1
-	 */
-	protected $state = null;
-
-	/**
 	 * A multi dimensional array of [function][] = key for observers
 	 *
 	 * @var    array
@@ -126,18 +118,6 @@ class Authentication
 		}
 
 		return self::$instance;
-	}
-
-	/**
-	 * Get the state of the JAuthentication object
-	 *
-	 * @return  mixed    The state of the object.
-	 *
-	 * @since   11.1
-	 */
-	public function getState()
-	{
-		return $this->state;
 	}
 
 	/**

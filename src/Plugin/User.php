@@ -60,9 +60,9 @@ class User extends Plugin
      * @return null|Userinfo Userinfo containing the user information
      */
 	public function getUser(Userinfo $userinfo)
-    {
-        return null;
-    }
+	{
+		return null;
+	}
 
 	/**
 	 * Gets the userinfo from the JFusion integrated software. it uses the lookup function
