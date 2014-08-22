@@ -676,7 +676,7 @@ class User extends Plugin
 		$correct = false;
 		if (isset($userinfo->groups)) {
 			$count = 0;
-			if ( count($usergroups) == count($userinfo->groups) ) {
+			if (count($usergroups) == count($userinfo->groups)) {
 				foreach ($usergroups as $group) {
 					if (in_array($group, $userinfo->groups, true)) {
 						$count++;
@@ -713,24 +713,22 @@ class User extends Plugin
 			$mastergroups = Framework::getUserGroups($master->name);
 
 			$groups = array();
-			if ($userinfo) {
-				if (isset($userinfo->groups)) {
-					$groups = $userinfo->groups;
-				} elseif (isset($userinfo->group_id)) {
-					$groups[] = $userinfo->group_id;
-				}
+			if (isset($userinfo->groups)) {
+				$groups = $userinfo->groups;
+			} elseif (isset($userinfo->group_id)) {
+				$groups[] = $userinfo->group_id;
 			}
 
 			foreach ($mastergroups as $key => $mastergroup) {
 				if ($mastergroup) {
-					if ( count($mastergroup) == count($groups) ) {
+					if (count($mastergroup) == count($groups)) {
 						$count = 0;
 						foreach ($mastergroup as $value) {
 							if (in_array($value, $groups, true)) {
 								$count++;
 							}
 						}
-						if (count($groups) == $count ) {
+						if (count($groups) == $count) {
 							$index = $key;
 							break;
 						}
@@ -1079,6 +1077,9 @@ class User extends Plugin
 				$group =  $slavegroups[0];
 			}
 		}
+
+
+
 		if (!is_array($group)) {
 			if ($group !==  null) {
 				$group = array($group);

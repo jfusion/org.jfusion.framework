@@ -12,6 +12,7 @@
  * @link      http://www.jfusion.org
  */
 
+use JFusion\Factory;
 use JFusion\Plugin\Admin;
 use JFusion\Plugin\Platform;
 
@@ -32,17 +33,17 @@ class AdminTest extends PluginTest
 	}
 
 	public function test_getUserList() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertCount(0, $plugin->getUserList());
 	}
 
 	public function test_getUserCount() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertSame(0, $plugin->getUserCount());
 	}
 
 	public function test_getUsergroupList() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertCount(0, $plugin->getUsergroupList());
 	}
 
@@ -51,17 +52,17 @@ class AdminTest extends PluginTest
 	}
 
 	public function test_allowRegistration() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertTrue($plugin->allowRegistration());
 	}
 
 	public function test_getTablename() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertSame('', $plugin->getTablename());
 	}
 
 	public function test_setupFromPath() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertCount(0, $plugin->setupFromPath(''));
 	}
 
@@ -78,12 +79,12 @@ class AdminTest extends PluginTest
 	}
 
 	public function test_allowEmptyCookiePath() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertFalse($plugin->allowEmptyCookiePath());
 	}
 
 	public function test_allowEmptyCookieDomain() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertFalse($plugin->allowEmptyCookieDomain());
 	}
 
@@ -92,22 +93,22 @@ class AdminTest extends PluginTest
 	}
 
 	public function test_uninstall() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertCount(2, $plugin->uninstall());
 	}
 
 	public function test_isMultiGroup() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertFalse($plugin->isMultiGroup());
 	}
 
 	public function test_requireFileAccess() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertSame('UNKNOWN', $plugin->requireFileAccess());
 	}
 
 	public function test_multiInstance() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertTrue($plugin->multiInstance());
 	}
 
@@ -116,7 +117,7 @@ class AdminTest extends PluginTest
 	}
 
 	public function test_getRenderGroupe() {
-		$plugin = new Admin('none_exsisting_plugin');
+		$plugin = Factory::getAdmin('none_exsisting_plugin');
 
 		$js = <<<JS
 		JFusion.renderPlugin['none_exsisting_plugin'] = JFusion.renderDefault;

@@ -12,8 +12,8 @@
         <column>original_name</column>
         <row>
             <value>1</value>
-            <value>phpbb3</value>
-            <value>{"source_url":"http://localhost/path/to/phpbb3","database_type":"sqlite","database_host":":memory:","database_prefix":"phpbb_"}</value>
+            <value>mockplugin</value>
+            <value>{"source_url":"http://localhost/path/to/mockplugin","database_type":"sqlite","database_host":":memory:","database_prefix":"mockplugin_"}</value>
             <value>1</value>
             <value>0</value>
             <value>1</value>
@@ -24,24 +24,24 @@
         <row>
             <value>2</value>
             <value>test</value>
-            <value>{"database_type":"sqlite","database_host":":memory:","database_prefix":"phpbb_"}</value>
+            <value>{"database_type":"sqlite","database_host":":memory:","database_prefix":"mockplugin_"}</value>
+            <value>0</value>
+            <value>1</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
-            <value>0</value>
-            <value>0</value>
-            <value>phpbb3</value>
+            <value>mockplugin</value>
         </row>
         <row>
             <value>3</value>
-            <value>phpbb3_1</value>
-            <value>{"database_type":"sqlite","database_host":":memory:","database_prefix":"phpbb_"}</value>
+            <value>mockplugin_1</value>
+            <value>{"database_type":"sqlite","database_host":":memory:","database_prefix":"mockplugin_1"}</value>
             <value>0</value>
             <value>1</value>
             <value>1</value>
             <value>0</value>
             <value>0</value>
-            <value>phpbb3</value>
+            <value>mockplugin</value>
         </row>
     </table>
 
@@ -57,7 +57,7 @@
         <row>
             <value>1</value>
             <value>asdf125</value>
-            <value>phpbb</value>
+            <value>mockplugin</value>
             <value>username1</value>
             <value>email1</value>
             <value>created</value>
@@ -67,7 +67,7 @@
         <row>
             <value>2</value>
             <value>asdf125</value>
-            <value>phpbb</value>
+            <value>mockplugin</value>
             <value>username2</value>
             <value>email2</value>
             <value>error</value>
@@ -77,7 +77,7 @@
         <row>
             <value>3</value>
             <value>asdf125</value>
-            <value>phpbb</value>
+            <value>mockplugin</value>
             <value>username3</value>
             <value>email3</value>
             <value>unchanged</value>
@@ -85,6 +85,7 @@
             <value>data3</value>
         </row>
     </table>
+
     <table name="jos_jfusion_sync">
         <column>syncid</column>
         <column>action</column>
@@ -99,6 +100,112 @@
             <value>{"syncid":"asdf125","action":"foobaa","data":"Hello"}</value>
             <value>0</value>
             <value>0</value>
+        </row>
+    </table>
+
+    <table name="jos_jfusion_users_plugin">
+        <column>autoid</column>
+        <column>id</column>
+        <column>email</column>
+        <column>username</column>
+        <column>userid</column>
+        <column>jname</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>mockuser@site.com</value>
+            <value>mockuser</value>
+            <value>1</value>
+            <value>mockplugin</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>1</value>
+            <value>mockuser3@site.com</value>
+            <value>mockuser3</value>
+            <value>3</value>
+            <value>mockplugin_1</value>
+        </row>
+    </table>
+
+
+    <!--mock plugin 1-->
+    <table name="mockplugin_users">
+        <column>userid</column>
+        <column>username</column>
+        <column>email</column>
+        <column>password</column>
+        <column>activation</column>
+        <column>block</column>
+        <row>
+            <value>1</value>
+            <value>mockuser</value>
+            <value>mockuser@site.com</value>
+            <value>632b4b4bb8562170fcb03a43f179d77e</value>
+            <value></value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>mockuser2</value>
+            <value>mockuser2@site.com</value>
+            <value>632b4b4bb8562170fcb03a43f179d77e</value>
+            <value>foobaa</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="mockplugin_groups">
+        <column>userid</column>
+        <column>group</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>1</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>1</value>
+        </row>
+    </table>
+
+    <!--mock plugin 2-->
+    <table name="mockplugin_1_users">
+        <column>userid</column>
+        <column>username</column>
+        <column>email</column>
+        <column>password</column>
+        <column>activation</column>
+        <column>block</column>
+        <row>
+            <value>1</value>
+            <value>mockuser</value>
+            <value>mockuser@site.com</value>
+            <value>632b4b4bb8562170fcb03a43f179d77e</value>
+            <value></value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>mockuser3</value>
+            <value>mockuser3@site.com</value>
+            <value>632b4b4bb8562170fcb03a43f179d77e</value>
+            <value>foobaa</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="mockplugin_1_groups">
+        <column>userid</column>
+        <column>group</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>1</value>
         </row>
     </table>
 </dataset>

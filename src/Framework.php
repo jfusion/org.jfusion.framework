@@ -465,6 +465,7 @@ class Framework
 					$usergroups = array();
 				}
 			}
+
 		}
 		return $usergroups;
 	}

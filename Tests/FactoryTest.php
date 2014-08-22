@@ -18,11 +18,11 @@ class FactoryTest extends FrameworkTestCase
 		$name = Factory::getNameFromInstance('none_exsisting_plugin');
 		$this->assertSame('none_exsisting_plugin', $name);
 
-		$name = Factory::getNameFromInstance('phpbb3');
-		$this->assertSame('phpbb3', $name);
+		$name = Factory::getNameFromInstance('mockplugin');
+		$this->assertSame('mockplugin', $name);
 
 		$name = Factory::getNameFromInstance('test');
-		$this->assertSame('phpbb3', $name);
+		$this->assertSame('mockplugin', $name);
 	}
 
 	public function test_getFront()
@@ -31,8 +31,8 @@ class FactoryTest extends FrameworkTestCase
 
 		$this->assertInstanceOf('\JFusion\Plugin\Front', $front);
 
-		$front = Factory::getFront('phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Front', $front);
+		$front = Factory::getFront('mockplugin');
+		$this->assertInstanceOf('\JFusion\Plugins\mockplugin\Front', $front);
 	}
 
 	public function test_getAdmin()
@@ -41,8 +41,8 @@ class FactoryTest extends FrameworkTestCase
 
 		$this->assertInstanceOf('\JFusion\Plugin\Admin', $admin);
 
-		$admin = Factory::getAdmin('phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Admin', $admin);
+		$admin = Factory::getAdmin('mockplugin');
+		$this->assertInstanceOf('\JFusion\Plugins\mockplugin\Admin', $admin);
 	}
 
 	public function test_getAuth()
@@ -51,8 +51,8 @@ class FactoryTest extends FrameworkTestCase
 
 		$this->assertInstanceOf('\JFusion\Plugin\Auth', $auth);
 
-		$auth = Factory::getAuth('phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Auth', $auth);
+		$auth = Factory::getAuth('mockplugin');
+		$this->assertInstanceOf('\JFusion\Plugins\mockplugin\Auth', $auth);
 	}
 
 	public function test_getUser()
@@ -61,8 +61,8 @@ class FactoryTest extends FrameworkTestCase
 
 		$this->assertInstanceOf('\JFusion\Plugin\User', $user);
 
-		$user = Factory::getUser('phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\User', $user);
+		$user = Factory::getUser('mockplugin');
+		$this->assertInstanceOf('\JFusion\Plugins\mockplugin\User', $user);
 	}
 
 	public function test_getPlatform()
@@ -71,8 +71,8 @@ class FactoryTest extends FrameworkTestCase
 
 		$this->assertInstanceOf('\JFusion\Plugin\Platform\Joomla', $platform);
 
-		$platform = Factory::getPlatform('Joomla','phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Platform\Joomla\Platform', $platform);
+		$platform = Factory::getPlatform('Joomla','mockplugin');
+		$this->assertInstanceOf('\JFusion\Plugins\mockplugin\Platform\Joomla\Platform', $platform);
 	}
 
 	public function test_getHelper()
@@ -81,12 +81,12 @@ class FactoryTest extends FrameworkTestCase
 
 		$this->assertFalse($helper, 'expected to be false');
 
-		$helper = Factory::getHelper('phpbb3');
-		$this->assertInstanceOf('\JFusion\Plugins\phpbb3\Helper', $helper);
+		$helper = Factory::getHelper('mockplugin');
+		$this->assertInstanceOf('\JFusion\Plugins\mockplugin\Helper', $helper);
 	}
 
 	public function test_getDatabase() {
-		$driver = Factory::getDatabase('phpbb3');
+		$driver = Factory::getDatabase('mockplugin');
 
 		$this->assertInstanceOf('\Joomla\Database\DatabaseDriver', $driver);
 	}
@@ -96,7 +96,7 @@ class FactoryTest extends FrameworkTestCase
 	}
 
 	public function test_getParams() {
-		$params = Factory::getParams('phpbb3');
+		$params = Factory::getParams('mockplugin');
 
 		$this->assertInstanceOf('\Joomla\Registry\Registry', $params);
 
@@ -114,27 +114,27 @@ class FactoryTest extends FrameworkTestCase
 	public function test_getPlugins() {
 		$plugins = Factory::getPlugins();
 
-		$this->assertSame('phpbb3', $plugins[0]->name);
-		$this->assertSame('phpbb3_1', $plugins[1]->name);
+		$this->assertSame('mockplugin', $plugins[0]->name);
+		$this->assertSame('mockplugin_1', $plugins[1]->name);
 
 		$plugins = Factory::getPlugins('master');
-		$this->assertSame('phpbb3', $plugins[0]->name);
+		$this->assertSame('mockplugin', $plugins[0]->name);
 
 		$plugins = Factory::getPlugins('slave');
-		$this->assertSame('phpbb3_1', $plugins[0]->name);
+		$this->assertSame('mockplugin_1', $plugins[0]->name);
 
-		$plugins = Factory::getPlugins('both', 'phpbb3');
-		$this->assertSame('phpbb3_1', $plugins[0]->name);
+		$plugins = Factory::getPlugins('both', 'mockplugin');
+		$this->assertSame('mockplugin_1', $plugins[0]->name);
 	}
 
 	public function test_getPluginNodeId() {
-		$nodeid = Factory::getPluginNodeId('phpbb3');
-		$this->assertSame('localhost/path/to/phpbb3', $nodeid);
+		$nodeid = Factory::getPluginNodeId('mockplugin');
+		$this->assertSame('localhost/path/to/mockplugin', $nodeid);
 	}
 
 	public function test_getPluginNameFromNodeId() {
-		$plugin = Factory::getPluginNameFromNodeId('localhost/path/to/phpbb3');
-		$this->assertSame('phpbb3', $plugin);
+		$plugin = Factory::getPluginNameFromNodeId('localhost/path/to/mockplugin');
+		$this->assertSame('mockplugin', $plugin);
 	}
 
 	public function test_getCookies() {

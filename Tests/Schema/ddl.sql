@@ -47,3 +47,35 @@ CREATE TABLE `jos_jfusion_sync` (
   `time_start` INTEGER NULL,
   `time_end` INTEGER NULL
 );
+
+/*
+mockplugin
+
+ */
+CREATE TABLE `mockplugin_users` (
+  `userid` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `username` TEXT NOT NULL,
+  `email` TEXT NOT NULL,
+  `password` TEXT NOT NULL,
+  `activation` TEXT NULL,
+  `block` INTEGER NULL
+);
+
+CREATE TABLE `mockplugin_groups` (
+  `userid` INTEGER NOT NULL,
+  `group` TEXT NOT NULL
+);
+
+CREATE TABLE `mockplugin_1_users` (
+  `userid` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `username` TEXT NOT NULL,
+  `email` TEXT NOT NULL,
+  `password` TEXT NOT NULL,
+  `activation` TEXT NULL,
+  `block` INTEGER NULL
+);
+
+CREATE TABLE `mockplugin_1_groups` (
+  `userid` INTEGER NOT NULL,
+  `group` TEXT NOT NULL
+);

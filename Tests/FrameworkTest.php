@@ -18,14 +18,14 @@ class FrameworkTest extends FrameworkTestCase
 	{
 		$master = Framework::getMaster();
 
-		$this->assertSame('phpbb3', $master->name);
+		$this->assertSame('mockplugin', $master->name);
 	}
 
 	public function test_getSlaves()
 	{
 		$slaves = Framework::getSlaves();
 
-		$this->assertSame('phpbb3_1', $slaves[0]->name);
+		$this->assertSame('mockplugin_1', $slaves[0]->name);
 
 		$this->assertCount(1, $slaves);
 	}
@@ -80,7 +80,7 @@ class FrameworkTest extends FrameworkTestCase
 			'deleteuser');
 
 		foreach($features as $feature) {
-			$this->assertTrue(Framework::hasFeature('phpbb3', $feature));
+			$this->assertTrue(Framework::hasFeature('mockplugin', $feature));
 		}
 	}
 

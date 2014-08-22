@@ -12,6 +12,7 @@
  * @link      http://www.jfusion.org
  */
 
+use JFusion\Factory;
 use JFusion\Plugin\Auth;
 use JFusion\Plugin\Platform;
 use JFusion\User\Userinfo;
@@ -33,14 +34,14 @@ class AuthTest extends PluginTest
 	}
 
 	public function test_generateEncryptedPassword() {
-		$plugin = new Auth('none_exsisting_plugin');
+		$plugin = Factory::getAuth('none_exsisting_plugin');
 
 		$userinfo = new Userinfo('none_exsisting_plugin');
 		$this->assertSame('', $plugin->generateEncryptedPassword($userinfo));
 	}
 
 	public function test_checkPassword() {
-		$plugin = new Auth('none_exsisting_plugin');
+		$plugin = Factory::getAuth('none_exsisting_plugin');
 
 		$userinfo = new Userinfo('none_exsisting_plugin');
 
@@ -51,7 +52,7 @@ class AuthTest extends PluginTest
 	}
 
 	public function test_comparePassword() {
-		$plugin = new Auth('none_exsisting_plugin');
+		$plugin = Factory::getAuth('none_exsisting_plugin');
 		$this->assertTrue($plugin->comparePassword('foo','foo'));
 		$this->assertFalse($plugin->comparePassword('foo','baa'));
 	}

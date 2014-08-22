@@ -43,6 +43,16 @@ abstract class FrameworkTestCase extends \PHPUnit_Extensions_Database_TestCase
 		$conf->set('url', 'http://localhost/path/to/framework');
 		$conf->set('plugin-path', '/fake/path/to/plugins');
 
+		$usergroups = new \stdClass();
+		$usergroups->mockplugin = array(array(1), array(1, 2), array(3));
+		$usergroups->mockplugin_1 = array(array(1), array(2,5), array(3));
+		$conf->set('usergroups', $usergroups);
+
+		$updateusergroups = new \stdClass();
+		$updateusergroups->mockplugin = true;
+		$updateusergroups->mockplugin_master = true;
+		$conf->set('updateusergroups', $updateusergroups);
+
 		Factory::$config = $conf;
 
 		try
@@ -52,6 +62,29 @@ abstract class FrameworkTestCase extends \PHPUnit_Extensions_Database_TestCase
 			$pdo = new \PDO('sqlite::memory:');
 			$pdo->exec(file_get_contents(__DIR__ . '/../Schema/ddl.sql'));
 			TestHelper::setValue(Factory::$database, 'connection', $pdo);
+
+			$params = Factory::getParams('mockplugin');
+
+			$params->set('database_name', ':memory:');
+			$params->set('database_prefix', 'mockplugin_');
+			$params->set('database_type', 'sqlite');
+
+			$params->set('source_url', 'http://localhost/path/to/mockplugin/');
+
+			$db1 = Factory::getDatabase('mockplugin');
+			TestHelper::setValue($db1, 'connection', $pdo);
+
+
+			$params = Factory::getParams('mockplugin_1');
+
+			$params->set('database_name', ':memory:');
+			$params->set('database_prefix', 'mockplugin_1_');
+			$params->set('database_type', 'sqlite');
+
+			$params->set('source_url', 'http://localhost/path/to/mockplugin_1/');
+
+			$db2 = Factory::getDatabase('mockplugin_1');
+			TestHelper::setValue($db2, 'connection', $pdo);
 		} catch (\RuntimeException $e) {
 			Factory::$database = null;
 		}
@@ -60,7 +93,6 @@ abstract class FrameworkTestCase extends \PHPUnit_Extensions_Database_TestCase
 		if (Factory::$database instanceof \Exception) {
 			Factory::$database = null;
 		}
-
 	}
 
 	/**

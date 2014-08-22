@@ -12,6 +12,7 @@
  * @link      http://www.jfusion.org
  */
 
+use JFusion\Factory;
 use JFusion\Plugin\Plugin;
 use JFusion\Tests\Abstracts\FrameworkTestCase;
 
@@ -47,7 +48,7 @@ class PluginTest extends FrameworkTestCase
 
 		$this->assertFalse($plugin->isConfigured());
 
-		$plugin = new Plugin('phpbb3');
+		$plugin = new Plugin('mockplugin');
 
 		$this->assertTrue($plugin->isConfigured());
 	}

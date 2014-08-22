@@ -38,12 +38,12 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "JFusion\\Tests\\": "Tests/"
+            "JFusion\\Tests\\": "Tests/",
+            "JFusion\\Plugins\\mockplugin\\": "Tests/Mock/Mockplugin/"
         }
     },
     "require-dev": {
         "jfusion/platform-joomla": "dev-master",
-        "jfusion/plugin-phpbb3": "dev-master",
         "phpunit/phpunit": "3.7.*",
         "phpunit/dbunit": "1.3.*"
     }

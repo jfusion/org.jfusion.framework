@@ -12,6 +12,7 @@
  * @link      http://www.jfusion.org
  */
 
+use JFusion\Factory;
 use JFusion\Plugin\Front;
 use JFusion\Plugin\Platform;
 
@@ -32,17 +33,17 @@ class FrontTest extends PluginTest
 	}
 
 	public function test_getLostPasswordURL() {
-		$plugin = new Front('none_exsisting_plugin');
+		$plugin = Factory::getFront('none_exsisting_plugin');
 		$this->assertSame('', $plugin->getLostPasswordURL());
 	}
 
 	public function test_getLostUsernameURL() {
-		$plugin = new Front('none_exsisting_plugin');
+		$plugin = Factory::getFront('none_exsisting_plugin');
 		$this->assertSame('', $plugin->getLostUsernameURL());
 	}
 
 	public function test_getRegistrationURL() {
-		$plugin = new Front('none_exsisting_plugin');
+		$plugin = Factory::getFront('none_exsisting_plugin');
 		$this->assertSame('', $plugin->getRegistrationURL());
 	}
 }
