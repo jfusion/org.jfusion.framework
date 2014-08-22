@@ -13,7 +13,6 @@
  */
 
 use JFusion\Factory;
-use JFusion\Plugin\Front;
 use JFusion\Plugin\Platform;
 
 /**

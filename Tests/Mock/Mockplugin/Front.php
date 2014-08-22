@@ -27,20 +27,20 @@ class Front extends \JFusion\Plugin\Front
 	 * @return string
 	 */
 	function getRegistrationURL() {
-		return 'ucp.php?mode=register';
+		return 'mockplugin.php?mode=register';
 	}
 
 	/**
 	 * @return string
 	 */
 	function getLostPasswordURL() {
-		return 'ucp.php?mode=sendpassword';
+		return 'mockplugin.php?mode=sendpassword';
 	}
 
 	/**
 	 * @return string
 	 */
 	function getLostUsernameURL() {
-		return 'ucp.php?mode=sendpassword';
+		return 'mockplugin.php?mode=sendpassword';
 	}
 }

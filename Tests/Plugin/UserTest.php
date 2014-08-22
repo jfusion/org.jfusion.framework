@@ -13,7 +13,6 @@
  */
 
 use JFusion\Factory;
-use JFusion\Plugin\User;
 use JFusion\User\Userinfo;
 
 /**

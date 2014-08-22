@@ -12,19 +12,8 @@
  * @link      http://www.jfusion.org
  */
 
-use JFusion\Factory;
-use JFusion\Framework;
 use JFusion\Tests\Abstracts\FrameworkTestCase;
-use JFusion\User\Sync;
-use JFusion\User\Userinfo;
-use Joomla\Language\Text;
 
-use Joomla\Registry\Registry;
-use Psr\Log\LogLevel;
-use RuntimeException;
-
-use stdClass;
-use Exception;
 
 /**
  * Class for usersync JFusion functions
