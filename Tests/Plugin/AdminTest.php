@@ -34,24 +34,41 @@ class AdminTest extends PluginTest
 	public function test_getUserList() {
 		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertCount(0, $plugin->getUserList());
+
+		$plugin = Factory::getAdmin('mockplugin');
+		$this->assertCount(2, $plugin->getUserList());
 	}
 
 	public function test_getUserCount() {
 		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertSame(0, $plugin->getUserCount());
+
+		$plugin = Factory::getAdmin('mockplugin');
+		$this->assertSame(2, $plugin->getUserCount());
 	}
 
 	public function test_getUsergroupList() {
 		$plugin = Factory::getAdmin('none_exsisting_plugin');
 		$this->assertCount(0, $plugin->getUsergroupList());
+
+		$plugin = Factory::getAdmin('mockplugin');
+		$this->assertCount(3, $plugin->getUsergroupList());
 	}
 
 	public function test_getDefaultUsergroup() {
-		$this->markTestIncomplete();
+		$plugin = Factory::getAdmin('mockplugin');
+
+		$groups = $plugin->getDefaultUsergroup();
+		$this->assertCount(1, $groups);
+
+		$this->assertSame('one', $groups[0]);
 	}
 
 	public function test_allowRegistration() {
 		$plugin = Factory::getAdmin('none_exsisting_plugin');
+		$this->assertTrue($plugin->allowRegistration());
+
+		$plugin = Factory::getAdmin('mockplugin');
 		$this->assertTrue($plugin->allowRegistration());
 	}
 
@@ -66,11 +83,32 @@ class AdminTest extends PluginTest
 	}
 
 	public function test_checkConfig() {
-		$this->markTestSkipped();
+		$plugin = Factory::getAdmin('mockplugin');
+		$this->assertTrue($plugin->checkConfig());
 	}
 
 	public function test_updateStatus() {
-		$this->markTestIncomplete();
+		$plugin = Factory::getAdmin('mockplugin');
+
+		$db = Factory::getDBO();
+
+		$query = $db->getQuery(true)
+			->select('status')
+			->from('#__jfusion')
+			->where('name = ' . $db->quote('mockplugin'));
+		$db->setQuery($query);
+
+		$this->assertSame('1', $db->loadResult());
+
+		$plugin->updateStatus(0);
+
+		$query = $db->getQuery(true)
+			->select('status')
+			->from('#__jfusion')
+			->where('name = ' . $db->quote('mockplugin'));
+		$db->setQuery($query);
+
+		$this->assertSame('0', $db->loadResult());
 	}
 
 	public function test_debugConfig() {

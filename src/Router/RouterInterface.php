@@ -1,9 +1,9 @@
-<?php namespace JFusion\Event;
+<?php namespace JFusion\Router;
 
 use Joomla\Event\Event;
 
 /**
- * Interface Interface_Router
+ * Interface IRouter
  *
  * @package JFusion\Event
  */

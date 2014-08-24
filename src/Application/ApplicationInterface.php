@@ -1,4 +1,4 @@
-<?php namespace JFusion\Event;
+<?php namespace JFusion\Application;
 
 use Joomla\Event\Event;
 
@@ -65,14 +65,6 @@ interface ApplicationInterface
 	 * @return  Event
 	 */
 	public function onApplicationEnqueueMessage($event);
-
-	/**
-	 * Is admin interface?
-	 *
-	 * @param Event $event
-	 * @return  Event
-	 */
-	public function onApplicationIsAdmin($event);
 
 	/**
 	 * get default url

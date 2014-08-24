@@ -1,9 +1,9 @@
-<?php namespace JFusion\Event;
+<?php namespace JFusion\Session;
 
 use Joomla\Event\Event;
 
 /**
- * Interface Interface_Session
+ * Interface ISession
  *
  * @package JFusion\Event
  */

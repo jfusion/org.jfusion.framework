@@ -1,4 +1,4 @@
-<?php namespace JFusion\Event;
+<?php namespace JFusion\Installer;
 
 use Joomla\Event\Event;
 
@@ -8,7 +8,7 @@ use Joomla\Event\Event;
  * Date: 18-03-14
  * Time: 14:14
  */
-interface InstallerInterface
+interface PluginInterface
 {
 	/**
 	 * @param Event $event

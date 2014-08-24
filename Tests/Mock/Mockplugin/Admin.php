@@ -8,6 +8,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link       http://www.jfusion.org
  */
+use JFusion\Factory;
+use JFusion\Framework;
+use stdClass;
 
 /**
  * JFusion Admin Class for phpbb3
@@ -52,7 +55,14 @@ class Admin extends \JFusion\Plugin\Admin
 	 */
 	function getUserList($limitstart = 0, $limit = 0)
 	{
+		$db = Factory::getDatabase($this->getJname());
 
+		$query = $db->getQuery(true)
+			->select('username, email')
+			->from('#__users');
+
+		$db->setQuery($query);
+		return $db->loadObjectList();
 	}
 
 	/**
@@ -60,7 +70,14 @@ class Admin extends \JFusion\Plugin\Admin
 	 */
 	function getUserCount()
 	{
+		$db = Factory::getDatabase($this->getJname());
 
+		$query = $db->getQuery(true)
+			->select('count(*)')
+			->from('#__users');
+
+		$db->setQuery($query);
+		return (int)$db->loadResult();
 	}
 
 	/**
@@ -68,7 +85,27 @@ class Admin extends \JFusion\Plugin\Admin
 	 */
 	function getUsergroupList()
 	{
+		$usergrouplist = array();
 
+		//append the default usergroup
+		$default_group = new stdClass;
+		$default_group->id = 1;
+		$default_group->name = 'one';
+		$usergrouplist[] = $default_group;
+
+		//append the default usergroup
+		$default_group = new stdClass;
+		$default_group->id = 2;
+		$default_group->name = 'two';
+		$usergrouplist[] = $default_group;
+
+		//append the default usergroup
+		$default_group = new stdClass;
+		$default_group->id = 3;
+		$default_group->name = 'three';
+		$usergrouplist[] = $default_group;
+
+		return $usergrouplist;
 	}
 
 	/**
@@ -76,7 +113,27 @@ class Admin extends \JFusion\Plugin\Admin
 	 */
 	function getDefaultUsergroup()
 	{
+		$usergroup = Framework::getUserGroups($this->getJname(), true);
 
+		$group = array();
+		if ($usergroup !== null) {
+			$db = Factory::getDatabase($this->getJname());
+
+			foreach($usergroup as $g) {
+				if ($g != 0) {
+					//we want to output the usergroup name
+
+					$query = $db->getQuery(true)
+						->select('name')
+						->from('#__usergroups')
+						->where('id = ' . (int)$g);
+
+					$db->setQuery($query);
+					$group[] = $db->loadResult();
+				}
+			}
+		}
+		return $group;
 	}
 
 	/**
@@ -84,7 +141,7 @@ class Admin extends \JFusion\Plugin\Admin
 	 */
 	function allowRegistration()
 	{
-
+		return true;
 	}
 
 	/**
@@ -105,7 +162,7 @@ class Admin extends \JFusion\Plugin\Admin
 	 */
 	function isMultiGroup()
 	{
-
+		return true;
 	}
 
 	/**
@@ -115,6 +172,6 @@ class Admin extends \JFusion\Plugin\Admin
 	 */
 	function requireFileAccess()
 	{
-
+		return 'UNKNOWN';
 	}
 }

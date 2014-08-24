@@ -532,6 +532,7 @@ class User extends Plugin
 		}
 		return $changed;
 	}
+
     /**
      * Function that activates the users account
      *
@@ -1159,8 +1160,10 @@ class User extends Plugin
 	/**
 	 * Updates the JFusion user lookup table during login
 	 *
-	 * @param Userinfo $userinfo         object containing the userdata
-	 * @param Userinfo $exsistinginfo    object containing the userdata
+	 * @param Userinfo $userinfo      object containing the userdata
+	 * @param Userinfo $exsistinginfo object containing the userdata
+	 *
+	 * @return bool
 	 */
 	final public function updateLookup(Userinfo $userinfo, Userinfo $exsistinginfo)
 	{
@@ -1181,8 +1184,7 @@ class User extends Plugin
 				}
 				$db->setQuery($query);
 
-				$db->loadObjectList('jname');
-				$list = $db->loadResult();
+				$list = $db->loadObjectList('jname');
 				if (empty($list)) {
 					$first = new stdClass();
 					$first->id = -1;
@@ -1226,16 +1228,21 @@ class User extends Plugin
 					$first->email = $userinfo->email;
 					$db->updateObject('#__jfusion_users_plugin', $first, 'autoid');
 				}
+				return true;
 			} catch (Exception $e) {
+				echo $e->getMessage();
 				Framework::raise(LogLevel::ERROR, $e);
 			}
 		}
+		return false;
 	}
 
 	/**
 	 * Updates the JFusion user lookup table during login
 	 *
-	 * @param Userinfo $userinfo    object containing the userdata
+	 * @param Userinfo $userinfo object containing the userdata
+	 *
+	 * @return bool
 	 */
 	final public function deleteLookup(Userinfo $userinfo)
 	{
@@ -1251,9 +1258,11 @@ class User extends Plugin
 
 				$db->setQuery($query);
 				$db->execute();
+				return true;
 			} catch (Exception $e) {
 				Framework::raise(LogLevel::ERROR, $e);
 			}
 		}
+		return false;
 	}
 }

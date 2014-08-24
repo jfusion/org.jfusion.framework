@@ -37,6 +37,10 @@ class AuthTest extends PluginTest
 
 		$userinfo = new Userinfo('none_exsisting_plugin');
 		$this->assertSame('', $plugin->generateEncryptedPassword($userinfo));
+
+		$plugin = Factory::getAuth('mockplugin');
+		$userinfo->password_clear = 'mockuser';
+		$this->assertSame(md5('mockuser'), $plugin->generateEncryptedPassword($userinfo));
 	}
 
 	public function test_checkPassword() {
@@ -48,6 +52,11 @@ class AuthTest extends PluginTest
 		$this->assertTrue($plugin->checkPassword($userinfo));
 		$userinfo->password = 'aa';
 		$this->assertFalse($plugin->checkPassword($userinfo));
+
+		$plugin = Factory::getAuth('mockplugin');
+		$userinfo->password_clear = 'mockuser';
+		$userinfo->password = md5('mockuser');
+		$this->assertTrue($plugin->checkPassword($userinfo));
 	}
 
 	public function test_comparePassword() {

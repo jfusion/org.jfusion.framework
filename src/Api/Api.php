@@ -1,21 +1,5 @@
 <?php namespace JFusion\Api;
-
 use stdClass;
-
-function initApi() {
-	if (!defined('_JEXEC')) {
-		$secretkey = 'secret passphrase';
-		if ($secretkey == 'secret passphrase') {
-			exit('JFusion Api Disabled');
-		}
-		$Api = new Api('', $secretkey);
-		$Api->parse();
-	}
-}
-// add everything inside a function to prevent 'sniffing';
-if (!defined('_JFUSIONAPI_INTERNAL')) {
-	initApi();
-}
 
 /**
  * Api class

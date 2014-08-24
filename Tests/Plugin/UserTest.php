@@ -50,7 +50,13 @@ class UserTest extends PluginTest
 	}
 
 	public function test_findUser() {
-		$this->markTestIncomplete();
+		$userinfo = new Userinfo('mockplugin');
+		$userinfo->username = 'mockuser';
+
+		$plugin = Factory::getUser('mockplugin_1');
+		$founed = $plugin->findUser($userinfo);
+
+		$this->assertSame('3', $founed->userid);
 	}
 
 	public function test_getUserIdentifier() {
@@ -95,8 +101,6 @@ class UserTest extends PluginTest
 	}
 
 	public function test_filterUsername() {
-		$this->markTestSkipped();
-
 		$plugin = Factory::getUser('none_exsisting_plugin');
 		$this->assertSame('username', $plugin->filterUsername('username'));
 
@@ -251,7 +255,18 @@ class UserTest extends PluginTest
 	}
 
 	public function test_updateUserLanguage() {
-		$this->markTestIncomplete();
+		$plugin = Factory::getUser('mockplugin');
+
+		$userinfo = new Userinfo('none_exsisting_plugin');
+		$userinfo->username = 'mockuser';
+		$userinfo->language = 'da-DK';
+
+		$exsisting = $plugin->getUser($userinfo);
+
+		$plugin->updateUserLanguage($userinfo, $exsisting);
+
+		$exsisting = $plugin->getUser($userinfo);
+		$this->assertSame($userinfo->language, $exsisting->language);
 	}
 
 	public function test_compareUserGroups() {
@@ -344,10 +359,40 @@ class UserTest extends PluginTest
 	}
 
 	public function test_updateLookup() {
-		$this->markTestIncomplete();
+		$plugin = Factory::getUser('mockplugin_1');
+
+		$update = new Userinfo('mockplugin');
+		$update->username = 'mockuser20';
+		$update->userid = 20;
+		$update->email = 'mockuser20@site.com';
+
+		$update2 = new Userinfo('mockplugin_1');
+		$update2->username = 'mockuser20';
+		$update2->userid = 20;
+		$update2->email = 'mockuser20@site.com';
+		$lookedup = $plugin->lookupUser($update2);
+
+		$this->assertTrue($plugin->updateLookup($update2, $update));
+		$lookedup = $plugin->lookupUser($update2);
+		$this->assertSame('20', $lookedup->userid);
+
+		$update2->email = 'mockuser25@site.com';
+		$this->assertTrue($plugin->updateLookup($update2, $update));
+		$lookedup = $plugin->lookupUser($update2);
+		$this->assertSame('mockuser25@site.com', $lookedup->email);
 	}
 
 	public function test_deleteLookup() {
-		$this->markTestIncomplete();
+		$plugin = Factory::getUser('mockplugin_1');
+
+		$lookup = new Userinfo('mockplugin');
+		$lookup->username = 'mockuser';
+		$lookup->userid = 1;
+		$lookup->email = 'mockuser3@site.com';
+
+		$lookedup = $plugin->lookupUser($lookup);
+
+		$this->assertTrue($plugin->deleteLookup($lookedup));
+		$this->assertNull($plugin->lookupUser($lookup));
 	}
 }

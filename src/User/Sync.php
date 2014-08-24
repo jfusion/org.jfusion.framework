@@ -15,7 +15,6 @@
 
 use JFusion\Factory;
 use JFusion\Framework;
-use JFusion\User\Userinfo;
 use Joomla\Language\Text;
 
 use Joomla\Registry\Registry;
@@ -24,21 +23,6 @@ use RuntimeException;
 
 use stdClass;
 use Exception;
-
-/**
- * Prevent time-outs
- */
-ob_start();
-set_time_limit(0);
-ini_set('memory_limit', '256M');
-
-ini_set('upload_max_filesize', '128M');
-ini_set('post_max_size', '256M');
-ini_set('max_input_time', '7200');
-ini_set('max_execution_time', '0');
-ini_set('expect.timeout', '7200');
-ini_set('default_socket_timeout', '7200');
-ob_end_clean();
 
 /**
  * Class for usersync JFusion functions
@@ -52,6 +36,23 @@ ob_end_clean();
  */
 class Sync
 {
+	/**
+	 * function will attempt to alocate more resources to run the sync
+	 */
+	private static function init() {
+		ob_start();
+		set_time_limit(0);
+		ini_set('memory_limit', '256M');
+
+		ini_set('upload_max_filesize', '128M');
+		ini_set('post_max_size', '256M');
+		ini_set('max_input_time', '7200');
+		ini_set('max_execution_time', '0');
+		ini_set('expect.timeout', '7200');
+		ini_set('default_socket_timeout', '7200');
+		ob_end_clean();
+	}
+
     /**
      * Retrieve log data
      *
@@ -120,15 +121,12 @@ class Sync
      */
     public static function saveSyncdata(Registry $syncdata)
     {
-        //serialize the $syncdata to allow storage in a SQL field
-//        $serialized = base64_encode(serialize($syncdata));
-
         $db = Factory::getDBO();
 	    $data = new stdClass;
 	    $data->syncdata = $syncdata->toString();
-	    $data->syncid = $syncdata['syncid'];
+	    $data->syncid = $syncdata->get('syncid');
 	    $data->time_start = time();
-	    $data->action = $syncdata['action'];
+	    $data->action = $syncdata->get('action');
 
 	    $db->insertObject('#__jfusion_sync', $data);
     }
@@ -146,7 +144,7 @@ class Sync
 	    $query = $db->getQuery(true)
 		    ->update('#__jfusion_sync')
 		    ->set('syncdata = ' . $db->quote($syncdata->toString()))
-		    ->where('syncid = ' . $db->quote($syncdata['syncid']));
+		    ->where('syncid = ' . $db->quote($syncdata->get('syncid')));
 
         $db->setQuery($query);
         $db->execute();
@@ -299,7 +297,7 @@ class Sync
     /**
      * Save log data
      *
-     * @param string &$syncdata     the actual syncdata
+     * @param Registry &$syncdata     the actual syncdata
      * @param string $action        the type of sync action required
      * @param int    $plugin_offset the plugin offset
      * @param int    $user_offset   the user offset
@@ -308,7 +306,9 @@ class Sync
      */
     public static function syncExecute(&$syncdata, $action, $plugin_offset, $user_offset)
     {
+	    self::init();
 	    try {
+		    $syncdata = $syncdata->toArray();
 		    if (empty($syncdata['completed'])) {
 			    //setup some variables
 			    $MasterPlugin = Factory::getAdmin($syncdata['master']);
@@ -442,7 +442,7 @@ class Sync
 										    $syncdata['plugin_offset'] += 1;
 										    $syncdata['user_offset'] = 0;
 									    }
-									    static::updateSyncdata($syncdata);
+									    static::updateSyncdata(new Registry($syncdata));
 									    //update counters
 									    $user_count = 1;
 									    $user_batch--;
@@ -462,7 +462,7 @@ class Sync
 										    $syncdata['plugin_offset'] += 1;
 										    $syncdata['user_offset'] = 0;
 									    }
-									    static::updateSyncdata($syncdata);
+									    static::updateSyncdata(new Registry($syncdata));
 									    //tell Joomla the batch has completed
 									    static::changeSyncStatus($syncid, 0);
 									    return;
@@ -475,7 +475,7 @@ class Sync
 				    if ($syncdata['synced_users'] == $syncdata['total_to_sync']) {
 					    //end of sync, save the final data
 					    $syncdata['completed'] = true;
-					    static::updateSyncdata($syncdata);
+					    static::updateSyncdata(new Registry($syncdata));
 
 					    //update the finish time
 					    $db = Factory::getDBO();
@@ -488,7 +488,7 @@ class Sync
 					    $db->setQuery($query);
 					    $db->execute();
 				    }
-				    static::updateSyncdata($syncdata);
+				    static::updateSyncdata(new Registry($syncdata));
 				    static::changeSyncStatus($syncid, 0);
 			    }
 		    }

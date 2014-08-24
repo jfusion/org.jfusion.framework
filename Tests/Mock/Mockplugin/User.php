@@ -322,4 +322,23 @@ class User extends \JFusion\Plugin\User
 		$db->execute();
 		return true;
 	}
+
+	/**
+	 * Function that update the language of a user
+	 *
+	 * @param Userinfo $userinfo Object containing the existing userinfo
+	 * @param Userinfo $existinguser         Object JLanguage containing the current language of Joomla
+	 */
+	function updateUserLanguage(Userinfo $userinfo, Userinfo &$existinguser)
+	{
+		$db = Factory::getDatabase($this->getJname());
+
+		$query = $db->getQuery(true)
+			->update('#__users')
+			->set('language = ' . $db->quote($userinfo->language))
+			->where('userid = ' . $db->quote($existinguser->userid));
+
+		$db->setQuery($query);
+		$db->execute();
+	}
 }

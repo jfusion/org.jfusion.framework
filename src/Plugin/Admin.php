@@ -161,12 +161,15 @@ class Admin extends Plugin
 		    throw new RuntimeException($this->getJname() . ' -> joomla_int ' . Text::_('NO_DATABASE'));
 	    } else {
 		    //added check for missing files of copied plugins after upgrade
+		    $admin = Factory::getAdmin($this->getJname());
+		    $adminclass = 'JFusion\\Plugins\\' . $this->getJname(). '\\Admin';
 
-		    $path = Framework::getPluginPath($this->getName()) . '/';
-		    if (!file_exists($path . 'admin.php')) {
-			    throw new RuntimeException(Text::_('NO_FILES') . ' admin.php');
-		    } else if (!file_exists($path . 'user.php')) {
-			    throw new RuntimeException(Text::_('NO_FILES') . ' user.php');
+		    $user = Factory::getUser($this->getJname());
+		    $userclass = 'JFusion\\Plugins\\' . $this->getJname(). '\\User';
+		    if (!$admin instanceof $adminclass) {
+			    throw new RuntimeException(Text::_('NO_FILES') . ' '. $adminclass);
+		    } else if (!$user instanceof $userclass) {
+			    throw new RuntimeException(Text::_('NO_FILES') . ' '. $userclass);
 		    } else {
 			    $cookie_domain = $this->params->get('cookie_domain');
 			    $jfc = Factory::getCookies();

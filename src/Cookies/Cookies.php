@@ -81,10 +81,7 @@ class Cookies {
 		}
 
 		if ($url) {
-			$mainframe = Application::getInstance();
-			if ( !$mainframe->isAdmin() ) {
-				$this->cookies[$url][] = $cookie;
-			}
+			$this->cookies[$url][] = $cookie;
 		} else {
 			header('Set-Cookie: ' . $cookie, false);
 		}
@@ -117,8 +114,7 @@ class Cookies {
      * @param string $return
      */
     function executeRedirect($source_url = null, $return = null) {
-    	$mainframe = Application::getInstance();
-    	if (!$mainframe->isAdmin() || !$this->secret) {
+    	if (!$this->secret) {
 	    	if(count($this->cookies)) {
 	    		if (empty($return)) {
                     $return = Application::getInstance()->input->getBase64('return', '');
@@ -145,6 +141,7 @@ class Cookies {
                 }
 	    	}
 	    	if (!empty($return)) {
+			    $mainframe = Application::getInstance();
 	    		$mainframe->redirect($return);
 	    	}
     	}

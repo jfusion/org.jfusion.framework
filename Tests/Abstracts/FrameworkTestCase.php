@@ -8,6 +8,7 @@
 
 use JFusion\Factory;
 use JFusion\Tests\Helper\TestHelper;
+use JFusion\Tests\Mock\Hook;
 use Joomla\Registry\Registry;
 
 /**
@@ -32,6 +33,12 @@ abstract class FrameworkTestCase extends \PHPUnit_Extensions_Database_TestCase
 			'database' => ':memory:',
 			'prefix' => 'jos_'
 		);
+
+
+		$hook = new Hook();
+
+		$dispatcher = Factory::getDispatcher();
+		$dispatcher->addListener($hook);
 
 		$conf = new Registry();
 		$conf->set('dbtype', 'sqlite');

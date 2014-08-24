@@ -58,7 +58,8 @@ CREATE TABLE `mockplugin_users` (
   `email` TEXT NOT NULL,
   `password` TEXT NOT NULL,
   `activation` TEXT NULL,
-  `block` INTEGER NULL
+  `block` INTEGER NULL,
+  `language` TEXT NULL
 );
 
 CREATE TABLE `mockplugin_groups` (
@@ -66,16 +67,28 @@ CREATE TABLE `mockplugin_groups` (
   `group` TEXT NOT NULL
 );
 
+CREATE TABLE `mockplugin_usergroups` (
+  `id` INTEGER NOT NULL,
+  `name` TEXT NOT NULL
+);
+
+
 CREATE TABLE `mockplugin_1_users` (
   `userid` INTEGER PRIMARY KEY AUTOINCREMENT,
   `username` TEXT NOT NULL,
   `email` TEXT NOT NULL,
   `password` TEXT NOT NULL,
   `activation` TEXT NULL,
-  `block` INTEGER NULL
+  `block` INTEGER NULL,
+  `language` TEXT NULL
 );
 
 CREATE TABLE `mockplugin_1_groups` (
   `userid` INTEGER NOT NULL,
   `group` TEXT NOT NULL
+);
+
+CREATE TABLE `mockplugin_1_usergroups` (
+  `id` INTEGER NOT NULL,
+  `name` TEXT NOT NULL
 );

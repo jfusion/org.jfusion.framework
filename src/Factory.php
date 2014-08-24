@@ -326,11 +326,11 @@ class Factory
 	public static function pluginAutoLoad($name)
 	{
 		$path = Framework::getPluginPath($name);
-		if (file_exists($path . '/autoloader.php')) {
-			include_once($path . '/autoloader.php');
+		if (file_exists($path . '/autoload.php')) {
+			include_once($path . '/autoload.php');
 		}
-		if (file_exists($path . '/vendor/autoloader.php')) {
-			include_once($path . '/vendor/autoloader.php');
+		if (file_exists($path . '/vendor/autoload.php')) {
+			include_once($path . '/vendor/autoload.php');
 		}
 	}
 

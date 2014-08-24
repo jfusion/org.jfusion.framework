@@ -6,19 +6,20 @@
  * Time: 21:31
  */
 
-use JFusion\Event\ApplicationInterface;
-use JFusion\Event\InstallerInterface;
+use JFusion\Api\PlatformInterface;
+use JFusion\Application\ApplicationInterface;
 use JFusion\Event\LanguageInterface;
-use JFusion\Event\PlatformInterface;
-use JFusion\Event\RouterInterface;
-use JFusion\Event\SessionInterface;
+use JFusion\Installer\PluginInterface;
+use JFusion\Router\RouterInterface;
+use JFusion\Session\SessionInterface;
+
 use Joomla\Event\Event;
 
 /**
  * Class Hook
  * @package JFusion\Tests\Mock
  */
-class Hook implements LanguageInterface, ApplicationInterface, SessionInterface, RouterInterface, InstallerInterface , PlatformInterface {
+class Hook implements LanguageInterface, ApplicationInterface, SessionInterface, RouterInterface, PluginInterface , PlatformInterface {
 	/**
 	 * Loads a language file for framework
 	 *
@@ -41,6 +42,16 @@ class Hook implements LanguageInterface, ApplicationInterface, SessionInterface,
 	function onLanguageLoadPlugin($event)
 	{
 		// TODO: Implement onLanguageLoadPlugin() method.
+	}
+
+	/**
+	 * @param Event $event
+	 *
+	 * @return  Event
+	 */
+	function onInstallerPluginUninstall($event)
+	{
+		// TODO: Implement onInstallerPluginUninstall() method.
 	}
 
 	/**
@@ -109,18 +120,6 @@ class Hook implements LanguageInterface, ApplicationInterface, SessionInterface,
 	public function onApplicationEnqueueMessage($event)
 	{
 		// TODO: Implement onApplicationEnqueueMessage() method.
-	}
-
-	/**
-	 * Is admin interface?
-	 *
-	 * @param Event $event
-	 *
-	 * @return  Event
-	 */
-	public function onApplicationIsAdmin($event)
-	{
-		// TODO: Implement onApplicationIsAdmin() method.
 	}
 
 	/**
@@ -193,16 +192,6 @@ class Hook implements LanguageInterface, ApplicationInterface, SessionInterface,
 	function  onRouterBuild($event)
 	{
 		// TODO: Implement onRouterBuild() method.
-	}
-
-	/**
-	 * @param Event $event
-	 *
-	 * @return  Event
-	 */
-	function onInstallerPluginUninstall($event)
-	{
-		// TODO: Implement onInstallerPluginUninstall() method.
 	}
 
 	/**

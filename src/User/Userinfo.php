@@ -25,9 +25,8 @@ use stdClass;
  * @property array              $groupnames         groupnames
  * @property int                $registerDate       timestamp of register date
  * @property int                $lastvisitDate      timestamp of lastvisit date
- * @property string|null        $language           language
+ * @property string|null        $language           language syntax must be [a-z]{2,2}-[A-Z]{2,2}$ EG en-GB or da-DK ....
  */
-
 class Userinfo {
 	private $jname = null;
 	private $userinfo = null;
@@ -104,7 +103,11 @@ class Userinfo {
 				case 'lastvisitDate';
 					$value = (int)$value;
 					break;
-
+				case 'language';
+					if (!preg_match('#[a-z]{2,2}-[A-Z]{2,2}$#', $value)) {
+						$value = null;
+					}
+					break;
 			}
 			$this->userinfo->$name = $value;
 		}
@@ -113,11 +116,37 @@ class Userinfo {
 	/**
 	 * @param $name
 	 *
-	 * @return null
+	 * @return mixed
 	 */
 	public function __get($name)
 	{
 		if (isset($this->userinfo->$name)) {
+			$value = $this->userinfo->$name;
+			switch($name) {
+				case 'block' :
+					if ($value) {
+						$value = true;
+					} else {
+						$value = false;
+					}
+					break;
+				case 'activation':
+				case 'password_clear';
+					if (empty($value)) {
+						$value = null;
+					}
+					break;
+				case 'groups';
+				case 'groupnames';
+					if (!is_array($value)) {
+						$value = array();
+					}
+					break;
+				case 'registerDate';
+				case 'lastvisitDate';
+					$value = (int)$value;
+					break;
+			}
 			return $this->userinfo->$name;
 		}
 		return null;

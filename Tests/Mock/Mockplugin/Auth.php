@@ -35,23 +35,6 @@ class Auth extends \JFusion\Plugin\Auth
 	 * @return string
 	 */
 	function generateEncryptedPassword(Userinfo $userinfo) {
-
-	}
-
-	/**
-	 * @param $password
-	 * @return string
-	 */
-	function HashPassword($password) {
-
-	}
-
-	/**
-	 * @param $password
-	 * @param $stored_hash
-	 * @return bool
-	 */
-	function doCheckPassword($password, $stored_hash) {
-
+		return md5($userinfo->password_clear);
 	}
 }

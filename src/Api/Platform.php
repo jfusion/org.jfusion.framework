@@ -115,7 +115,7 @@ class Platform extends Base {
 	 *
 	 * @return void
 	 */
-	public function logout($username=null)
+	public function logout($username = null)
 	{
 		$event = new Event('onPlatformLogout');
 		$event->addArgument('username', $username);

@@ -137,6 +137,7 @@
         <column>password</column>
         <column>activation</column>
         <column>block</column>
+        <column>language</column>
         <row>
             <value>1</value>
             <value>mockuser</value>
@@ -144,6 +145,7 @@
             <value>632b4b4bb8562170fcb03a43f179d77e</value>
             <value></value>
             <value>1</value>
+            <value>en-GB</value>
         </row>
         <row>
             <value>2</value>
@@ -152,6 +154,7 @@
             <value>632b4b4bb8562170fcb03a43f179d77e</value>
             <value>foobaa</value>
             <value>0</value>
+            <value>en-GB</value>
         </row>
     </table>
     <table name="mockplugin_groups">
@@ -170,6 +173,22 @@
             <value>1</value>
         </row>
     </table>
+    <table name="mockplugin_usergroups">
+        <column>id</column>
+        <column>name</column>
+        <row>
+            <value>1</value>
+            <value>one</value>
+        </row>
+        <row>
+            <value>1</value>
+            <value>two</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>three</value>
+        </row>
+    </table>
 
     <!--mock plugin 2-->
     <table name="mockplugin_1_users">
@@ -179,6 +198,7 @@
         <column>password</column>
         <column>activation</column>
         <column>block</column>
+        <column>language</column>
         <row>
             <value>1</value>
             <value>mockuser</value>
@@ -186,6 +206,7 @@
             <value>632b4b4bb8562170fcb03a43f179d77e</value>
             <value></value>
             <value>1</value>
+            <value>en-GB</value>
         </row>
         <row>
             <value>3</value>
@@ -194,6 +215,7 @@
             <value>632b4b4bb8562170fcb03a43f179d77e</value>
             <value>foobaa</value>
             <value>0</value>
+            <value>en-GB</value>
         </row>
     </table>
     <table name="mockplugin_1_groups">
@@ -206,6 +228,22 @@
         <row>
             <value>2</value>
             <value>1</value>
+        </row>
+    </table>
+    <table name="mockplugin_1_usergroups">
+        <column>id</column>
+        <column>name</column>
+        <row>
+            <value>1</value>
+            <value>one</value>
+        </row>
+        <row>
+            <value>1</value>
+            <value>two</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>three</value>
         </row>
     </table>
 </dataset>

@@ -100,7 +100,7 @@ class Plugin
 	            $name = $this->manifest->name;
 	            $name = $this->filterInput->clean($name, 'string');
 
-	            if (!$framework || !$version || version_compare($framework->version, $version) >= 0) {
+	            if (!$framework || !$version || version_compare($framework->version, $version) >= 0 || $framework->version == 'dev-master') {
 		            $result['jname'] = $name;
 		            $this->name = $name;
 

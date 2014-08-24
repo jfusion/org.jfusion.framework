@@ -26,6 +26,7 @@ class Application
 	 * @since  11.3
 	 */
 	protected static $instance;
+
 	/**
 	 * @var boolean $messageStatus
 	 * @since  11.3
@@ -99,20 +100,6 @@ class Application
 	public function messageStatus($status)
 	{
 		$this->messageStatus = $status;
-	}
-
-	/**
-	 * Is admin interface?
-	 *
-	 * @return  boolean  True if this application is administrator.
-	 *
-	 * @since   3.2
-	 */
-	public function isAdmin()
-	{
-		$event = new Event('onApplicationIsAdmin');
-		Factory::getDispatcher()->triggerEvent($event);
-		return $event->getArgument('admin', false);
 	}
 
 	/**
