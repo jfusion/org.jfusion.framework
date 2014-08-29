@@ -675,26 +675,19 @@ class User extends Plugin
 			$usergroups = array($usergroups);
 		}
 		$correct = false;
-		if (isset($userinfo->groups)) {
-			$count = 0;
-			if (count($usergroups) == count($userinfo->groups)) {
-				foreach ($usergroups as $group) {
-					if (in_array($group, $userinfo->groups, true)) {
-						$count++;
-					}
-				}
-				if (count($userinfo->groups) == $count) {
-					$correct = true;
+
+		$count = 0;
+		if (count($usergroups) == count($userinfo->groups)) {
+			foreach ($usergroups as $group) {
+				if (in_array($group, $userinfo->groups, true)) {
+					$count++;
 				}
 			}
-		} else {
-			foreach ($usergroups as $group) {
-				if ($group == $userinfo->group_id) {
-					$correct = true;
-					break;
-				}
+			if (count($userinfo->groups) == $count) {
+				$correct = true;
 			}
 		}
+
 		return $correct;
 	}
 
@@ -713,23 +706,16 @@ class User extends Plugin
 		if ($master) {
 			$mastergroups = Framework::getUserGroups($master->name);
 
-			$groups = array();
-			if (isset($userinfo->groups)) {
-				$groups = $userinfo->groups;
-			} elseif (isset($userinfo->group_id)) {
-				$groups[] = $userinfo->group_id;
-			}
-
 			foreach ($mastergroups as $key => $mastergroup) {
 				if ($mastergroup) {
-					if (count($mastergroup) == count($groups)) {
+					if (count($mastergroup) == count($userinfo->groups)) {
 						$count = 0;
 						foreach ($mastergroup as $value) {
-							if (in_array($value, $groups, true)) {
+							if (in_array($value, $userinfo->groups, true)) {
 								$count++;
 							}
 						}
-						if (count($groups) == $count) {
+						if (count($userinfo->groups) == $count) {
 							$index = $key;
 							break;
 						}
