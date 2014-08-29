@@ -137,13 +137,11 @@ class Plugin
 			            $this->installer->abort();
 			            throw new RuntimeException($name . ': ' . Text::_('PLUGIN') . ' ' . $name . ' ' . Text::_('INSTALL') . ': ' . Text::_('FAILED'));
 		            } else {
-			            $vendor = $dir . '/vendor';
-			            if (is_dir(Path::clean($vendor))) {
-							Folder::copy($vendor, $this->installer->getPath('extension_root') . '/vendor');
+			            if (is_dir(Path::clean($dir . '/vendor'))) {
+							Folder::copy('vendor', 'vendor', $this->installer->getPath('extension_root'), true);
 			            }
-			            $language = $dir . '/language';
-			            if (is_dir(Path::clean($language))) {
-				            Folder::copy($language, $this->installer->getPath('extension_root') . '/language');
+			            if (is_dir(Path::clean($dir . '/language'))) {
+				            Folder::copy('language', 'language', $this->installer->getPath('extension_root'), true);
 			            }
 			            /**
 			             * ---------------------------------------------------------------------------------------------
@@ -152,7 +150,6 @@ class Plugin
 			             */
 			            //determine the features of the plugin
 			            $dual_login = $slave = null;
-			            //$features = array('master', 'slave', 'dual_login', 'check_encryption', 'activity', 'search', 'discussion');
 			            $features = array('master', 'slave', 'dual_login', 'check_encryption');
 			            foreach ($features as $f) {
 				            $xml = $this->manifest->$f;
@@ -167,7 +164,7 @@ class Plugin
 			            }
 			            //let's check to see if a plugin with the same name is already installed
 			            $query = $db->getQuery(true)
-				            ->select('id, ' . implode(', ', $features))
+				            ->select('id, ' . $db->quoteName(implode(', ', $features)))
 				            ->from('#__jfusion')
 				            ->where('name = ' . $db->quote($name));
 

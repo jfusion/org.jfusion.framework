@@ -52,7 +52,7 @@ class User extends \JFusion\Plugin\User
 		$query = $db->getQuery(true)
 			->select('*')
 			->from('#__users')
-			->where($identifier_type . ' = ' . $db->quote($identifier));
+			->where($db->quoteName($identifier_type) . ' = ' . $db->quote($identifier));
 
 		$db->setQuery($query);
 
