@@ -103,64 +103,6 @@ class Application
 	}
 
 	/**
-	 * Login authentication function.
-	 *
-	 * Username and encoded password are passed the onUserLogin event which
-	 * is responsible for the user validation. A successful validation updates
-	 * the current session record with the user's details.
-	 *
-	 * Username and encoded password are sent as credentials (along with other
-	 * possibilities) to each observer (authentication plugin) for user
-	 * validation.  Successful validation will update the current session with
-	 * the user details.
-	 *
-	 * @param   array  $credentials  Array('username' => string, 'password' => string)
-	 * @param   array  $options      Array('remember' => boolean)
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @since   3.2
-	 */
-	public function login($credentials, $options = array())
-	{
-		$event = new Event('onApplicationLogin');
-
-		$event->addArgument('credentials', $credentials);
-		$event->addArgument('options', $options);
-
-		Factory::getDispatcher()->triggerEvent($event);
-
-		return $event->getArgument('status', false);
-	}
-
-	/**
-	 * Logout authentication function.
-	 *
-	 * Passed the current user information to the onUserLogout event and reverts the current
-	 * session record back to 'anonymous' parameters.
-	 * If any of the authentication plugins did not successfully complete
-	 * the logout routine then the whole method fails. Any errors raised
-	 * should be done in the plugin as this provides the ability to give
-	 * much more information about why the routine may have failed.
-	 *
-	 * @param   integer  $userid   The user to load - Can be an integer or string - If string, it is converted to ID automatically
-	 *
-	 * @return  boolean  True on success
-	 *
-	 * @since   3.2
-	 */
-	public function logout($userid = null)
-	{
-		$event = new Event('onApplicationLogout');
-
-		$event->addArgument('userid', $userid);
-
-		Factory::getDispatcher()->triggerEvent($event);
-
-		return $event->getArgument('status', false);
-	}
-
-	/**
 	 * Redirect to another URL.
 	 *
 	 * If the headers have not been sent the redirect will be accomplished using a "301 Moved Permanently"
