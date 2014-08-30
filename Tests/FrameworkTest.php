@@ -112,11 +112,6 @@ class FrameworkTest extends FrameworkTestCase
 		$this->markTestIncomplete();
 	}
 
-	public function test_genRandomPassword() {
-		$password = Framework::genRandomPassword();
-		$this->assertSame(8, strlen($password));
-	}
-
 	public function test_getNodeID() {
 		$node = Framework::getNodeID();
 		$this->assertSame('localhost/path/to/framework', $node);

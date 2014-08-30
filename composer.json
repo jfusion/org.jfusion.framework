@@ -16,6 +16,7 @@
     "require": {
         "php": ">=5.3.10",
         "jfusion/debugger": "~1.0",
+        "jfusion/curl": "dev-master",
         "joomla/archive": "~1.0",
         "joomla/database": "~1.0",
         "joomla/date": "~1.0",

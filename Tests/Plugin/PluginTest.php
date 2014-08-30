@@ -60,4 +60,10 @@ class PluginTest extends FrameworkTestCase
 		$this->markTestSkipped();
 	}
 
+	public function test_genRandomPassword() {
+		$plugin = new Plugin('none_exsisting_plugin');
+
+		$password = $plugin->genRandomPassword();
+		$this->assertSame(8, strlen($password));
+	}
 }

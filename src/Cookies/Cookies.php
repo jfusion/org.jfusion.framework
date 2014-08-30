@@ -192,8 +192,6 @@ class Cookies {
 	 *        2. 2 Delimeters in between keys
 	 *        3. 3 Delimeters in between key and value
 	 *        4. 4 Delimeters in between key-value pairs
-	 *
-	 * @see JFusion\Curl\Curl
      *
      * @param array $array
      * @param string $delimeter
