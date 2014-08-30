@@ -137,34 +137,22 @@ class Plugin
 			            $this->installer->abort();
 			            throw new RuntimeException($name . ': ' . Text::_('PLUGIN') . ' ' . $name . ' ' . Text::_('INSTALL') . ': ' . Text::_('FAILED'));
 		            } else {
-			            if (is_dir(Path::clean($dir . '/vendor'))) {
-							Folder::copy('vendor', 'vendor', $this->installer->getPath('extension_root'), true);
+			            $vendor = $dir . '/vendor';
+			            if (is_dir(Path::clean($vendor))) {
+				            Folder::copy($vendor, $this->installer->getPath('extension_root') . '/vendor', '', true);
 			            }
-			            if (is_dir(Path::clean($dir . '/language'))) {
-				            Folder::copy('language', 'language', $this->installer->getPath('extension_root'), true);
+			            $language = $dir . '/language';
+			            if (is_dir(Path::clean($language))) {
+				            Folder::copy($language, $this->installer->getPath('extension_root') . '/language', '', true);
 			            }
 			            /**
 			             * ---------------------------------------------------------------------------------------------
 			             * Database Processing Section
 			             * ---------------------------------------------------------------------------------------------
 			             */
-			            //determine the features of the plugin
-			            $dual_login = $slave = null;
-			            $features = array('master', 'slave', 'dual_login', 'check_encryption');
-			            foreach ($features as $f) {
-				            $xml = $this->manifest->$f;
-
-				            if ($xml instanceof SimpleXMLElement) {
-					            $$f = $this->filterInput->clean($xml, 'integer');
-				            } elseif ($f == 'master' || $f == 'check_encryption') {
-					            $$f = 0;
-				            } else {
-					            $$f = 3;
-				            }
-			            }
 			            //let's check to see if a plugin with the same name is already installed
 			            $query = $db->getQuery(true)
-				            ->select('id, ' . $db->quoteName(implode(', ', $features)))
+				            ->select('id')
 				            ->from('#__jfusion')
 				            ->where('name = ' . $db->quote($name));
 
@@ -187,8 +175,8 @@ class Plugin
 				            $plugin_entry = new stdClass;
 				            $plugin_entry->id = null;
 				            $plugin_entry->name = $name;
-				            $plugin_entry->dual_login = $dual_login;
-				            $plugin_entry->slave = $slave;
+				            $plugin_entry->dual_login = 0;
+				            $plugin_entry->slave = 0;
 				            //now append the new plugin data
 				            try {
 					            $db->insertObject('#__jfusion', $plugin_entry, 'id');

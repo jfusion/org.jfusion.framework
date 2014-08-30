@@ -250,7 +250,7 @@ class Authentication
 											foreach($status[LogLevel::ERROR] as $error) {
 												$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('UPDATE') . ' ' . Text::_('ERROR') . ': ' . $error);
 											}
-											Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $master->name. ' ' .Text::_('PASSWORD') . ' ' . Text::_('UPDATE'));
+											Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $master->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('UPDATE'));
 										} else {
 											$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('UPDATE') . ' ' . Text::_('SUCCESS'));
 										}
