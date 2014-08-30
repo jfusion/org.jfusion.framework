@@ -545,4 +545,33 @@ class Framework
 		}
 		return $lib;
 	}
+
+	/**
+	 * @param string $url
+	 * @param bool   $moved
+	 */
+	public static function redirect($url, $moved = false)
+	{
+		// If the headers have already been sent we need to send the redirect statement via JavaScript.
+		if (headers_sent()) {
+			echo "<script>document.location.href='" . str_replace("'", "&apos;", $url) . "';</script>\n";
+		} else {
+			$agent = $_SERVER['HTTP_USER_AGENT'];
+			// We have to use a JavaScript redirect here because MSIE doesn't play nice with utf-8 URLs.
+			if ((stripos($agent, 'MSIE') !== false || stripos($agent, 'Trident') !== false) && !(preg_match('/(?:[^\x00-\x7F])/', $url) !== 1)) {
+				$html = '<html><head>';
+				$html .= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
+				$html .= '<script>document.location.href=\'' . str_replace("'", "&apos;", $url) . '\';</script>';
+				$html .= '</head><body></body></html>';
+
+				echo $html;
+			} else {
+				// All other cases use the more efficient HTTP header for redirection.
+				header($moved ? 'HTTP/1.1 301 Moved Permanently' : 'HTTP/1.1 303 See other');
+				header('Location: ' . $url);
+				header('Content-Type: text/html; charset=utf-8');
+			}
+		}
+		exit();
+	}
 }

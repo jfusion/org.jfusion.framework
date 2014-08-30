@@ -1,4 +1,6 @@
 <?php namespace JFusion\Api;
+use JFusion\Framework;
+
 /**
  *
  */
@@ -62,7 +64,7 @@ class Base {
 		}
 
 		if ($url) {
-			header('Location: ' . $url);
+			Framework::redirect($url);
 		}
 		exit();
 	}

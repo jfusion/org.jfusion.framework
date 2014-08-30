@@ -11,19 +11,6 @@ use Joomla\Event\Event;
 interface ApplicationInterface
 {
 	/**
-	 * Redirect to another URL.
-	 *
-	 * If the headers have not been sent the redirect will be accomplished using a "301 Moved Permanently"
-	 * or "303 See Other" code in the header pointing to the new location. If the headers have already been
-	 * sent this will be accomplished using a JavaScript statement.
-	 *
-	 * @param Event $event
-	 *
-	 * @return  Event
-	 */
-	function onApplicationRedirect($event);
-
-	/**
 	 * Enqueue a system message.
 	 *
 	 * @param Event $event

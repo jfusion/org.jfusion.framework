@@ -3,6 +3,7 @@
 
 use JFusion\Api\Api;
 use JFusion\Application\Application;
+use JFusion\Framework;
 use Joomla\Language\Text;
 
 /**
@@ -141,8 +142,7 @@ class Cookies {
                 }
 	    	}
 	    	if (!empty($return)) {
-			    $mainframe = Application::getInstance();
-	    		$mainframe->redirect($return);
+			    Framework::redirect($return);
 	    	}
     	}
     }
