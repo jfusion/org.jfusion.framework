@@ -186,6 +186,13 @@ class Userinfo {
 	}
 
 	/**
+	 * @return bool
+	 */
+	function canLogin() {
+		return (!$this->userinfo->block && empty($this->userinfo->activation));
+	}
+
+	/**
 	 * @return stdClass
 	 */
 	function toObject() {

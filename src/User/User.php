@@ -199,12 +199,27 @@ class User
 							}
 						} else {
 							if (!in_array($master->name, $options['skipplugin']) && $master->dual_login == 1) {
-								try {
-									$MasterSession = $MasterUserPlugin->createSession($userinfo, $options);
+								if ($userinfo->canLogin()) {
+									try {
+										$MasterSession = $MasterUserPlugin->createSession($userinfo, $options);
 
-									if (!empty($MasterSession[LogLevel::ERROR])) {
-										$debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $MasterSession[LogLevel::ERROR]);
-										Framework::raise(LogLevel::ERROR, $MasterSession[LogLevel::ERROR], $master->name . ': ' . Text::_('SESSION') . ' ' . Text::_('CREATE'));
+										if (!empty($MasterSession[LogLevel::ERROR])) {
+											$debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $MasterSession[LogLevel::ERROR]);
+											Framework::raise(LogLevel::ERROR, $MasterSession[LogLevel::ERROR], $master->name . ': ' . Text::_('SESSION') . ' ' . Text::_('CREATE'));
+											/**
+											 * TODO replace below code ? or just login slaves as well?
+											 */
+											if ($master->name == 'joomla_int') {
+												$success = -1;
+											}
+										}
+										if (!empty($MasterSession[LogLevel::DEBUG])) {
+											$debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG'), $MasterSession[LogLevel::DEBUG]);
+											//report the error back
+										}
+									} catch (Exception $e) {
+										$debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $e->getMessage());
+										Framework::raise(LogLevel::ERROR, $e, $master->name . ': ' . Text::_('SESSION') . ' ' . Text::_('CREATE'));
 										/**
 										 * TODO replace below code ? or just login slaves as well?
 										 */
@@ -212,19 +227,8 @@ class User
 											$success = -1;
 										}
 									}
-									if (!empty($MasterSession[LogLevel::DEBUG])) {
-										$debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG'), $MasterSession[LogLevel::DEBUG]);
-										//report the error back
-									}
-								} catch (Exception $e) {
-									$debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $e->getMessage());
-									Framework::raise(LogLevel::ERROR, $e, $master->name . ': ' . Text::_('SESSION') . ' ' . Text::_('CREATE'));
-									/**
-									 * TODO replace below code ? or just login slaves as well?
-									 */
-									if ($master->name == 'joomla_int') {
-										$success = -1;
-									}
+								} else {
+									$debugger->addDebug($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG') . ': ' . Text::_('FUSION_BLOCKED_USER'));
 								}
 							}
 							if ($success === 0) {
@@ -269,18 +273,22 @@ class User
 												$SlaveUserPlugin->updateLookup($SlaveUserInfo, $userinfo);
 
 												if (!in_array($slave->name, $options['skipplugin']) && $slave->dual_login == 1) {
-													try {
-														$SlaveSession = $SlaveUserPlugin->createSession($SlaveUserInfo, $options);
-														if (!empty($SlaveSession[LogLevel::ERROR])) {
-															$debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $SlaveSession[LogLevel::ERROR]);
-															Framework::raise(LogLevel::ERROR, $SlaveSession[LogLevel::ERROR], $slave->name . ': ' . Text::_('SESSION') . ' ' . Text::_('CREATE'));
+													if ($userinfo->canLogin()) {
+														try {
+															$SlaveSession = $SlaveUserPlugin->createSession($SlaveUserInfo, $options);
+															if (!empty($SlaveSession[LogLevel::ERROR])) {
+																$debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $SlaveSession[LogLevel::ERROR]);
+																Framework::raise(LogLevel::ERROR, $SlaveSession[LogLevel::ERROR], $slave->name . ': ' . Text::_('SESSION') . ' ' . Text::_('CREATE'));
+															}
+															if (!empty($SlaveSession[LogLevel::DEBUG])) {
+																$debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG'), $SlaveSession[LogLevel::DEBUG]);
+															}
+														} catch (Exception $e) {
+															$debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $e->getMessage());
+															Framework::raise(LogLevel::ERROR, $e, $SlaveUserPlugin->getJname());
 														}
-														if (!empty($SlaveSession[LogLevel::DEBUG])) {
-															$debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG'), $SlaveSession[LogLevel::DEBUG]);
-														}
-													} catch (Exception $e) {
-														$debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $e->getMessage());
-														Framework::raise(LogLevel::ERROR, $e, $SlaveUserPlugin->getJname());
+													} else {
+														$debugger->addDebug($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG') . ': ' . Text::_('FUSION_BLOCKED_USER'));
 													}
 												}
 											}
