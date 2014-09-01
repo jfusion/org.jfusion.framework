@@ -10,8 +10,6 @@ use JFusion\Api\PlatformInterface;
 use JFusion\Application\ApplicationInterface;
 use JFusion\Event\LanguageInterface;
 use JFusion\Installer\PluginInterface;
-use JFusion\Router\RouterInterface;
-use JFusion\Session\SessionInterface;
 
 use Joomla\Event\Event;
 
@@ -19,7 +17,7 @@ use Joomla\Event\Event;
  * Class Hook
  * @package JFusion\Tests\Mock
  */
-class Hook implements LanguageInterface, ApplicationInterface, SessionInterface, RouterInterface, PluginInterface , PlatformInterface {
+class Hook implements LanguageInterface, ApplicationInterface, PluginInterface , PlatformInterface {
 	/**
 	 * Loads a language file for framework
 	 *
@@ -156,42 +154,6 @@ class Hook implements LanguageInterface, ApplicationInterface, SessionInterface,
 	public function onApplicationGetUser($event)
 	{
 		// TODO: Implement onApplicationGetUser() method.
-}
-
-	/**
-	 * Close the session
-	 *
-	 * @param   Event $event
-	 *
-	 * @return  Event
-	 */
-	function onSessionClose($event)
-	{
-		// TODO: Implement onSessionClose() method.
-	}
-
-	/**
-	 * Restart an expired or locked session.
-	 *
-	 * @param   Event $event
-	 *
-	 * @return  Event
-	 */
-	public function onSessionRestart($event)
-	{
-		// TODO: Implement onSessionRestart() method.
-	}
-
-	/**
-	 * Function to convert an internal URI to a route
-	 *
-	 * @param   Event $event
-	 *
-	 * @return  Event
-	 */
-	function  onRouterBuild($event)
-	{
-		// TODO: Implement onRouterBuild() method.
 	}
 
 	/**

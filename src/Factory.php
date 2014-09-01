@@ -16,7 +16,6 @@
 use JFusion\Cookies\Cookies;
 use JFusion\Application\Application;
 use JFusion\Plugin\Plugin;
-use JFusion\Session\Session;
 use JFusion\Plugin\Front;
 use JFusion\Plugin\Admin;
 use JFusion\Plugin\Auth;
@@ -73,12 +72,6 @@ class Factory
 	 * @since  11.1
 	 */
 	public static $application = null;
-
-	/**
-	 * @var    Session  The session object.
-	 * @since  11.3
-	 */
-	public static $session;
 
 	/**
 	 * Global configuration object
