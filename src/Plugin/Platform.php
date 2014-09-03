@@ -90,4 +90,16 @@ class Platform extends Plugin
 	function buildRoute(&$segments)
 	{
 	}
+
+	/**
+	 * Gets the url of a plugin location
+	 *
+	 * @return string plugin url
+	 */
+	final public function getUrl()
+	{
+		$plugin_url = Factory::getConfig('plugin-url');
+
+		return $plugin_url . '/' . $this->getName() . '/';
+	}
 }
