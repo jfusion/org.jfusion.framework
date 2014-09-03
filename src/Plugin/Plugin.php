@@ -72,7 +72,7 @@ class Plugin
 	{
 		$this->instance = $instance;
 
-		$responce = Factory::getDispatcher()->triggerEvent(new Event('onLanguageLoadFramework'));
+		$responce = Factory::getDispatcher()->triggerEvent(new Event('onFrameworkLoadLanguage'));
 
 		$jname = $this->getJname();
 		if (!empty($jname)) {
@@ -98,7 +98,7 @@ class Plugin
 					foreach($plugins as $plugin) {
 						$name = $plugin->original_name ? $plugin->original_name : $plugin->name;
 						if (!$loaded) {
-							$pluginevent = new Event('onLanguageLoadPlugin');
+							$pluginevent = new Event('onPluginLoadLanguage');
 							$pluginevent->addArgument('jname', $name);
 
 							Factory::getDispatcher()->triggerEvent($pluginevent);

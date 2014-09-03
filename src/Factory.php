@@ -1,17 +1,16 @@
 <?php namespace JFusion;
-
-	/**
-	 * Factory model that can generate any jfusion objects or classes
-	 *
-	 * PHP version 5
-	 *
-	 * @category  JFusion
-	 * @package   Models
-	 * @author    JFusion Team <webmaster@jfusion.org>
-	 * @copyright 2008 JFusion. All rights reserved.
-	 * @license   http://www.gnu.org/copyleft/gpl.html GNU/GPL
-	 * @link      http://www.jfusion.org
-	 */
+/**
+ * Factory model that can generate any jfusion objects or classes
+ *
+ * PHP version 5
+ *
+ * @category  JFusion
+ * @package   Models
+ * @author    JFusion Team <webmaster@jfusion.org>
+ * @copyright 2008 JFusion. All rights reserved.
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @link      http://www.jfusion.org
+ */
 
 use JFusion\Cookies\Cookies;
 use JFusion\Application\Application;
@@ -32,7 +31,6 @@ use Joomla\Event\Dispatcher;
 
 use \RuntimeException;
 use \DateTimeZone;
-
 
 /**
  * Custom parameter class that can save array values

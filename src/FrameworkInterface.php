@@ -1,4 +1,4 @@
-<?php namespace JFusion\Installer;
+<?php namespace JFusion;
 
 use Joomla\Event\Event;
 
@@ -8,10 +8,12 @@ use Joomla\Event\Event;
  * Date: 18-03-14
  * Time: 14:14
  */
-interface PluginInterface
+interface FrameworkInterface
 {
 	/**
+	 * Loads a language file for framework
+	 *
 	 * @param Event $event
 	 */
-	function onInstallerPluginUninstall($event);
+	function onFrameworkLoadLanguage($event);
 }

@@ -8,16 +8,17 @@
 
 use JFusion\Api\PlatformInterface;
 use JFusion\Application\ApplicationInterface;
-use JFusion\Event\LanguageInterface;
-use JFusion\Installer\PluginInterface;
+use JFusion\FrameworkInterface;
+use JFusion\Installer\InstallerPluginInterface;
 
+use JFusion\Plugin\PluginInterface;
 use Joomla\Event\Event;
 
 /**
  * Class Hook
  * @package JFusion\Tests\Mock
  */
-class Hook implements LanguageInterface, ApplicationInterface, PluginInterface , PlatformInterface {
+class Hook implements FrameworkInterface, ApplicationInterface, PluginInterface, InstallerPluginInterface, PlatformInterface, FrameworkInterface {
 	/**
 	 * Enqueue a system message.
 	 *
@@ -53,19 +54,9 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	 *
 	 * @param Event $event
 	 */
-	function onLanguageLoadFramework($event)
+	function onFrameworkLoadLanguage($event)
 	{
-		// TODO: Implement onLanguageLoadFramework() method.
-	}
-
-	/**
-	 * Loads a language file for plugin
-	 *
-	 * @param Event $event
-	 */
-	function onLanguageLoadPlugin($event)
-	{
-		// TODO: Implement onLanguageLoadPlugin() method.
+		// TODO: Implement onFrameworkLoadLanguage() method.
 	}
 
 	/**
@@ -134,5 +125,15 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	function onInstallerPluginUninstall($event)
 	{
 		// TODO: Implement onInstallerPluginUninstall() method.
+	}
+
+	/**
+	 * Loads a language file for plugin
+	 *
+	 * @param Event $event
+	 */
+	function onPluginLoadLanguage($event)
+	{
+		// TODO: Implement onPluginLoadLanguage() method.
 	}
 }

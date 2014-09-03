@@ -14,15 +14,14 @@
  */
 
 use JFusion\Application\Application;
+
 use Joomla\Language\Text;
 
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
-use JFusion\Parser\Parser;
 use \stdClass;
 use \SimpleXMLElement;
 use \Exception;
-use Symfony\Component\Yaml\Exception\RuntimeException;
-
 
 /**
  * Class for general JFusion functions
