@@ -14,24 +14,13 @@ interface ApplicationInterface
 	 * Enqueue a system message.
 	 *
 	 * @param Event $event
-	 *
-	 * @return  Event
 	 */
 	public function onApplicationEnqueueMessage($event);
-
-	/**
-	 * get default url
-	 *
-	 * @param Event $event
-	 * @return  Event
-	 */
-	public function onApplicationGetDefaultAvatar($event);
 
 	/**
 	 * Load Script language
 	 *
 	 * @param Event $event
-	 * @return  Event
 	 */
 	public function onApplicationLoadScriptLanguage($event);
 
@@ -39,7 +28,6 @@ interface ApplicationInterface
 	 * Load Script language
 	 *
 	 * @param Event $event
-	 * @return  Event
 	 */
 	public function onApplicationGetUser($event);
 }

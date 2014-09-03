@@ -106,63 +106,6 @@ class Framework
     }
 
     /**
-     * Parses text from bbcode to html, html to bbcode, or html to plaintext
-     * $options include:
-     * strip_all_html - if $to==bbcode, strips all unsupported html from text (default is false)
-     * bbcode_patterns - if $to==bbcode, adds additional html to bbcode rules; array [0] startsearch, [1] startreplace, [2] endsearch, [3] endreplace
-     * parse_smileys - if $to==html, disables the bbcode smiley parsing; useful for plugins that do their own smiley parsing (default is true)
-	 * custom_smileys - if $to==html, adds custom smileys to parser; array in the format of array[$smiley] => $path.  For example $options['custom_smileys'][':-)'] = 'http://mydomain.com/smileys/smile.png';
-     * html_patterns - if $to==html, adds additional bbcode to html rules;
-     *     Must be an array of elements with the custom bbcode as the key and the value in the format described at http://nbbc.sourceforge.net/readme.php?page=usage_add
-     *     For example $options['html_patterns']['mono'] = array('simple_start' => '<tt>', 'simple_end' => '</tt>', 'class' => 'inline', 'allow_in' => array('listitem', 'block', 'columns', 'inline', 'link'));
-     * character_limit - if $to==html OR $to==plaintext, limits the number of visible characters to the user
-     * plaintext_line_breaks - if $to=='plaintext', should line breaks when converting to plaintext be replaced with <br /> (br) (default), converted to spaces (space), or left as \n (n)
-     * plain_tags - if $to=='plaintext', array of custom bbcode tags (without brackets) that should be stripped
-     *
-     * @param string $text    the actual text
-     * @param string $to      what to convert the text to; bbcode, html, or plaintext
-     * @param mixed  $options array with parser options
-     *
-     * @return string with converted text
-     */
-    public static function parseCode($text, $to, $options = array())
-    {
-	    $parser = new Parser();
-	    return $parser->parseCode($text, $to, $options);
-    }
-
-	/**
-	 * Retrieves the source of the avatar for a Joomla supported component
-	 *
-	 * @param string  $software    software name
-	 * @param User\Userinfo $userinfo
-	 *
-	 * @return string nothing
-	 */
-	public static function getAltAvatar($software, $userinfo)
-	{
-		$application = Application::getInstance();
-		try {
-			if (!$userinfo) {
-				//no user was found
-				return $application->getDefaultAvatar();
-			} else {
-				switch($software) {
-					case 'gravatar':
-						$avatar = 'http://www.gravatar.com/avatar.php?gravatar_id=' . md5(strtolower($userinfo->email)) . '&size=40';
-						break;
-					default:
-						$avatar = $application->getDefaultAvatar();
-						break;
-				}
-			}
-		} catch (Exception $e) {
-			$avatar = $application->getDefaultAvatar();
-		}
-		return $avatar;
-	}
-
-    /**
      * Check if feature exists
      *
      * @static

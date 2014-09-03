@@ -103,19 +103,6 @@ class Application
 	}
 
 	/**
-	 * Retrieves the source of the avatar for a Joomla supported component
-	 *
-	 * @return string url of the default avatar
-	 */
-	public function getDefaultAvatar()
-	{
-		$event = new Event('onApplicationGetDefaultAvatar');
-		Factory::getDispatcher()->triggerEvent($event);
-
-		return $event->getArgument('avatar', false);
-	}
-
-	/**
 	 * Load Script language
 	 *
 	 * @param string|array $keys

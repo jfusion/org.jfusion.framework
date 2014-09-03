@@ -14,8 +14,6 @@ interface LanguageInterface
 	 * Loads a language file for framework
 	 *
 	 * @param Event $event
-	 *
-	 * @return  Event
 	 */
 	function onLanguageLoadFramework($event);
 
@@ -23,8 +21,6 @@ interface LanguageInterface
 	 * Loads a language file for plugin
 	 *
 	 * @param Event $event
-	 *
-	 * @return  Event
 	 */
 	function onLanguageLoadPlugin($event);
 }

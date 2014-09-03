@@ -12,8 +12,6 @@ interface PluginInterface
 {
 	/**
 	 * @param Event $event
-	 *
-	 * @return  Event
 	 */
 	function onInstallerPluginUninstall($event);
 }

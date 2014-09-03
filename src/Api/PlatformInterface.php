@@ -14,8 +14,6 @@ interface PlatformInterface
 	 * used for platform login
 	 *
 	 * @param   Event   $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformLogin($event);
 
@@ -23,8 +21,6 @@ interface PlatformInterface
 	 * used for platform logout
 	 *
 	 * @param   Event   $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformLogout($event);
 
@@ -32,8 +28,6 @@ interface PlatformInterface
 	 * used for platform delete user
 	 *
 	 * @param   Event   $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformUserDelete($event);
 
@@ -41,8 +35,6 @@ interface PlatformInterface
 	 * used for platform user register
 	 *
 	 * @param   Event   $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformUserRegister($event);
 
@@ -50,8 +42,6 @@ interface PlatformInterface
 	 * used for platform user update
 	 *
 	 * @param   Event   $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformUserUpdate($event);
 
@@ -59,8 +49,6 @@ interface PlatformInterface
 	 * used for platform route url
 	 *
 	 * @param   Event   $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformRoute($event);
 }

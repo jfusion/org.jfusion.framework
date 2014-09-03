@@ -22,8 +22,6 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	 * Enqueue a system message.
 	 *
 	 * @param Event $event
-	 *
-	 * @return  Event
 	 */
 	public function onApplicationEnqueueMessage($event)
 	{
@@ -31,23 +29,9 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	}
 
 	/**
-	 * get default url
-	 *
-	 * @param Event $event
-	 *
-	 * @return  Event
-	 */
-	public function onApplicationGetDefaultAvatar($event)
-	{
-		// TODO: Implement onApplicationGetDefaultAvatar() method.
-	}
-
-	/**
 	 * Load Script language
 	 *
 	 * @param Event $event
-	 *
-	 * @return  Event
 	 */
 	public function onApplicationLoadScriptLanguage($event)
 	{
@@ -58,8 +42,6 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	 * Load Script language
 	 *
 	 * @param Event $event
-	 *
-	 * @return  Event
 	 */
 	public function onApplicationGetUser($event)
 	{
@@ -70,8 +52,6 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	 * Loads a language file for framework
 	 *
 	 * @param Event $event
-	 *
-	 * @return  Event
 	 */
 	function onLanguageLoadFramework($event)
 	{
@@ -82,8 +62,6 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	 * Loads a language file for plugin
 	 *
 	 * @param Event $event
-	 *
-	 * @return  Event
 	 */
 	function onLanguageLoadPlugin($event)
 	{
@@ -94,8 +72,6 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	 * used for platform login
 	 *
 	 * @param   Event $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformLogin($event)
 	{
@@ -106,8 +82,6 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	 * used for platform logout
 	 *
 	 * @param   Event $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformLogout($event)
 	{
@@ -118,8 +92,6 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	 * used for platform delete user
 	 *
 	 * @param   Event $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformUserDelete($event)
 	{
@@ -130,8 +102,6 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	 * used for platform user register
 	 *
 	 * @param   Event $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformUserRegister($event)
 	{
@@ -142,8 +112,6 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	 * used for platform user update
 	 *
 	 * @param   Event $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformUserUpdate($event)
 	{
@@ -154,8 +122,6 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 	 * used for platform route url
 	 *
 	 * @param   Event $event
-	 *
-	 * @return  Event
 	 */
 	function onPlatformRoute($event)
 	{
@@ -164,8 +130,6 @@ class Hook implements LanguageInterface, ApplicationInterface, PluginInterface ,
 
 	/**
 	 * @param Event $event
-	 *
-	 * @return  Event
 	 */
 	function onInstallerPluginUninstall($event)
 	{
