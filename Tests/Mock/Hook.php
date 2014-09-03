@@ -10,15 +10,15 @@ use JFusion\Api\PlatformInterface;
 use JFusion\Application\ApplicationInterface;
 use JFusion\FrameworkInterface;
 use JFusion\Installer\InstallerPluginInterface;
-
 use JFusion\Plugin\PluginInterface;
+
 use Joomla\Event\Event;
 
 /**
  * Class Hook
  * @package JFusion\Tests\Mock
  */
-class Hook implements FrameworkInterface, ApplicationInterface, PluginInterface, InstallerPluginInterface, PlatformInterface, FrameworkInterface {
+class Hook implements FrameworkInterface, ApplicationInterface, PluginInterface, InstallerPluginInterface, PlatformInterface {
 	/**
 	 * Enqueue a system message.
 	 *

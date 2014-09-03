@@ -10,11 +10,12 @@
 use JFusion\Debugger\Debugger;
 use JFusion\Factory;
 use JFusion\Framework;
-
 use JFusion\User\Userinfo;
+
 use Joomla\Language\Text;
 
 use Psr\Log\LogLevel;
+
 use \Exception;
 
 /**

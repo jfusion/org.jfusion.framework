@@ -1,5 +1,4 @@
 <?php namespace JFusion;
-
 /**
  * Model for all jfusion related function
  *

@@ -1,5 +1,4 @@
 <?php namespace JFusion\User;
-
 /**
  * Model that handles the usersync
  *
@@ -15,9 +14,10 @@
 
 use JFusion\Factory;
 use JFusion\Framework;
-use Joomla\Language\Text;
 
+use Joomla\Language\Text;
 use Joomla\Registry\Registry;
+
 use Psr\Log\LogLevel;
 use RuntimeException;
 

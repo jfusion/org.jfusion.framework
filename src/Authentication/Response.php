@@ -8,6 +8,7 @@
  */
 
 use JFusion\Debugger\Debugger;
+
 use \stdClass;
 
 /**

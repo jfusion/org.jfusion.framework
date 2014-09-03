@@ -7,14 +7,17 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-use Exception;
 use JFusion\Application\Application;
 use JFusion\Debugger\Debugger;
 use JFusion\Factory;
 use JFusion\Framework;
+
 use Joomla\Language\Text;
+
 use Psr\Log\LogLevel;
+
 use RuntimeException;
+use Exception;
 
 /**
  * Joomla! CMS Application class

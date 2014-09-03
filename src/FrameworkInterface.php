@@ -1,5 +1,4 @@
 <?php namespace JFusion;
-
 use Joomla\Event\Event;
 
 /**

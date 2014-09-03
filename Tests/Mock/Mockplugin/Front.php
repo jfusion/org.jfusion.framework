@@ -1,13 +1,13 @@
 <?php namespace JFusion\Plugins\mockplugin;
-	/**
-	 * @category   Plugins
-	 * @package    JFusion\Plugins
-	 * @subpackage mockplugin
-	 * @author     JFusion Team <webmaster@jfusion.org>
-	 * @copyright  2008 JFusion. All rights reserved.
-	 * @license    http://www.gnu.org/copyleft/gpl.html GNU/GPL
-	 * @link       http://www.jfusion.org
-	 */
+/**
+ * @category   Plugins
+ * @package    JFusion\Plugins
+ * @subpackage mockplugin
+ * @author     JFusion Team <webmaster@jfusion.org>
+ * @copyright  2008 JFusion. All rights reserved.
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @link       http://www.jfusion.org
+ */
 
 /**
  * JFusion Front Class for phpbb3

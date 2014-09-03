@@ -9,6 +9,7 @@
 use JFusion\Factory;
 use JFusion\Tests\Helper\TestHelper;
 use JFusion\Tests\Mock\Hook;
+
 use Joomla\Registry\Registry;
 
 /**

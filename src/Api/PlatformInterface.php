@@ -1,5 +1,4 @@
 <?php namespace JFusion\Api;
-
 use Joomla\Event\Event;
 
 /**

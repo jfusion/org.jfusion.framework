@@ -10,6 +10,7 @@
  */
 use JFusion\Factory;
 use JFusion\Framework;
+
 use stdClass;
 
 /**

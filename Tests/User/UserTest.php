@@ -14,7 +14,6 @@
 
 use JFusion\Tests\Abstracts\FrameworkTestCase;
 
-
 /**
  * Class for usersync JFusion functions
  *

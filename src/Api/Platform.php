@@ -1,6 +1,7 @@
 <?php namespace JFusion\Api;
 use JFusion\Factory;
 use JFusion\User\Userinfo;
+
 use Joomla\Event\Event;
 
 /**

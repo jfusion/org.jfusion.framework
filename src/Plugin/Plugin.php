@@ -1,21 +1,21 @@
 <?php namespace JFusion\Plugin;
-
-	/**
-	 * Abstract plugin class
-	 *
-	 * PHP version 5
-	 *
-	 * @category  JFusion
-	 * @package   Models
-	 * @author    JFusion Team <webmaster@jfusion.org>
-	 * @copyright 2008 JFusion. All rights reserved.
-	 * @license   http://www.gnu.org/copyleft/gpl.html GNU/GPL
-	 * @link      http://www.jfusion.org
-	 */
+/**
+ * Abstract plugin class
+ *
+ * PHP version 5
+ *
+ * @category  JFusion
+ * @package   Models
+ * @author    JFusion Team <webmaster@jfusion.org>
+ * @copyright 2008 JFusion. All rights reserved.
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @link      http://www.jfusion.org
+ */
 
 use JFusion\Factory;
 use JFusion\Debugger\Debugger;
 use JFusion\Framework;
+
 use Joomla\Crypt\Crypt;
 use Joomla\Event\Event;
 use Joomla\Language\Text;

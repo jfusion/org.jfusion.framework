@@ -1,5 +1,4 @@
 <?php namespace JFusion\Installer;
-
 /**
  * installer model
  *

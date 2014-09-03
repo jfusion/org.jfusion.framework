@@ -12,7 +12,7 @@
  * @link      http://www.jfusion.org
  */
 
-use JFusion\Cookies\Cookies;
+use JFusion\Authentication\Cookies;
 use JFusion\Application\Application;
 use JFusion\Plugin\Plugin;
 use JFusion\Plugin\Front;
@@ -24,7 +24,6 @@ use JFusion\Plugin\Platform;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseFactory;
 use Joomla\Registry\Registry;
-
 use Joomla\Language\Language;
 use Joomla\Date\Date;
 use Joomla\Event\Dispatcher;
@@ -517,7 +516,7 @@ class Factory
 		static $instance;
 		//only create a new plugin instance if it has not been created before
 		if (!isset($instance)) {
-			$instance = new Cookies(static::getParams('joomla_int')->get('secret'));
+			$instance = new Cookies(self::getConfig()->get('apikey'));
 		}
 		return $instance;
 	}

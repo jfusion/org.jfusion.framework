@@ -4,7 +4,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-use JFusion\Cookies\Cookies;
+use JFusion\Authentication\Cookies;
 
 /**
  * Test class for Authentication

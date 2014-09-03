@@ -1,5 +1,4 @@
 <?php namespace JFusion\Plugin;
-
 /**
  * abstract authentication file
  * 

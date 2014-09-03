@@ -1,11 +1,9 @@
-<?php namespace JFusion\Cookies;
-// Check to ensure this file is within the rest of the framework
-
+<?php namespace JFusion\Authentication;
 use JFusion\Api\Api;
 use JFusion\Application\Application;
 use JFusion\Framework;
-use Joomla\Language\Text;
 
+use Joomla\Language\Text;
 /**
  * Cookies class
  *

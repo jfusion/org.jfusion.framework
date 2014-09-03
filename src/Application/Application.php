@@ -9,6 +9,7 @@
 
 use JFusion\Factory;
 use JFusion\User\Userinfo;
+
 use Joomla\Event\Event;
 use Joomla\Input\Input;
 

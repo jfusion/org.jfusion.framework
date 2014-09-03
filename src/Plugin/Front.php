@@ -1,5 +1,4 @@
 <?php namespace JFusion\Plugin;
-
 /**
  * Abstract public class for JFusion
  *

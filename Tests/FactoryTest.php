@@ -140,7 +140,7 @@ class FactoryTest extends FrameworkTestCase
 	public function test_getCookies() {
 		$cookie = Factory::getCookies();
 
-		$this->assertInstanceOf('\JFusion\Cookies\Cookies', $cookie);
+		$this->assertInstanceOf('\JFusion\Authentication\Cookies', $cookie);
 	}
 
 	public function test_getDbo() {
