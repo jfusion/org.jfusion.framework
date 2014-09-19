@@ -14,6 +14,7 @@
 
 use JFusion\Application\Application;
 
+use JFusion\User\Userinfo;
 use Joomla\Language\Text;
 
 use Symfony\Component\Yaml\Exception\RuntimeException;
@@ -78,6 +79,50 @@ class Framework
 			$jfusion_slaves = $db->loadObjectList();
 		}
 		return $jfusion_slaves;
+	}
+
+	/**
+	 * Finds the first user that match starting with master
+	 *
+	 * @param Userinfo $userinfo
+	 * @param bool     $lookup
+	 *
+	 * @return null|Userinfo returns first used founed
+	 */
+	public static function searchUser(Userinfo $userinfo, $lookup = false)
+	{
+		$exsistingUser = null;
+
+		if ($lookup && $userinfo->getJname() !== null) {
+			$userPlugin = Factory::getUser($userinfo->getJname());
+
+			$exsistingUser = $userPlugin->lookupUser($userinfo);
+		}
+		if (!$exsistingUser instanceof Userinfo) {
+			$master = Framework::getMaster();
+			if ($master) {
+				try {
+					$JFusionMaster = Factory::getUser($master->name);
+					$exsistingUser = $JFusionMaster->getUser($userinfo);
+				} catch (Exception $e) {
+				}
+			}
+			if (!$exsistingUser instanceof Userinfo) {
+				$slaves = Factory::getPlugins('slave');
+				foreach ($slaves as $slave) {
+					try {
+						$JFusionSlave = Factory::getUser($slave->name);
+						//if the username was updated, call the updateUsername function before calling updateUser
+						$exsistingUser = $JFusionSlave->getUser($userinfo);
+						if ($exsistingUser instanceof Userinfo) {
+							break;
+						}
+					} catch (Exception $e) {
+					}
+				}
+			}
+		}
+		return $exsistingUser;
 	}
 
     /**
@@ -445,7 +490,7 @@ class Framework
 	public static function getNodeID()
 	{
 		$params = Factory::getConfig();
-		$url = $params->get('url');
+		$url = $params->get('uri.base.full');
 		return strtolower(rtrim(parse_url($url, PHP_URL_HOST) . parse_url($url, PHP_URL_PATH), '/'));
 	}
 

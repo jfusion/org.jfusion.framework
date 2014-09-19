@@ -535,13 +535,14 @@ class Factory
 			//get config values
 			$conf = self::getConfig();
 
-			$host = $conf->get('host');
-			$user = $conf->get('user');
-			$password = $conf->get('password');
-			$database = $conf->get('db');
-			$prefix = $conf->get('dbprefix');
-			$driver = $conf->get('dbtype');
-			$debug = $conf->get('debug');
+			$host = $conf->get('database.host');
+			$user = $conf->get('database.user');
+			$password = $conf->get('database.password');
+			$database = $conf->get('database.name');
+			$prefix = $conf->get('database.prefix');
+			$driver = $conf->get('database.driver');
+			$debug = $conf->get('database.debug');
+
 			//added extra code to prevent error when $driver is incorrect
 
 			$options = array('driver' => $driver, 'host' => $host, 'user' => $user, 'password' => $password, 'database' => $database, 'prefix' => $prefix);
@@ -588,8 +589,8 @@ class Factory
 		if (!self::$language)
 		{
 			$conf = self::getConfig();
-			$locale = $conf->get('language');
-			$debug = $conf->get('debug_lang');
+			$locale = $conf->get('language.language');
+			$debug = $conf->get('language.debug');
 			self::$language = Language::getInstance($locale, $debug);
 		}
 		return self::$language;

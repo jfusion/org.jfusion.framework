@@ -136,7 +136,7 @@ class Authentication
 	public function authenticate($credentials, $options = array())
 	{
 		// Create authentication response
-		$response = new Response;
+		$response = new Response();
 
 		$debugger = Debugger::getInstance('jfusion-authentication');
 		$debugger->set(null, array());
@@ -165,8 +165,6 @@ class Authentication
 				if (!empty($options['skip_password_check']) && $debug === true) {
 					$debugger->addDebug(Text::_('SKIPPED') . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK'));
 					$response->status = Authentication::STATUS_SUCCESS;
-					$response->email = $userinfo->email;
-					$response->fullname = $userinfo->name;
 					$response->error_message = '';
 					$response->userinfo = $userinfo;
 				} else {
@@ -192,8 +190,6 @@ class Authentication
 							//found a match
 							$debugger->addDebug($master->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' . Text::_('SUCCESS'));
 							$response->status = Authentication::STATUS_SUCCESS;
-							$response->email = $userinfo->email;
-							$response->fullname = $userinfo->name;
 							$response->error_message = '';
 							$response->userinfo = $userinfo;
 						} else {
@@ -234,8 +230,6 @@ class Authentication
 										//found a match
 										$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' . Text::_('SUCCESS'));
 										$response->status = Authentication::STATUS_SUCCESS;
-										$response->email = $userinfo->email;
-										$response->fullname = $userinfo->name;
 										$response->error_message = '';
 										$response->userinfo = $userinfo;
 										//update the password format to what the master expects

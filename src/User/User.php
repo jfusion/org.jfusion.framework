@@ -35,6 +35,19 @@ class User
 	protected static $instance;
 
 	/**
+	 * @var Debugger $debugger
+	 */
+	protected $debugger;
+
+	/**
+	 *
+	 */
+	function __construct()
+	{
+		$this->debugger = new Debugger();
+	}
+
+	/**
 	 * Returns a reference to the global JApplicationCms object, only creating it if it doesn't already exist.
 	 *
 	 * This method must be invoked as: $web = JApplicationCms::getInstance();
@@ -48,6 +61,14 @@ class User
 			static::$instance = new User();
 		}
 		return static::$instance;
+	}
+
+	/**
+	 * @return Debugger
+	 */
+	public function getDebugger()
+	{
+		return $this->debugger;
 	}
 
 	/**
@@ -71,11 +92,19 @@ class User
 	 */
 	public function login($credentials, $options = array())
 	{
+		if (!isset($credentials['email'])) {
+			$credentials['email'] = null;
+		}
+		if (!isset($credentials['fullname'])) {
+			$credentials['fullname'] = null;
+		}
+		if (!isset($credentials['userinfo'])) {
+			$credentials['userinfo'] = null;
+		}
+
 		$success = 0;
-		$debugger = Debugger::getInstance('jfusion-loginchecker');
-		$debugger->set(null, array());
-		$debugger->set('init', array());
-		ob_start();
+		$this->debugger->set(null, array());
+		$this->debugger->set('init', array());
 		try {
 			global $JFusionActive, $JFusionLoginCheckActive, $JFusionActivePlugin;
 
@@ -86,6 +115,9 @@ class User
 
 			if (!isset($options['skipplugin'])) {
 				$options['skipplugin'] = array();
+			}
+			if (!isset($options['overwrite'])) {
+				$options['overwrite'] = 0;
 			}
 
 			if (!empty($JFusionActivePlugin)) {
@@ -117,11 +149,11 @@ class User
 
 				if ($credentials['userinfo'] instanceof Userinfo) {
 					//the jfusion auth plugin is enabled
-					$debugger->add('init', Text::_('USING_JFUSION_AUTH'));
+					$this->debugger->add('init', Text::_('USING_JFUSION_AUTH'));
 
 					$userinfo = $credentials['userinfo'];
 				} else {
-					$debugger->add('init', Text::_('USING_OTHER_AUTH'));
+					$this->debugger->add('init', Text::_('USING_OTHER_AUTH'));
 					//other auth plugin enabled get the userinfo again
 					//temp userinfo to see if the user exists in the master
 
@@ -144,18 +176,18 @@ class User
 						$autoregister = $params->get('autoregister', 0);
 						if ($autoregister == 1) {
 							try {
-								$debugger->add('init', Text::_('CREATING_MASTER_USER'));
+								$this->debugger->add('init', Text::_('CREATING_MASTER_USER'));
 								//try to create a Master user
 
 								$MasterUserPlugin->resetDebugger();
 								$userinfo = $MasterUserPlugin->doCreateUser($authUserinfo);
-								$debugger->add('init', Text::_('MASTER') . ' ' . Text::_('USER') . ' ' . Text::_('CREATE') . ' ' . Text::_('SUCCESS'));
+								$this->debugger->add('init', Text::_('MASTER') . ' ' . Text::_('USER') . ' ' . Text::_('CREATE') . ' ' . Text::_('SUCCESS'));
 							} catch (Exception $e) {
 								throw new RuntimeException($master->name . ' ' . Text::_('USER') . ' ' . Text::_('CREATE') . ' ' . Text::_('ERROR') . ' ' . $e->getMessage());
 							}
 						} else {
 							//return an error
-							$debugger->add('init', Text::_('COULD_NOT_FIND_USER'));
+							$this->debugger->add('init', Text::_('COULD_NOT_FIND_USER'));
 							throw new RuntimeException(Text::_('COULD_NOT_FIND_USER'));
 						}
 					}
@@ -182,17 +214,17 @@ class User
 											$SlaveUserInfo = $JFusionSlave->getUser($userinfo);
 										}
 										if (!empty($SlaveUser[LogLevel::ERROR])) {
-											$debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE') . ' ' . Text::_('ERROR'), $SlaveUser[LogLevel::ERROR]);
+											$this->debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE') . ' ' . Text::_('ERROR'), $SlaveUser[LogLevel::ERROR]);
 										}
 										if (!empty($SlaveUser[LogLevel::DEBUG])) {
-											$debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE') . ' ' . Text::_('DEBUG'), $SlaveUser[LogLevel::DEBUG]);
+											$this->debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE') . ' ' . Text::_('DEBUG'), $SlaveUser[LogLevel::DEBUG]);
 										}
 
-										$debugger->set($slave->name . ' ' . Text::_('USERINFO'), $SlaveUserInfo);
+										$this->debugger->set($slave->name . ' ' . Text::_('USERINFO'), $SlaveUserInfo);
 									}
 								} catch (Exception $e) {
 									Framework::raise(LogLevel::ERROR, $e, $slave->name);
-									$debugger->add($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE') . ' ' . Text::_('ERROR'), $e->getMessage());
+									$this->debugger->add($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE') . ' ' . Text::_('ERROR'), $e->getMessage());
 								}
 							}
 							if ($userinfo->block) {
@@ -207,7 +239,7 @@ class User
 										$MasterSession = $MasterUserPlugin->createSession($userinfo, $options);
 
 										if (!empty($MasterSession[LogLevel::ERROR])) {
-											$debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $MasterSession[LogLevel::ERROR]);
+											$this->debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $MasterSession[LogLevel::ERROR]);
 											Framework::raise(LogLevel::ERROR, $MasterSession[LogLevel::ERROR], $master->name . ': ' . Text::_('SESSION') . ' ' . Text::_('CREATE'));
 											/**
 											 * TODO replace below code ? or just login slaves as well?
@@ -217,11 +249,11 @@ class User
 											}
 										}
 										if (!empty($MasterSession[LogLevel::DEBUG])) {
-											$debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG'), $MasterSession[LogLevel::DEBUG]);
+											$this->debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG'), $MasterSession[LogLevel::DEBUG]);
 											//report the error back
 										}
 									} catch (Exception $e) {
-										$debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $e->getMessage());
+										$this->debugger->set($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $e->getMessage());
 										Framework::raise(LogLevel::ERROR, $e, $master->name . ': ' . Text::_('SESSION') . ' ' . Text::_('CREATE'));
 										/**
 										 * TODO replace below code ? or just login slaves as well?
@@ -231,7 +263,7 @@ class User
 										}
 									}
 								} else {
-									$debugger->addDebug($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG') . ': ' . Text::_('FUSION_BLOCKED_USER'));
+									$this->debugger->addDebug($master->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG') . ': ' . Text::_('FUSION_BLOCKED_USER'));
 								}
 							}
 							if ($success === 0) {
@@ -250,10 +282,10 @@ class User
 
 										$SlaveUser = $SlaveUserPlugin->debugger->get();
 										if (!empty($SlaveUser[LogLevel::DEBUG])) {
-											$debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE') . ' ' . Text::_('DEBUG'), $SlaveUser[LogLevel::DEBUG]);
+											$this->debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE') . ' ' . Text::_('DEBUG'), $SlaveUser[LogLevel::DEBUG]);
 										}
 										if (!empty($SlaveUser[LogLevel::ERROR])) {
-											$debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE') . ' ' . Text::_('ERROR'), $SlaveUser[LogLevel::ERROR]);
+											$this->debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE') . ' ' . Text::_('ERROR'), $SlaveUser[LogLevel::ERROR]);
 											Framework::raise(LogLevel::ERROR, $SlaveUser[LogLevel::ERROR], $slave->name . ': ' . Text::_('USER') . ' ' . Text::_('UPDATE'));
 										} else {
 											if (!$SlaveUserInfo instanceof UserInfo) {
@@ -268,7 +300,7 @@ class User
 													$details = $SlaveUserInfo->getAnonymizeed();
 												}
 
-												$debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE'), $details);
+												$this->debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE'), $details);
 
 												//apply the clear text password to the user object
 												$SlaveUserInfo->password_clear = $credentials['password'];
@@ -280,25 +312,25 @@ class User
 														try {
 															$SlaveSession = $SlaveUserPlugin->createSession($SlaveUserInfo, $options);
 															if (!empty($SlaveSession[LogLevel::ERROR])) {
-																$debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $SlaveSession[LogLevel::ERROR]);
+																$this->debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $SlaveSession[LogLevel::ERROR]);
 																Framework::raise(LogLevel::ERROR, $SlaveSession[LogLevel::ERROR], $slave->name . ': ' . Text::_('SESSION') . ' ' . Text::_('CREATE'));
 															}
 															if (!empty($SlaveSession[LogLevel::DEBUG])) {
-																$debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG'), $SlaveSession[LogLevel::DEBUG]);
+																$this->debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG'), $SlaveSession[LogLevel::DEBUG]);
 															}
 														} catch (Exception $e) {
-															$debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $e->getMessage());
+															$this->debugger->set($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('ERROR'), $e->getMessage());
 															Framework::raise(LogLevel::ERROR, $e, $SlaveUserPlugin->getJname());
 														}
 													} else {
-														$debugger->addDebug($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG') . ': ' . Text::_('FUSION_BLOCKED_USER'));
+														$this->debugger->addDebug($slave->name . ' ' . Text::_('SESSION') . ' ' . Text::_('DEBUG') . ': ' . Text::_('FUSION_BLOCKED_USER'));
 													}
 												}
 											}
 										}
 									} catch (Exception $e) {
 										Framework::raise(LogLevel::ERROR, $e, $slave->name);
-										$debugger->addError($e->getMessage());
+										$this->debugger->addError($e->getMessage());
 									}
 								}
 								$success = 1;
@@ -309,9 +341,8 @@ class User
 			}
 		} catch (Exception $e) {
 			Framework::raise(LogLevel::ERROR, $e);
-			$debugger->addError($e->getMessage());
+			$this->debugger->addError($e->getMessage());
 		}
-		ob_end_clean();
 	    return ($success === 1);
 	}
 
@@ -356,9 +387,7 @@ class User
 		}
 
 		//prevent any output by the plugins (this could prevent cookies from being passed to the header)
-		ob_start();
 		//logout from the JFusion plugins if done through frontend
-		$debugger = Debugger::getInstance('jfusion-loginchecker');
 
 		//get the JFusion master
 		$master = Framework::getMaster();
@@ -366,7 +395,7 @@ class User
 			if (!in_array($master->name, $options['skipplugin'])) {
 				$JFusionMaster = Factory::getUser($master->name);
 				$userlookup = $JFusionMaster->lookupUser($userinfo);
-				$debugger->set('userlookup', $userlookup);
+				$this->debugger->set('userlookup', $userlookup);
 				if ($userlookup instanceof Userinfo) {
 					$details = null;
 					try {
@@ -387,7 +416,7 @@ class User
 								Framework::raise(LogLevel::ERROR, $MasterSession[LogLevel::ERROR], $master->name . ': ' . Text::_('SESSION') . ' ' . Text::_('DESTROY'));
 							}
 							if (!empty($MasterSession[LogLevel::DEBUG])) {
-								$debugger->set($master->name . ' logout', $MasterSession[LogLevel::DEBUG]);
+								$this->debugger->set($master->name . ' logout', $MasterSession[LogLevel::DEBUG]);
 							}
 						} catch (Exception $e) {
 							Framework::raise(LogLevel::ERROR, $e, $JFusionMaster->getJname());
@@ -395,7 +424,7 @@ class User
 					} else {
 						Framework::raise(LogLevel::NOTICE, Text::_('LOGOUT') . ' ' . Text::_('COULD_NOT_FIND_USER'), $master->name);
 					}
-					$debugger->set('masteruser', $details);
+					$this->debugger->set('masteruser', $details);
 				}
 			}
 
@@ -427,7 +456,7 @@ class User
 										Framework::raise(LogLevel::ERROR, $SlaveSession[LogLevel::ERROR], $slave->name . ': ' . Text::_('SESSION') . ' ' . Text::_('DESTROY'));
 									}
 									if (!empty($SlaveSession[LogLevel::DEBUG])) {
-										$debugger->set($slave->name . ' logout', $SlaveSession[LogLevel::DEBUG]);
+										$this->debugger->set($slave->name . ' logout', $SlaveSession[LogLevel::DEBUG]);
 									}
 								} catch (Exception $e) {
 									Framework::raise(LogLevel::ERROR, $e, $JFusionSlave->getJname());
@@ -436,13 +465,12 @@ class User
 								Framework::raise(LogLevel::NOTICE, Text::_('LOGOUT') . ' ' . Text::_('COULD_NOT_FIND_USER'), $slave->name);
 							}
 
-							$debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('DETAILS') , $info);
+							$this->debugger->set($slave->name . ' ' . Text::_('USER') . ' ' . Text::_('DETAILS') , $info);
 						}
 					}
 				}
 			}
 		}
-		ob_end_clean();
 		return true;
 	}
 
@@ -457,8 +485,7 @@ class User
 	{
 		$result = false;
 
-		$debugger = Debugger::getInstance('jfusion-deleteuser');
-		$debugger->set(null, array());
+		$this->debugger->set(null, array());
 
 		//create an array to store the debug info
 		$debug_info = array();
@@ -534,8 +561,8 @@ class User
 		} else {
 			$result = false;
 		}
-		$debugger->set('debug', $debug_info);
-		$debugger->set('error', $error_info);
+		$this->debugger->set('debug', $debug_info);
+		$this->debugger->set('error', $error_info);
 		return $result;
 	}
 
@@ -550,8 +577,7 @@ class User
 	 */
 	public function save(Userinfo $userinfo, Userinfo $olduserinfo = null, $new = false)
 	{
-		$debugger = Debugger::getInstance('jfusion-saveuser');
-		$debugger->set(null, array());
+		$this->debugger->set(null, array());
 
 		//create an array to store the debug info
 		$debug_info = array();
@@ -563,27 +589,26 @@ class User
 			// Recover the old data of the user
 			// This is then used to determine if the username was changed
 			$updateUsername = false;
-			if ($new == false && $userinfo instanceof Userinfo && $olduserinfo instanceof Userinfo) {
-				if ($userinfo->getJname() == $olduserinfo->getJname() && $userinfo->username != $olduserinfo->username) {
-					$updateUsername = true;
+			$master_userinfo = null;
+			$exsistingUser = null;
+
+			if ($userinfo->getJname() !== null && $olduserinfo->getJname() !== null) {
+				if ($new == false && $userinfo instanceof Userinfo && $olduserinfo instanceof Userinfo) {
+					if ($userinfo->getJname() == $olduserinfo->getJname() && $userinfo->username != $olduserinfo->username) {
+						$updateUsername = true;
+					}
 				}
 			}
-			//retrieve the username stored in jfusion_users if it exists
-			$userPlugin = Factory::getUser($userinfo->getJname());
-			if ($olduserinfo instanceof Userinfo) {
-				$storedUser = $userPlugin->lookupUser($olduserinfo);
-			} else {
-				$storedUser = null;
-			}
+			$exsistingUser = Framework::searchUser($olduserinfo, true);
 
-			$master_userinfo = null;
 			try {
 				$JFusionMaster = Factory::getUser($master->name);
 				//update the master user if not joomla_int
 				if ($master->name != $userinfo->getJname()) {
-					$master_userinfo = $JFusionMaster->getUser($olduserinfo);
 					//if the username was updated, call the updateUsername function before calling updateUser
 					if ($updateUsername) {
+						$master_userinfo = $JFusionMaster->getUser($exsistingUser);
+
 						if ($master_userinfo instanceof Userinfo) {
 							try {
 								$JFusionMaster->resetDebugger();
@@ -604,7 +629,7 @@ class User
 					try {
 						//run the update user to ensure any other userinfo is updated as well
 						$JFusionMaster->resetDebugger();
-						$MasterUserInfo = $JFusionMaster->updateUser($userinfo, 1);
+						$master_userinfo = $JFusionMaster->updateUser($userinfo, 1);
 						$MasterUser = $JFusionMaster->debugger->get();
 
 						if (!empty($MasterUser[LogLevel::ERROR])) {
@@ -613,13 +638,13 @@ class User
 						if (!empty($MasterUser[LogLevel::DEBUG])) {
 							$debug_info[$master->name] = $MasterUser[LogLevel::DEBUG];
 						}
-						if (!$MasterUserInfo instanceof Userinfo) {
+						if (!$master_userinfo instanceof Userinfo) {
 							//make sure the userinfo is available
-							$MasterUserInfo = $JFusionMaster->getUser($userinfo);
+							$master_userinfo = $JFusionMaster->getUser($userinfo);
 						}
 						//update the jfusion_users_plugin table
-						if ($MasterUserInfo instanceof Userinfo) {
-							$JFusionMaster->updateLookup($MasterUserInfo, $userinfo);
+						if ($master_userinfo instanceof Userinfo) {
+							$JFusionMaster->updateLookup($master_userinfo, $userinfo);
 						}
 					} catch (Exception $e) {
 						$error_info[$master->name] = array($e->getMessage());
@@ -645,7 +670,7 @@ class User
 						$JFusionSlave = Factory::getUser($slave->name);
 						//if the username was updated, call the updateUsername function before calling updateUser
 						if ($updateUsername) {
-							$slave_userinfo = $JFusionSlave->getUser($olduserinfo);
+							$slave_userinfo = $JFusionSlave->getUser($exsistingUser);
 							if ($slave_userinfo instanceof Userinfo) {
 								try {
 									$JFusionSlave->resetDebugger();
@@ -689,8 +714,8 @@ class User
 				}
 			}
 		}
-		$debugger->set('debug', $debug_info);
-		$debugger->set('error', $error_info);
+		$this->debugger->set('debug', $debug_info);
+		$this->debugger->set('error', $error_info);
 		return true;
 	}
 }
