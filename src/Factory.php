@@ -399,6 +399,9 @@ class Factory
 	public static function &createDatabase($jname)
 	{
 		//check to see if joomla DB is requested
+		/**
+		 * TODO: MUST BE CHANGED! as do not rely on joomla_int
+		 */
 		if ($jname == 'joomla_int') {
 			$db = self::getDBO();
 		} else {

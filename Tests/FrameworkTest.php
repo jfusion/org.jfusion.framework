@@ -5,7 +5,6 @@
  */
 use JFusion\Framework;
 use JFusion\Tests\Abstracts\FrameworkTestCase;
-use JFusion\User\Userinfo;
 
 /**
  * Test class for Authentication
@@ -28,12 +27,6 @@ class FrameworkTest extends FrameworkTestCase
 		$this->assertSame('mockplugin_1', $slaves[0]->name);
 
 		$this->assertCount(1, $slaves);
-	}
-
-	public function test_removeUser()
-	{
-		$userinfo = new Userinfo('foo');
-		Framework::removeUser($userinfo);
 	}
 
 	public function test_parseCode()

@@ -494,8 +494,7 @@ class User
 		$master = Framework::getMaster();
 		if ($master) {
 			$params = Factory::getParams($master->name);
-			$deleteEnabled = $params->get('allow_delete_users', 0);
-			if ($deleteEnabled) {
+			if ($params->get('allow_delete_users', 0)) {
 				$JFusionMaster = Factory::getUser($master->name);
 				try {
 					$MasterUser = $JFusionMaster->getUser($userinfo);
@@ -527,8 +526,7 @@ class User
 			$slaves = Factory::getPlugins('slave');
 			foreach ($slaves as $slave) {
 				$params = Factory::getParams($slave->name);
-				$deleteEnabled = $params->get('allow_delete_users', 0);
-				if ($deleteEnabled) {
+				if ($params->get('allow_delete_users', 0)) {
 					$JFusionSlave = Factory::getUser($slave->name);
 					try {
 						$SlaveUser = $JFusionSlave->getUser($userinfo);
@@ -557,7 +555,7 @@ class User
 				}
 			}
 			//remove userlookup data
-			Framework::removeUser($userinfo);
+			User::remove($userinfo);
 		} else {
 			$result = false;
 		}
@@ -599,13 +597,12 @@ class User
 					}
 				}
 			}
-			$exsistingUser = Framework::searchUser($olduserinfo, true);
+			$exsistingUser = User::search($olduserinfo, true);
 
 			try {
 				$JFusionMaster = Factory::getUser($master->name);
-				//update the master user if not joomla_int
-				if ($master->name != $userinfo->getJname()) {
-					//if the username was updated, call the updateUsername function before calling updateUser
+
+				if ($exsistingUser instanceof Userinfo) {
 					if ($updateUsername) {
 						$master_userinfo = $JFusionMaster->getUser($exsistingUser);
 
@@ -626,34 +623,25 @@ class User
 							$error_info[$master->name] = Text::_('NO_USER_DATA_FOUND');
 						}
 					}
-					try {
-						//run the update user to ensure any other userinfo is updated as well
-						$JFusionMaster->resetDebugger();
-						$master_userinfo = $JFusionMaster->updateUser($userinfo, 1);
-						$MasterUser = $JFusionMaster->debugger->get();
+				}
+				//run the update user to ensure any other userinfo is updated as well
+				$JFusionMaster->resetDebugger();
+				$master_userinfo = $JFusionMaster->updateUser($userinfo, 1);
+				$MasterUser = $JFusionMaster->debugger->get();
 
-						if (!empty($MasterUser[LogLevel::ERROR])) {
-							$error_info[$master->name] = $MasterUser[LogLevel::ERROR];
-						}
-						if (!empty($MasterUser[LogLevel::DEBUG])) {
-							$debug_info[$master->name] = $MasterUser[LogLevel::DEBUG];
-						}
-						if (!$master_userinfo instanceof Userinfo) {
-							//make sure the userinfo is available
-							$master_userinfo = $JFusionMaster->getUser($userinfo);
-						}
-						//update the jfusion_users_plugin table
-						if ($master_userinfo instanceof Userinfo) {
-							$JFusionMaster->updateLookup($master_userinfo, $userinfo);
-						}
-					} catch (Exception $e) {
-						$error_info[$master->name] = array($e->getMessage());
-					}
-				} else {
-					//Joomla is master
-					// commented out because we should use the joomla use object (in out plugins)
-					//	            $master_userinfo = $JoomlaUser;
+				if (!empty($MasterUser[LogLevel::ERROR])) {
+					$error_info[$master->name] = $MasterUser[LogLevel::ERROR];
+				}
+				if (!empty($MasterUser[LogLevel::DEBUG])) {
+					$debug_info[$master->name] = $MasterUser[LogLevel::DEBUG];
+				}
+				if (!$master_userinfo instanceof Userinfo) {
+					//make sure the userinfo is available
 					$master_userinfo = $JFusionMaster->getUser($userinfo);
+				}
+				//update the jfusion_users_plugin table
+				if ($master_userinfo instanceof Userinfo) {
+					$JFusionMaster->updateLookup($master_userinfo, $userinfo);
 				}
 			} catch (Exception $e) {
 				$error_info[$master->name] = array($e->getMessage());
@@ -669,23 +657,25 @@ class User
 					try {
 						$JFusionSlave = Factory::getUser($slave->name);
 						//if the username was updated, call the updateUsername function before calling updateUser
-						if ($updateUsername) {
-							$slave_userinfo = $JFusionSlave->getUser($exsistingUser);
-							if ($slave_userinfo instanceof Userinfo) {
-								try {
-									$JFusionSlave->resetDebugger();
-									$JFusionSlave->updateUsername($master_userinfo, $slave_userinfo);
-									if (!$JFusionSlave->debugger->isEmpty('error')) {
-										$error_info[$slave->name . ' ' . Text::_('USERNAME') . ' ' . Text::_('UPDATE') . ' ' . Text::_('ERROR') ] = $JFusionSlave->debugger->get('error');
+						if ($exsistingUser instanceof Userinfo) {
+							if ($updateUsername) {
+								$slave_userinfo = $JFusionSlave->getUser($exsistingUser);
+								if ($slave_userinfo instanceof Userinfo) {
+									try {
+										$JFusionSlave->resetDebugger();
+										$JFusionSlave->updateUsername($master_userinfo, $slave_userinfo);
+										if (!$JFusionSlave->debugger->isEmpty('error')) {
+											$error_info[$slave->name . ' ' . Text::_('USERNAME') . ' ' . Text::_('UPDATE') . ' ' . Text::_('ERROR') ] = $JFusionSlave->debugger->get('error');
+										}
+										if (!$JFusionSlave->debugger->isEmpty('debug')) {
+											$debug_info[$slave->name . ' ' . Text::_('USERNAME') . ' ' . Text::_('UPDATE') . ' ' . Text::_('DEBUG') ] = $JFusionSlave->debugger->get('debug');
+										}
+									}  catch (Exception $e) {
+										$status[LogLevel::ERROR][] = Text::_('USERNAME_UPDATE_ERROR') . ': ' . $e->getMessage();
 									}
-									if (!$JFusionSlave->debugger->isEmpty('debug')) {
-										$debug_info[$slave->name . ' ' . Text::_('USERNAME') . ' ' . Text::_('UPDATE') . ' ' . Text::_('DEBUG') ] = $JFusionSlave->debugger->get('debug');
-									}
-								}  catch (Exception $e) {
-									$status[LogLevel::ERROR][] = Text::_('USERNAME_UPDATE_ERROR') . ': ' . $e->getMessage();
+								} else {
+									$error_info[$slave->name] = Text::_('NO_USER_DATA_FOUND');
 								}
-							} else {
-								$error_info[$slave->name] = Text::_('NO_USER_DATA_FOUND');
 							}
 						}
 						$JFusionSlave->resetDebugger();
@@ -717,5 +707,70 @@ class User
 		$this->debugger->set('debug', $debug_info);
 		$this->debugger->set('error', $error_info);
 		return true;
+	}
+
+	/**
+	 * Finds the first user that match starting with master
+	 *
+	 * @param Userinfo $userinfo
+	 * @param bool     $lookup
+	 *
+	 * @return null|Userinfo returns first used founed
+	 */
+	public static function search(Userinfo $userinfo, $lookup = false)
+	{
+		$exsistingUser = null;
+
+		if ($lookup && $userinfo->getJname() !== null) {
+			$userPlugin = Factory::getUser($userinfo->getJname());
+
+			$exsistingUser = $userPlugin->lookupUser($userinfo);
+		}
+		if (!$exsistingUser instanceof Userinfo) {
+			$master = Framework::getMaster();
+			if ($master) {
+				try {
+					$JFusionMaster = Factory::getUser($master->name);
+					$exsistingUser = $JFusionMaster->getUser($userinfo);
+				} catch (Exception $e) {
+				}
+			}
+			if (!$exsistingUser instanceof Userinfo) {
+				$slaves = Factory::getPlugins('slave');
+				foreach ($slaves as $slave) {
+					try {
+						$JFusionSlave = Factory::getUser($slave->name);
+						//if the username was updated, call the updateUsername function before calling updateUser
+						$exsistingUser = $JFusionSlave->getUser($userinfo);
+						if ($exsistingUser instanceof Userinfo) {
+							break;
+						}
+					} catch (Exception $e) {
+					}
+				}
+			}
+		}
+		return $exsistingUser;
+	}
+
+	/**
+	 * Delete old user data in the lookup table
+	 *
+	 * @param Userinfo $userinfo userinfo of the user to be deleted
+	 */
+	public static function remove(Userinfo $userinfo)
+	{
+		/**
+		 * TODO: need to be change to remove the user correctly with the new layout.
+		 */
+		//Delete old user data in the lookup table
+		$db = Factory::getDBO();
+
+		$query = $db->getQuery(true)
+			->delete('#__jfusion_users_plugin')
+			->where('userid = ' . $db->quote($userinfo->userid));
+		$db->setQuery($query);
+
+		$db->execute();
 	}
 }

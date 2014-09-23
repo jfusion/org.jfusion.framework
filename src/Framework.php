@@ -14,7 +14,6 @@
 
 use JFusion\Application\Application;
 
-use JFusion\User\Userinfo;
 use Joomla\Language\Text;
 
 use Symfony\Component\Yaml\Exception\RuntimeException;
@@ -57,7 +56,7 @@ class Framework
 		}
 		return $jfusion_master;
 	}
-	
+
 	/**
 	 * Returns the JFusion plugin name of the software that are currently the slaves of user management
 	 *
@@ -80,73 +79,6 @@ class Framework
 		}
 		return $jfusion_slaves;
 	}
-
-	/**
-	 * Finds the first user that match starting with master
-	 *
-	 * @param Userinfo $userinfo
-	 * @param bool     $lookup
-	 *
-	 * @return null|Userinfo returns first used founed
-	 */
-	public static function searchUser(Userinfo $userinfo, $lookup = false)
-	{
-		$exsistingUser = null;
-
-		if ($lookup && $userinfo->getJname() !== null) {
-			$userPlugin = Factory::getUser($userinfo->getJname());
-
-			$exsistingUser = $userPlugin->lookupUser($userinfo);
-		}
-		if (!$exsistingUser instanceof Userinfo) {
-			$master = Framework::getMaster();
-			if ($master) {
-				try {
-					$JFusionMaster = Factory::getUser($master->name);
-					$exsistingUser = $JFusionMaster->getUser($userinfo);
-				} catch (Exception $e) {
-				}
-			}
-			if (!$exsistingUser instanceof Userinfo) {
-				$slaves = Factory::getPlugins('slave');
-				foreach ($slaves as $slave) {
-					try {
-						$JFusionSlave = Factory::getUser($slave->name);
-						//if the username was updated, call the updateUsername function before calling updateUser
-						$exsistingUser = $JFusionSlave->getUser($userinfo);
-						if ($exsistingUser instanceof Userinfo) {
-							break;
-						}
-					} catch (Exception $e) {
-					}
-				}
-			}
-		}
-		return $exsistingUser;
-	}
-
-    /**
-     * Delete old user data in the lookup table
-     *
-     * @param object $userinfo userinfo of the user to be deleted
-     *
-     * @return string nothing
-     */
-    public static function removeUser($userinfo)
-    {
-	    /**
-	     * TODO: need to be change to remove the user correctly with the new layout.
-	     */
-	    //Delete old user data in the lookup table
-	    $db = Factory::getDBO();
-
-	    $query = $db->getQuery(true)
-		    ->delete('#__jfusion_users_plugin')
-		    ->where('userid = ' . $db->quote($userinfo->userid));
-	    $db->setQuery($query);
-
-	    $db->execute();
-    }
 
     /**
      * Check if feature exists

@@ -150,7 +150,7 @@ class FactoryTest extends FrameworkTestCase
 	public function test_getConfig() {
 		$config = Factory::getConfig();
 
-		$this->assertSame('sqlite', $config->get('dbtype'));
+		$this->assertSame('sqlite', $config->get('database.driver'));
 	}
 
 	public function test_getLanguage() {

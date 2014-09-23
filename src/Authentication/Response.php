@@ -10,7 +10,6 @@
 use JFusion\Debugger\Debugger;
 
 use JFusion\User\Userinfo;
-use \stdClass;
 
 /**
  * Authentication response class, provides an object for storing user and error details

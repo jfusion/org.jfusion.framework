@@ -42,13 +42,14 @@ abstract class FrameworkTestCase extends \PHPUnit_Extensions_Database_TestCase
 		$dispatcher->addListener($hook);
 
 		$conf = new Registry();
-		$conf->set('dbtype', 'sqlite');
-		$conf->set('db', ':memory:');
-		$conf->set('dbprefix', 'jos_');
+		$conf->set('database.driver', 'sqlite');
+		$conf->set('database.name', ':memory:');
+		$conf->set('database.prefix', 'jos_');
 
 		$conf->set('secret', 'testing');
 
-		$conf->set('url', 'http://localhost/path/to/framework');
+		$conf->set('uri.base.full', 'http://localhost/path/to/framework');
+
 		$conf->set('plugin-path', '/fake/path/to/plugins');
 
 		$usergroups = new \stdClass();
