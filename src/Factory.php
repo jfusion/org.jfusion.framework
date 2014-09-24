@@ -340,7 +340,38 @@ class Factory
 		}
 		//only create a new database instance if it has not been created before
 		if (!isset($instances[$jname])) {
-			$instances[$jname] = static::createDatabase($jname);
+			/**
+			 * TODO: MUST BE CHANGED! as do not rely on joomla_int
+			 */
+			if ($jname == 'joomla_int') {
+				$db = self::getDBO();
+			} else {
+				//get config values
+				$params = static::getParams($jname);
+				//prepare the data for creating a database connection
+				$host = $params->get('database_host');
+				$user = $params->get('database_user');
+				$password = $params->get('database_password');
+				$database = $params->get('database_name');
+				$prefix = $params->get('database_prefix', '');
+				$driver = $params->get('database_type');
+				$charset = $params->get('database_charset', 'utf8');
+				//added extra code to prevent error when $driver is incorrect
+
+				$options = array('driver' => $driver, 'host' => $host, 'user' => $user, 'password' => $password, 'database' => $database, 'prefix' => $prefix);
+
+				$db = DatabaseFactory::getInstance()->getDriver($driver, $options);
+
+				if ($driver != 'sqlite') {
+					//add support for UTF8
+					$db->setQuery('SET names ' . $db->quote($charset));
+					$db->execute();
+				}
+
+				//get the debug configuration setting
+				$db->setDebug(self::getConfig()->get('debug'));
+			}
+			$instances[$jname] = $db;
 		}
 		return $instances[$jname];
 	}
@@ -361,76 +392,18 @@ class Factory
 		}
 		//only create a new parameter instance if it has not been created before
 		if (!isset($instances[$jname]) || $reset) {
-			$instances[$jname] = static::createParams($jname);
+			$db = self::getDBO();
+
+			$query = $db->getQuery(true)
+				->select('params')
+				->from('#__jfusion')
+				->where('name = ' . $db->quote($jname));
+
+			$db->setQuery($query);
+			$params = $db->loadResult();
+			$instances[$jname] = new Registry($params);
 		}
 		return $instances[$jname];
-	}
-
-	/**
-	 * creates new param object
-	 *
-	 * @param string $jname name of the JFusion plugin used
-	 *
-	 * @throws RuntimeException
-	 * @return Registry JParam object for the JFusion plugin
-	 */
-	public static function createParams($jname)
-	{
-		//get the current parameters from the jfusion table
-		$db = self::getDBO();
-
-		$query = $db->getQuery(true)
-			->select('params')
-			->from('#__jfusion')
-			->where('name = ' . $db->quote($jname));
-
-		$db->setQuery($query);
-		$params = $db->loadResult();
-		return new Registry($params);
-	}
-	/**
-	 * Acquires a database connection to the database of the software integrated by JFusion
-	 *
-	 * @param string $jname name of the JFusion plugin used
-	 *
-	 * @return DatabaseDriver database object
-	 * @throws  RuntimeException
-	 */
-	public static function &createDatabase($jname)
-	{
-		//check to see if joomla DB is requested
-		/**
-		 * TODO: MUST BE CHANGED! as do not rely on joomla_int
-		 */
-		if ($jname == 'joomla_int') {
-			$db = self::getDBO();
-		} else {
-			//get config values
-			$params = static::getParams($jname);
-			//prepare the data for creating a database connection
-			$host = $params->get('database_host');
-			$user = $params->get('database_user');
-			$password = $params->get('database_password');
-			$database = $params->get('database_name');
-			$prefix = $params->get('database_prefix', '');
-			$driver = $params->get('database_type');
-			$charset = $params->get('database_charset', 'utf8');
-			//added extra code to prevent error when $driver is incorrect
-
-			$options = array('driver' => $driver, 'host' => $host, 'user' => $user, 'password' => $password, 'database' => $database, 'prefix' => $prefix);
-
-			$db = DatabaseFactory::getInstance()->getDriver($driver, $options);
-
-			if ($driver != 'sqlite') {
-				//add support for UTF8
-				$db->setQuery('SET names ' . $db->quote($charset));
-				$db->execute();
-			}
-
-			//get the debug configuration setting
-			$db->setDebug(self::getConfig()->get('debug'));
-		}
-		return $db;
 	}
 
 	/**

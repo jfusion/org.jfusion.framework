@@ -103,14 +103,6 @@ class FactoryTest extends FrameworkTestCase
 		$this->assertSame('sqlite', $params->get('database_type'));
 	}
 
-	public function test_createParams() {
-		$this->markTestSkipped();
-	}
-
-	public function test_createDatabase() {
-		$this->markTestSkipped();
-	}
-
 	public function test_getPlugins() {
 		$plugins = Factory::getPlugins();
 
