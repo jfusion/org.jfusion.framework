@@ -297,15 +297,17 @@ class Sync
 								if ($userinfo instanceof Userinfo) {
 									$userPlugin = Factory::getUser($userjname);
 									$userPlugin->resetDebugger();
-									$userPlugin->updateUser($userinfo, 1);
+									if ($userPlugin->validateUser($userinfo)) {
+										$userPlugin->updateUser($userinfo, 1);
 
-									$status = $userPlugin->debugger->get();
-									if (!empty($status[LogLevel::ERROR])) {
-										Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $userjname . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE'));
-									} else {
-										Framework::raise(LogLevel::INFO, Text::_('USER') . ' ' . $userinfo->username . ' ' . Text::_('UPDATE'), $userjname);
-										static::markResolved($id);
-										$userPlugin->updateLookup($useruserinfo, $userinfo);
+										$status = $userPlugin->debugger->get();
+										if (!empty($status[LogLevel::ERROR])) {
+											Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $userjname . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE'));
+										} else {
+											Framework::raise(LogLevel::INFO, Text::_('USER') . ' ' . $userinfo->username . ' ' . Text::_('UPDATE'), $userjname);
+											static::markResolved($id);
+											$userPlugin->updateLookup($useruserinfo, $userinfo);
+										}
 									}
 								}
 								break;
@@ -314,15 +316,17 @@ class Sync
 								if ($userinfo instanceof Userinfo) {
 									$userPlugin = Factory::getUser($conflictjname);
 									$userPlugin->resetDebugger();
-									$userPlugin->updateUser($userinfo, 1);
+									if ($userPlugin->validateUser($userinfo)) {
+										$userPlugin->updateUser($userinfo, 1);
 
-									$status = $userPlugin->debugger->get();
-									if (!empty($status[LogLevel::ERROR])) {
-										Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $conflictjname . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE'));
-									} else {
-										Framework::raise(LogLevel::INFO, Text::_('USER') . ' ' . $userinfo->username . ' ' . Text::_('UPDATE'), $conflictjname);
-										static::markResolved($id);
-										$userPlugin->updateLookup($userinfo, $useruserinfo);
+										$status = $userPlugin->debugger->get();
+										if (!empty($status[LogLevel::ERROR])) {
+											Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $conflictjname . ' ' . Text::_('USER') . ' ' . Text::_('UPDATE'));
+										} else {
+											Framework::raise(LogLevel::INFO, Text::_('USER') . ' ' . $userinfo->username . ' ' . Text::_('UPDATE'), $conflictjname);
+											static::markResolved($id);
+											$userPlugin->updateLookup($userinfo, $useruserinfo);
+										}
 									}
 								}
 								break;
@@ -457,26 +461,30 @@ class Sync
 											$userinfo = $SlaveUser->getUser($userlist[$j]);
 											if ($userinfo instanceof Userinfo) {
 												$MasterUser->resetDebugger();
-												$UpdateUserInfo = $MasterUser->updateUser($userinfo);
+												if ($MasterUser->validateUser($userinfo)) {
+													$UpdateUserInfo = $MasterUser->updateUser($userinfo);
 
-												$status = $MasterUser->debugger->get();
+													$status = $MasterUser->debugger->get();
 
-												if (!$UpdateUserInfo instanceof Userinfo) {
-													//make sure the userinfo is available
-													$UpdateUserInfo = $MasterUser->getUser($userinfo);
+													if (!$UpdateUserInfo instanceof Userinfo) {
+														//make sure the userinfo is available
+														$UpdateUserInfo = $MasterUser->getUser($userinfo);
+													}
 												}
 											}
 										} else {
 											$userinfo = $MasterUser->getUser($userlist[$j]);
 											if ($userinfo instanceof Userinfo) {
 												$SlaveUser->resetDebugger();
-												$UpdateUserInfo = $SlaveUser->updateUser($userinfo);
+												if ($MasterUser->validateUser($userinfo)) {
+													$UpdateUserInfo = $SlaveUser->updateUser($userinfo);
 
-												$status = $SlaveUser->debugger->get();
+													$status = $SlaveUser->debugger->get();
 
-												if (!$UpdateUserInfo instanceof Userinfo) {
-													//make sure the userinfo is available
-													$UpdateUserInfo = $SlaveUser->getUser($userinfo);
+													if (!$UpdateUserInfo instanceof Userinfo) {
+														//make sure the userinfo is available
+														$UpdateUserInfo = $SlaveUser->getUser($userinfo);
+													}
 												}
 											}
 										}

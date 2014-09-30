@@ -100,12 +100,14 @@ class UserTest extends PluginTest
 		$this->markTestSkipped();
 	}
 
-	public function test_filterUsername() {
+	public function validateUser() {
+		$this->markTestIncomplete();
+
 		$plugin = Factory::getUser('none_exsisting_plugin');
-		$this->assertSame('username', $plugin->filterUsername('username'));
+		$this->assertSame('username', $plugin->validateUser('username'));
 
 		$plugin = Factory::getUser('mockplugin');
-		$this->assertSame('username_lol', $plugin->filterUsername('username%lol'));
+		$this->assertSame('username_lol', $plugin->validateUser('username%lol'));
 	}
 
 	public function test_updateUser() {

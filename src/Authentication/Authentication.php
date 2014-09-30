@@ -146,126 +146,120 @@ class Authentication
 		$master = Framework::getMaster();
 		if (!empty($master)) {
 			$userinfo = new Userinfo(null);
-			$userinfo->username = $credentials['username'];
-
-			$JFusionMaster = Factory::getUser($master->name);
-			try {
-				$userinfo = $JFusionMaster->getUser($userinfo);
-			} catch (Exception $e) {
-				$userinfo = null;
+			if (isset($credentials['username'])) {
+				$userinfo->username = $credentials['username'];
 			}
-			//check if a user was found
-			if ($userinfo instanceof Userinfo) {
-				/**
-				 * check to see if the login checker wanted a skip password
-				 * TODO: DO WE still need to allow this ?
-				 * $debug = \JFusionFunction::isAdministrator();
-				 */
-				$debug = false;
-				if (!empty($options['skip_password_check']) && $debug === true) {
-					$debugger->addDebug(Text::_('SKIPPED') . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK'));
-					$response->status = Authentication::STATUS_SUCCESS;
-					$response->error_message = '';
-					$response->userinfo = $userinfo;
-				} else {
-					// Joomla does not like blank passwords
-					if (empty($credentials['password'])) {
-						$response->status = Authentication::STATUS_FAILURE;
-						$response->error_message = Text::_('EMPTY_PASSWORD_NO_ALLOWED');
+			if (isset($credentials['email'])) {
+				$userinfo->email = $credentials['email'];
+			}
+
+			if (isset($options['skip_password_check']) && $options['skip_password_check'] === true) {
+				$debugger->addDebug(Text::_('SKIPPED') . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK'));
+				$response->status = Authentication::STATUS_SUCCESS;
+				$response->error_message = '';
+				$response->userinfo = $userinfo;
+			} elseif (empty($credentials['password'])) {
+				$response->status = Authentication::STATUS_FAILURE;
+				$response->error_message = Text::_('EMPTY_PASSWORD_NO_ALLOWED');
+			} else {
+				$JFusionMaster = Factory::getUser($master->name);
+				try {
+					$userinfo = $JFusionMaster->getUser($userinfo);
+				} catch (Exception $e) {
+					$userinfo = null;
+				}
+				//check if a user was found
+				if ($userinfo instanceof Userinfo) {
+					//apply the clear text password to the user object
+					$userinfo->password_clear = $credentials['password'];
+					//check the master plugin for a valid password
+					$model = Factory::getAuth($master->name);
+
+					try {
+						$check = $model->checkPassword($userinfo);
+					} catch (Exception $e) {
+						Framework::raise(LogLevel::ERROR, $e, $model->getJname());
+						$check = false;
+					}
+					if ($check) {
+						//found a match
+						$debugger->addDebug($master->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' . Text::_('SUCCESS'));
+						$response->status = Authentication::STATUS_SUCCESS;
+						$response->error_message = '';
+						$response->userinfo = $userinfo;
 					} else {
-						//store this to be stored jfusion_user table by the joomla_int createUser function
-						$userinfo->username = $credentials['username'];
-						//apply the clear text password to the user object
-						$userinfo->password_clear = $credentials['password'];
-						//check the master plugin for a valid password
-						$model = Factory::getAuth($master->name);
-
-						try {
-							$check = $model->checkPassword($userinfo);
-						} catch (Exception $e) {
-							Framework::raise(LogLevel::ERROR, $e, $model->getJname());
-							$check = false;
-						}
-						if ($check) {
-							//found a match
-							$debugger->addDebug($master->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' . Text::_('SUCCESS'));
-							$response->status = Authentication::STATUS_SUCCESS;
-							$response->error_message = '';
-							$response->userinfo = $userinfo;
+						$testcrypt = $model->generateEncryptedPassword($userinfo);
+						if (isset($options['show_unsensored'])) {
+							$debugger->addDebug($master->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' . $testcrypt . ' vs ' . $userinfo->password);
 						} else {
-							$testcrypt = $model->generateEncryptedPassword($userinfo);
-							if (isset($options['show_unsensored'])) {
-								$debugger->addDebug($master->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' . $testcrypt . ' vs ' . $userinfo->password);
-							} else {
-								$debugger->addDebug($master->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' .  substr($testcrypt, 0, 6) . '******** vs ' . substr($userinfo->password, 0, 6) . '********');
-							}
+							$debugger->addDebug($master->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' .  substr($testcrypt, 0, 6) . '******** vs ' . substr($userinfo->password, 0, 6) . '********');
+						}
 
-							//otherwise check the other authentication models
-							$query = $db->getQuery(true)
-								->select('name')
-								->from('#__jfusion')
-								->where('master = 0')
-								->where('check_encryption = 1');
+						//otherwise check the other authentication models
+						$query = $db->getQuery(true)
+							->select('name')
+							->from('#__jfusion')
+							->where('master = 0')
+							->where('check_encryption = 1');
 
-							$db->setQuery($query);
-							$auth_models = $db->loadObjectList();
-							//loop through the different models
-							foreach ($auth_models as $auth_model) {
-								try {
-									//Generate an encrypted password for comparison
-									$model = Factory::getAuth($auth_model->name);
-									$JFusionSlave = Factory::getUser($auth_model->name);
-									$slaveuserinfo = $JFusionSlave->getUser($userinfo);
-									// add in the clear password to be able to generate the hash
-									if ($slaveuserinfo instanceof Userinfo) {
-										$slaveuserinfo->password_clear = $userinfo->password_clear;
-										$testcrypt = $model->generateEncryptedPassword($slaveuserinfo);
-										$check = $model->checkPassword($slaveuserinfo);
-									} else {
-										$testcrypt = $model->generateEncryptedPassword($userinfo);
-										$check = $model->checkPassword($userinfo);
-									}
-
-									if ($check) {
-										//found a match
-										$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' . Text::_('SUCCESS'));
-										$response->status = Authentication::STATUS_SUCCESS;
-										$response->error_message = '';
-										$response->userinfo = $userinfo;
-										//update the password format to what the master expects
-										$JFusionMaster = Factory::getUser($master->name);
-										//make sure that the password_clear is not already hashed which may be the case for some dual login plugins
-
-										$JFusionMaster->resetDebugger();
-
-										$JFusionMaster->doUpdatePassword($userinfo, $userinfo);
-
-										$status = $JFusionMaster->debugger->get();
-										if (!empty($status[LogLevel::ERROR])) {
-											foreach($status[LogLevel::ERROR] as $error) {
-												$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('UPDATE') . ' ' . Text::_('ERROR') . ': ' . $error);
-											}
-											Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $master->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('UPDATE'));
-										} else {
-											$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('UPDATE') . ' ' . Text::_('SUCCESS'));
-										}
-									} else {
-										if (isset($options['show_unsensored'])) {
-											$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' .  $testcrypt . ' vs ' . $userinfo->password);
-										} else {
-											$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' .  substr($testcrypt, 0, 6) . '******** vs ' . substr($userinfo->password, 0, 6) . '********');
-										}
-									}
-								} catch (Exception $e) {
-									Framework::raise(LogLevel::ERROR, $e);
+						$db->setQuery($query);
+						$auth_models = $db->loadObjectList();
+						//loop through the different models
+						foreach ($auth_models as $auth_model) {
+							try {
+								//Generate an encrypted password for comparison
+								$model = Factory::getAuth($auth_model->name);
+								$JFusionSlave = Factory::getUser($auth_model->name);
+								$slaveuserinfo = $JFusionSlave->getUser($userinfo);
+								// add in the clear password to be able to generate the hash
+								if ($slaveuserinfo instanceof Userinfo) {
+									$slaveuserinfo->password_clear = $userinfo->password_clear;
+									$testcrypt = $model->generateEncryptedPassword($slaveuserinfo);
+									$check = $model->checkPassword($slaveuserinfo);
+								} else {
+									$testcrypt = $model->generateEncryptedPassword($userinfo);
+									$check = $model->checkPassword($userinfo);
 								}
+
+								if ($check) {
+									//found a match
+									$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' . Text::_('SUCCESS'));
+									$response->status = Authentication::STATUS_SUCCESS;
+									$response->error_message = '';
+									$response->userinfo = $userinfo;
+									//update the password format to what the master expects
+									$JFusionMaster = Factory::getUser($master->name);
+									//make sure that the password_clear is not already hashed which may be the case for some dual login plugins
+
+									$JFusionMaster->resetDebugger();
+
+									$JFusionMaster->doUpdatePassword($userinfo, $userinfo);
+
+									$status = $JFusionMaster->debugger->get();
+									if (!empty($status[LogLevel::ERROR])) {
+										foreach($status[LogLevel::ERROR] as $error) {
+											$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('UPDATE') . ' ' . Text::_('ERROR') . ': ' . $error);
+										}
+										Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $master->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('UPDATE'));
+									} else {
+										$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('UPDATE') . ' ' . Text::_('SUCCESS'));
+									}
+								} else {
+									if (isset($options['show_unsensored'])) {
+										$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' .  $testcrypt . ' vs ' . $userinfo->password);
+									} else {
+										$debugger->addDebug($auth_model->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' .  substr($testcrypt, 0, 6) . '******** vs ' . substr($userinfo->password, 0, 6) . '********');
+									}
+								}
+							} catch (Exception $e) {
+								Framework::raise(LogLevel::ERROR, $e);
 							}
 						}
 					}
+				} else {
+					$response->error_message = Text::_('USER_NOT_EXIST');
+					$debugger->addDebug(Text::_('USER_NOT_EXIST'));
 				}
-			} else {
-				$response->error_message = Text::_('USER_NOT_EXIST');
-				$debugger->addDebug(Text::_('USER_NOT_EXIST'));
 			}
 		} else {
 			$response->status = Authentication::STATUS_UNKNOWN;

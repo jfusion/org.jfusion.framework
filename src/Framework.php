@@ -14,6 +14,7 @@
 
 use JFusion\Application\Application;
 
+use JFusion\User\Userinfo;
 use Joomla\Language\Text;
 
 use Symfony\Component\Yaml\Exception\RuntimeException;
@@ -462,6 +463,24 @@ class Framework
 			}
 		}
 		return $lib;
+	}
+
+	/**
+	 * @param Userinfo $userinfo
+	 *
+	 * @return bool
+	 */
+	public static function validateUser($userinfo)
+	{
+		$plugins = Factory::getPlugins();
+
+		foreach($plugins as $plugin) {
+			$user = Factory::getUser($plugin->name);
+			if (!$user->validateUser($userinfo)) {
+				throw new \RuntimeException('unknown validation: ' . $plugin->name);
+			}
+		}
+		return true;
 	}
 
 	/**

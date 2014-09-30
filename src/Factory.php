@@ -12,6 +12,7 @@
  * @link      http://www.jfusion.org
  */
 
+use Exception;
 use JFusion\Authentication\Cookies;
 use JFusion\Application\Application;
 use JFusion\Plugin\Plugin;
@@ -23,6 +24,7 @@ use JFusion\Plugin\Platform;
 
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseFactory;
+use Joomla\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\Language\Language;
 use Joomla\Date\Date;
@@ -551,6 +553,35 @@ class Factory
 	}
 
 	/**
+	 * @param bool $overwrite
+	 */
+	public static function loadSettings($overwrite = true)
+	{
+		if (!self::$config instanceof Registry) {
+			throw new RuntimeException('NO_CONFIG');
+		} else {
+			try {
+				$db = self::getDbo();
+
+				$query = $db->getQuery(true)
+					->select('*')
+					->from('#__jfusion_settings');
+
+				$db->setQuery($query);
+				$settings = $db->loadObjectList();
+
+				foreach ($settings as $setting) {
+					if (!self::$config->exists($setting->key) || $overwrite) {
+						$value = json_decode($setting->value);
+						self::$config->set($setting->key, $value);
+					}
+				}
+			} catch (Exception $e) {
+			}
+		}
+	}
+
+	/**
 	 * Get a language object.
 	 *
 	 * Returns the global {@link JLanguage} object, only creating it if it doesn't already exist.
@@ -568,6 +599,8 @@ class Factory
 			$locale = $conf->get('language.language');
 			$debug = $conf->get('language.debug');
 			self::$language = Language::getInstance($locale, $debug);
+
+			Text::setLanguage(self::$language);
 		}
 		return self::$language;
 	}

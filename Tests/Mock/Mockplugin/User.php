@@ -104,11 +104,16 @@ class User extends \JFusion\Plugin\User
 	}
 
 	/**
-	 * @param string $username
-	 * @return string
+	 * used to validate if a user can be created or not
+	 * should throw exception if user can't be created with info about the error.
+	 *
+	 * @param $userinfo
+	 *
+	 * @return boolean
 	 */
-	function filterUsername($username) {
-		return str_replace('%', '_', $username);
+	function validateUser(Userinfo $userinfo)
+	{
+		return true;
 	}
 
 	/**

@@ -187,6 +187,19 @@ class User extends Plugin
         return $username;
     }
 
+	/**
+	 * used to validate if a user can be created or not
+	 * should throw exception if user can't be created with info about the error.
+	 *
+	 * @param $userinfo
+	 *
+	 * @return boolean
+	 */
+	function validateUser(Userinfo $userinfo)
+	{
+		return true;
+	}
+
     /**
      * Updates or creates a user for the integrated software. This allows JFusion to have external software as slave for user management
      * $result['error'] (contains any error messages)
