@@ -109,11 +109,11 @@ class FactoryTest extends FrameworkTestCase
 		$this->assertSame('mockplugin', $plugins[0]->name);
 		$this->assertSame('mockplugin_1', $plugins[1]->name);
 
-		$plugins = Factory::getPlugins('master');
-		$this->assertSame('mockplugin', $plugins[0]->name);
+		$master = Factory::getPlugins('master');
+		$this->assertSame('mockplugin', $master->name);
 
-		$plugins = Factory::getPlugins('slave');
-		$this->assertSame('mockplugin_1', $plugins[0]->name);
+		$slaves = Factory::getPlugins('slave');
+		$this->assertSame('mockplugin_1', $slaves[1]->name);
 
 		$plugins = Factory::getPlugins('both', 'mockplugin');
 		$this->assertSame('mockplugin_1', $plugins[0]->name);

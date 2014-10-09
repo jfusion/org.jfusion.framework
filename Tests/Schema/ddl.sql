@@ -11,12 +11,11 @@ CREATE TABLE `jos_jfusion` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT,
   `name` TEXT DEFAULT '',
   `params` TEXT DEFAULT '',
-  `master` INTEGER DEFAULT '0',
-  `slave` INTEGER DEFAULT '0',
   `status` INTEGER DEFAULT '0',
   `dual_login` INTEGER DEFAULT '0',
   `check_encryption` INTEGER DEFAULT '0',
-  `original_name` TEXT
+  `original_name` TEXT,
+  `ordering` INTEGER DEFAULT '0'
 );
 
 CREATE TABLE `jos_jfusion_users_plugin` (
@@ -48,6 +47,10 @@ CREATE TABLE `jos_jfusion_sync` (
   `time_end` INTEGER NULL
 );
 
+CREATE TABLE `jos_jfusion_settings` (
+  `key` TEXT NOT NULL,
+  `value` TEXT NOT NULL
+);
 /*
 mockplugin
 

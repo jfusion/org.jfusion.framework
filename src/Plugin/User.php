@@ -16,6 +16,7 @@ use JFusion\Application\Application;
 use JFusion\Curl\Curl;
 use JFusion\Factory;
 use JFusion\Framework;
+use JFusion\User\Groups;
 use JFusion\User\Userinfo;
 
 use Joomla\Language\Text;
@@ -716,7 +717,7 @@ class User extends Plugin
 
 		$master = Framework::getMaster();
 		if ($master) {
-			$mastergroups = Framework::getUserGroups($master->name);
+			$mastergroups = Groups::get($master->name);
 
 			foreach ($mastergroups as $key => $mastergroup) {
 				if ($mastergroup) {
@@ -1061,9 +1062,9 @@ class User extends Plugin
 
 		$master = Framework::getMaster();
 		if ($master->name == $jname) {
-			$group = Framework::getUserGroups($master->name, true);
+			$group = Groups::get($master->name, true);
 		} else {
-			$slavegroups = Framework::getUserGroups($jname);
+			$slavegroups = Groups::get($jname);
 
 			$user = Factory::getUser($master->name);
 			$index = $user->getUserGroupIndex($userinfo);
@@ -1076,8 +1077,6 @@ class User extends Plugin
 				$group =  $slavegroups[0];
 			}
 		}
-
-
 
 		if (!is_array($group)) {
 			if ($group !==  null) {

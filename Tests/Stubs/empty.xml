@@ -4,44 +4,40 @@
         <column>id</column>
         <column>name</column>
         <column>params</column>
-        <column>master</column>
-        <column>slave</column>
         <column>status</column>
         <column>dual_login</column>
         <column>check_encryption</column>
         <column>original_name</column>
+        <column>ordering</column>
         <row>
             <value>1</value>
             <value>mockplugin</value>
             <value>{"source_url":"http://localhost/path/to/mockplugin","database_type":"sqlite","database_host":":memory:","database_prefix":"mockplugin_"}</value>
-            <value>1</value>
-            <value>0</value>
-            <value>1</value>
+            <value>2</value>
             <value>0</value>
             <value>0</value>
             <null />
+            <value>0</value>
         </row>
         <row>
             <value>2</value>
             <value>test</value>
             <value>{"database_type":"sqlite","database_host":":memory:","database_prefix":"mockplugin_"}</value>
             <value>0</value>
-            <value>1</value>
-            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>mockplugin</value>
+            <value>1</value>
         </row>
         <row>
             <value>3</value>
             <value>mockplugin_1</value>
             <value>{"database_type":"sqlite","database_host":":memory:","database_prefix":"mockplugin_1"}</value>
-            <value>0</value>
-            <value>1</value>
-            <value>1</value>
+            <value>2</value>
             <value>0</value>
             <value>0</value>
             <value>mockplugin</value>
+            <value>2</value>
         </row>
     </table>
 
@@ -100,6 +96,19 @@
             <value>{"syncid":"asdf125","action":"foobaa","data":"Hello"}</value>
             <value>0</value>
             <value>0</value>
+        </row>
+    </table>
+
+    <table name="jos_jfusion_settings">
+        <column>key</column>
+        <column>value</column>
+        <row>
+            <value>user.groups</value>
+            <value>{"mockplugin":[[1],[1,2],[3]],"mockplugin_1":[[1],[2,5],[3]]}</value>
+        </row>
+        <row>
+            <value>user.groups.update</value>
+            <value>{"mockplugin":true,"mockplugin_master":true}</value>
         </row>
     </table>
 

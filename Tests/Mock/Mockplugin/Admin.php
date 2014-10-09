@@ -11,6 +11,7 @@
 use JFusion\Factory;
 use JFusion\Framework;
 
+use JFusion\User\Groups;
 use stdClass;
 
 /**
@@ -114,7 +115,7 @@ class Admin extends \JFusion\Plugin\Admin
 	 */
 	function getDefaultUsergroup()
 	{
-		$usergroup = Framework::getUserGroups($this->getJname(), true);
+		$usergroup = Groups::get($this->getJname(), true);
 
 		$group = array();
 		if ($usergroup !== null) {

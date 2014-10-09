@@ -68,8 +68,6 @@ class Framework
 				        id int(11) NOT null auto_increment,
 				        name varchar(50) NOT null,
 				        params text,
-				        master tinyint(4) NOT null,
-				        slave tinyint(4) NOT null,
 				        status tinyint(4) NOT null,
 				        dual_login tinyint(4) NOT null,
 				        check_encryption tinyint(4) NOT null,
@@ -82,7 +80,8 @@ class Framework
 
 		$query = 'CREATE TABLE IF NOT EXISTS `#__jfusion_settings` (
 						`key` varchar(255) NOT NULL,
-						`value` text NOT NULL
+						`value` text NOT NULL,
+						PRIMARY KEY (`key`)
 					) DEFAULT CHARSET=utf8;';
 		$db->setQuery($query);
 		$db->execute();
@@ -241,15 +240,27 @@ class Framework
 			}
 		}
 
+		/**
+		 * 3.0
+		 */
+		//remove the plugin_files if it exists
+		if (in_array('master', $columns)) {
+			//remove master
+			$query = 'ALTER TABLE #__jfusion DROP column master';
+			$db->setQuery($query);
+			$db->execute();
+			//remove master
+			$query = 'ALTER TABLE #__jfusion DROP column slave';
+			$db->setQuery($query);
+			$db->execute();
+		}
+
 		//cleanup unused plugins
 		$query = $db->getQuery(true)
 			->select('name')
 			->from('#__jfusion')
 			->where('(params IS NULL OR params = ' . $db->quote('') . ' OR params = ' . $db->quote('0') . ')')
-			->where('status = 0')
-			->where('master = 0')
-			->where('slave = 0')
-			->where('name NOT LIKE ' . $db->quote('joomla_int'));
+			->where('status = 0');
 
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();

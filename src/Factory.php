@@ -32,6 +32,7 @@ use Joomla\Event\Dispatcher;
 
 use \RuntimeException;
 use \DateTimeZone;
+use stdClass;
 
 /**
  * Custom parameter class that can save array values
@@ -415,7 +416,7 @@ class Factory
 	 * @param string|boolean $exclude should we exclude joomla_int
 	 * @param boolean $active only active plugins
 	 *
-	 * @return array plugin details
+	 * @return array|stdClass plugin details
 	 */
 	public static function getPlugins($criteria = 'both', $exclude = false, $active = true)
 	{
@@ -426,31 +427,37 @@ class Factory
 		$db = self::getDBO();
 
 		$query = $db->getQuery(true)
-			->select('id, name, status, dual_login')
+			->select('*')
 			->from('#__jfusion');
 
-		switch ($criteria) {
-			case 'slave':
-				$query->where('slave = 1');
-				break;
-			case 'master':
-				$query->where('master = 1 AND status = 1');
-				break;
-			case 'both':
-				$query->where('(slave = 1 OR master = 1)');
-				break;
-		}
 		$key = $criteria . '_' . $exclude . '_' . $active;
 		if (!isset($instances[$key])) {
-			if ($exclude) {
+			if ($exclude !== false) {
 				$query->where('name NOT LIKE ' . $db->quote($exclude));
 			}
 			if ($active) {
-				$query->where('status = 1');
+				$query->where('status = 2');
+			} else {
+				$query->where('status >= 1');
 			}
+			$query->order('ordering');
 
 			$db->setQuery($query);
-			$instances[$key] = $db->loadObjectList();
+			$list = $db->loadObjectList();
+
+			switch ($criteria) {
+				case 'slave':
+					if (isset($list[0])) {
+						unset($list[0]);
+					}
+					break;
+				case 'master':
+					if (isset($list[0])) {
+						$list = $list[0];
+					}
+					break;
+			}
+			$instances[$key] = $list;
 		}
 		return $instances[$key];
 	}

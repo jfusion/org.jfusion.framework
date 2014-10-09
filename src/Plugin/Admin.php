@@ -250,9 +250,15 @@ class Admin extends Plugin
 	    $db->setQuery($query);
 	    $plugin = $db->loadObject();
 	    //output a warning to the administrator if the allowRegistration setting is wrong
+	    /**
+	     * TODO: slave is removed
+	     */
 	    if ($new_registration && $plugin->slave == 1) {
 		    Framework::raise(LogLevel::NOTICE, Text::_('DISABLE_REGISTRATION'), $jname);
 	    }
+	    /**
+	     * TODO: master is removed
+	     */
 	    if (!$new_registration && $plugin->master == 1) {
 		    Framework::raise(LogLevel::NOTICE, Text::_('ENABLE_REGISTRATION'), $jname);
 	    }

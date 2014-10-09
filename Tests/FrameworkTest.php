@@ -24,7 +24,7 @@ class FrameworkTest extends FrameworkTestCase
 	{
 		$slaves = Framework::getSlaves();
 
-		$this->assertSame('mockplugin_1', $slaves[0]->name);
+		$this->assertSame('mockplugin_1', $slaves[1]->name);
 
 		$this->assertCount(1, $slaves);
 	}

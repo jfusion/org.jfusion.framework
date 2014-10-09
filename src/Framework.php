@@ -42,20 +42,11 @@ class Framework
 	 */
 	public static function getMaster()
 	{
-		static $jfusion_master;
-		if (!isset($jfusion_master)) {
-			$db = Factory::getDBO();
-
-			$query = $db->getQuery(true)
-				->select('*')
-				->from('#__jfusion')
-				->where('master = 1')
-				->where('status = 1');
-
-			$db->setQuery($query);
-			$jfusion_master = $db->loadObject();
+		static $master;
+		if (!isset($master)) {
+			$master = Factory::getPlugins('master');
 		}
-		return $jfusion_master;
+		return $master;
 	}
 
 	/**
@@ -65,20 +56,11 @@ class Framework
 	 */
 	public static function getSlaves()
 	{
-		static $jfusion_slaves;
-		if (!isset($jfusion_slaves)) {
-			$db = Factory::getDBO();
-
-			$query = $db->getQuery(true)
-				->select('*')
-				->from('#__jfusion')
-				->where('slave = 1')
-				->where('status = 1');
-
-			$db->setQuery($query);
-			$jfusion_slaves = $db->loadObjectList();
+		static $slaves;
+		if (!isset($slaves)) {
+			$slaves = Factory::getPlugins('slave');
 		}
-		return $jfusion_slaves;
+		return $slaves;
 	}
 
     /**
@@ -352,67 +334,23 @@ class Framework
 		return md5(Factory::getConfig()->get('secret') . $seed);
 	}
 
-
-
 	/**
-	 * @param string $jname
-	 * @param bool   $default
-	 *
-	 * @return mixed;
+	 * @param array $order
 	 */
-	public static function getUserGroups($jname = '', $default = false) {
-		$params = Factory::getConfig();
-		$usergroups = $params->get('usergroups', false);
+	public static function orderPlugins(array $order)
+	{
+		$db = Factory::getDbo();
+		foreach($order as $index => $id) {
+			if($id != '') {
+				$query = $db->getQuery(true)
+					->update('#__jfusion')
+					->set('ordering = ' . (int) $index)
+					->where('name = ' . $db->quote($id));
 
-		if ($jname) {
-			if (isset($usergroups->{$jname})) {
-				$usergroups = $usergroups->{$jname};
-
-				if ($default) {
-					if (isset($usergroups[0])) {
-						$usergroups = $usergroups[0];
-					} else {
-						$usergroups = null;
-					}
-				}
-			} else {
-				if ($default) {
-					$usergroups = null;
-				} else {
-					$usergroups = array();
-				}
-			}
-
-		}
-		return $usergroups;
-	}
-
-	/**
-	 * @return stdClass
-	 */
-	public static function getUpdateUserGroups() {
-		$params = Factory::getConfig();
-		$usergroupmodes = $params->get('updateusergroups', new stdClass());
-		return $usergroupmodes;
-	}
-
-	/**
-	 * returns true / false if the plugin is in advanced usergroup mode or not...
-	 *
-	 * @param string $jname plugin name
-	 *
-	 * @return boolean
-	 */
-	public static function updateUsergroups($jname) {
-		$updateusergroups = static::getUpdateUserGroups();
-		$advanced = false;
-		if (isset($updateusergroups->{$jname}) && $updateusergroups->{$jname}) {
-			$master = Framework::getMaster();
-			if ($master->name != $jname) {
-				$advanced = true;
+				$db->setQuery($query);
+				$db->execute();
 			}
 		}
-		return $advanced;
 	}
 
 	/**

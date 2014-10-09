@@ -98,7 +98,7 @@ class AdminTest extends PluginTest
 			->where('name = ' . $db->quote('mockplugin'));
 		$db->setQuery($query);
 
-		$this->assertSame('1', $db->loadResult());
+		$this->assertSame('2', $db->loadResult());
 
 		$plugin->updateStatus(0);
 

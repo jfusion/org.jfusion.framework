@@ -180,6 +180,7 @@ class User extends \JFusion\Plugin\User
 	public function updateUsergroup(Userinfo $userinfo, Userinfo &$existinguser)
 	{
 		$usergroups = $this->getCorrectUserGroups($userinfo);
+
 		if (empty($usergroups)) {
 			throw new RuntimeException(Text::_('ADVANCED_GROUPMODE_MASTERGROUP_NOTEXIST'));
 		} else {

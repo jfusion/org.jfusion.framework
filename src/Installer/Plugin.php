@@ -175,7 +175,6 @@ class Plugin
 				            $plugin_entry->id = null;
 				            $plugin_entry->name = $name;
 				            $plugin_entry->dual_login = 0;
-				            $plugin_entry->slave = 0;
 				            //now append the new plugin data
 				            try {
 					            $db->insertObject('#__jfusion', $plugin_entry, 'id');
@@ -376,8 +375,6 @@ class Plugin
 				    $plugin_entry = $db->loadObject();
 				    $plugin_entry->name = $new_jname;
 				    $plugin_entry->id = null;
-				    $plugin_entry->master = ($plugin_entry->master == 3) ? 3 : 0;
-				    $plugin_entry->slave = ($plugin_entry->slave == 3) ? 3 : 0;
 				    //only change the original name if this is not a copy itself
 				    if (empty($plugin_entry->original_name)) {
 					    $plugin_entry->original_name = $jname;

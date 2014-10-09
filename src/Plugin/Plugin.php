@@ -197,7 +197,7 @@ class Plugin
 
 				$db->setQuery($query);
 				$result = $db->loadResult();
-				if ($result == '1') {
+				if ($result >= 1) {
 					$result = true;
 				} else {
 					$result = false;

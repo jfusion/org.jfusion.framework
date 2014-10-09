@@ -55,12 +55,15 @@ abstract class FrameworkTestCase extends \PHPUnit_Extensions_Database_TestCase
 		$usergroups = new \stdClass();
 		$usergroups->mockplugin = array(array(1), array(1, 2), array(3));
 		$usergroups->mockplugin_1 = array(array(1), array(2,5), array(3));
-		$conf->set('usergroups', $usergroups);
+
+//		echo json_encode($usergroups); die();
+//		$conf->set('usergroups', $usergroups);
 
 		$updateusergroups = new \stdClass();
 		$updateusergroups->mockplugin = true;
 		$updateusergroups->mockplugin_master = true;
-		$conf->set('updateusergroups', $updateusergroups);
+//		$conf->set('updateusergroups', $updateusergroups);
+//		echo json_encode($updateusergroups); die();
 
 		Factory::$config = $conf;
 
