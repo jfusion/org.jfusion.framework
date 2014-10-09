@@ -97,14 +97,6 @@ class FrameworkTest extends FrameworkTestCase
 		$this->assertSame('ea2d966cf3f13addb32c1accfcaccd12', $hash);
 	}
 
-	public function test_getUpdateUserGroups() {
-		$this->markTestIncomplete();
-	}
-
-	public function test_updateUsergroups() {
-		$this->markTestIncomplete();
-	}
-
 	public function test_getNodeID() {
 		$node = Framework::getNodeID();
 		$this->assertSame('localhost/path/to/framework', $node);

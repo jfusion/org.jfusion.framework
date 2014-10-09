@@ -292,7 +292,7 @@ class Framework
 		$results = array();
 
 		//see if any mods from jfusion plugins need to be removed
-		$plugins = Factory::getPlugins('all', true, false);
+		$plugins = Factory::getPlugins('all', true, 0);
 		foreach($plugins as $plugin) {
 			$model = new Plugin();
 			$result = $model->uninstall($plugin->name);

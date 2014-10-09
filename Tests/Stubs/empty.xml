@@ -108,7 +108,7 @@
         </row>
         <row>
             <value>user.groups.update</value>
-            <value>{"mockplugin":true,"mockplugin_master":true}</value>
+            <value>{"mockplugin":true,"mockplugin_1":true}</value>
         </row>
     </table>
 

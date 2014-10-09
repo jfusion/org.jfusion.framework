@@ -414,11 +414,11 @@ class Factory
 	 *
 	 * @param string $criteria the type of plugins to retrieve Use: master | slave | both
 	 * @param string|boolean $exclude should we exclude joomla_int
-	 * @param boolean $active only active plugins
+	 * @param int $status only plugins with status equal or higher.
 	 *
 	 * @return array|stdClass plugin details
 	 */
-	public static function getPlugins($criteria = 'both', $exclude = false, $active = true)
+	public static function getPlugins($criteria = 'both', $exclude = false, $status = 2)
 	{
 		static $instances;
 		if (!isset($instances)) {
@@ -430,16 +430,12 @@ class Factory
 			->select('*')
 			->from('#__jfusion');
 
-		$key = $criteria . '_' . $exclude . '_' . $active;
+		$key = $criteria . '_' . $exclude . '_' . $status;
 		if (!isset($instances[$key])) {
 			if ($exclude !== false) {
 				$query->where('name NOT LIKE ' . $db->quote($exclude));
 			}
-			if ($active) {
-				$query->where('status = 2');
-			} else {
-				$query->where('status >= 1');
-			}
+			$query->where('status >= ' . (int)$status);
 			$query->order('ordering');
 
 			$db->setQuery($query);
@@ -481,7 +477,7 @@ class Factory
 	public static function getPluginNameFromNodeId($jnode_id) {
 		$result = '';
 		//$jid = $jnode_id;
-		$plugins = static::getPlugins('both', true);
+		$plugins = static::getPlugins('both', false);
 		foreach($plugins as $plugin) {
 			$id = rtrim(static::getPluginNodeId($plugin->name), '/');
 			if (strcasecmp($jnode_id, $id) == 0) {

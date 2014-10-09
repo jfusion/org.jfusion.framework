@@ -28,34 +28,9 @@ use stdClass;
  */
 class Groups
 {
-	/**
-	 * @var    User  The application instance.
-	 * @since  11.3
-	 */
-	protected static $instance;
+	static $groups;
 
-	/**
-	 *
-	 */
-	function __construct()
-	{
-	}
-
-	/**
-	 * Returns a reference to the global JApplicationCms object, only creating it if it doesn't already exist.
-	 *
-	 * This method must be invoked as: $web = JApplicationCms::getInstance();
-	 *
-	 * @return  User
-	 */
-	public static function getInstance()
-	{
-		if (!static::$instance)
-		{
-			static::$instance = new Groups();
-		}
-		return static::$instance;
-	}
+	static $update;
 
 	/**
 	 * @param string $jname
@@ -64,8 +39,7 @@ class Groups
 	 * @return mixed;
 	 */
 	public static function get($jname = '', $default = false) {
-		static $usergroups;
-		if (!isset($usergroups)) {
+		if (!isset($groups)) {
 			$db = Factory::getDbo();
 			$query = $db->getQuery(true)
 				->select('value')
@@ -74,47 +48,46 @@ class Groups
 
 			$db->setQuery($query);
 
-			$usergroups = $db->loadResult();
+			$groups = $db->loadResult();
 
-			if ($usergroups) {
-				$usergroups = new Registry($usergroups);
+			if ($groups) {
+				$groups = new Registry($groups);
 
-				$usergroups = $usergroups->toObject();
+				$groups = $groups->toObject();
 			} else {
-				$usergroups = false;
+				$groups = false;
 			}
 		}
 
 		if ($jname) {
-			if (isset($usergroups->{$jname})) {
-				$groups = $usergroups->{$jname};
+			if (isset($groups->{$jname})) {
+				$usergroups = $groups->{$jname};
 				if ($default) {
-					if (isset($groups[0])) {
-						$groups = $groups[0];
+					if (isset($usergroups[0])) {
+						$usergroups = $usergroups[0];
 					} else {
-						$groups = null;
+						$usergroups = null;
 					}
 				}
 			} else {
 				if ($default) {
-					$groups = null;
+					$usergroups = null;
 				} else {
-					$groups = array();
+					$usergroups = array();
 				}
 			}
 		} else {
-			$groups = $usergroups;
+			$usergroups = $groups;
 		}
 
-		return $groups;
+		return $usergroups;
 	}
 
 	/**
 	 * @return stdClass
 	 */
 	public static function getUpdate() {
-		static $updateusergroups;
-		if (!isset($updateusergroups)) {
+		if (!isset($update)) {
 			$db = Factory::getDbo();
 			$query = $db->getQuery(true)
 				->select('value')
@@ -123,18 +96,17 @@ class Groups
 
 			$db->setQuery($query);
 
-			$updateusergroups = $db->loadResult();
+			$update = $db->loadResult();
 
-			if ($updateusergroups) {
-				$updateusergroups = new Registry($updateusergroups);
+			if ($update) {
+				$update = new Registry($update);
 
-				$updateusergroups = $updateusergroups->toObject();
+				$update = $update->toObject();
 			} else {
-				$updateusergroups = new stdClass();
+				$update = new stdClass();
 			}
 		}
-
-		return $updateusergroups;
+		return $update;
 	}
 
 	/**
