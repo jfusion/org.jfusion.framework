@@ -16,6 +16,7 @@ use JFusion\Api\Api;
 use JFusion\Factory;
 use JFusion\Framework;
 
+use JFusion\User\Groups;
 use Joomla\Registry\Registry;
 use Joomla\Language\Text;
 
@@ -87,7 +88,7 @@ class Admin extends Plugin
      */
     function getDefaultUsergroup()
     {
-        $usergroups = Framework::getUserGroups($this->getJname(), true);
+        $usergroups = Groups::get($this->getJname(), true);
 
         $groups = array();
         if ($usergroups !== null) {

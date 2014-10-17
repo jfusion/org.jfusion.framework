@@ -28,11 +28,23 @@ class Framework
 		//see if we need to create SQL tables
 		$db = Factory::getDBO();
 
-		$query = 'CREATE TABLE IF NOT EXISTS #__jfusion_users (
-						id int(11) NOT null,
-						username varchar(50),
-						PRIMARY KEY (id)
-					) DEFAULT CHARACTER SET utf8;';
+		/**
+		 * TODO: NEEDS TO BE CHANGED!
+		 */
+		$query = 'CREATE TABLE IF NOT EXISTS `#__jfusion_users` (
+						`autoid` int(11) NOT NULL,
+						`id` int(11) NOT NULL,
+						`email` varchar(255) DEFAULT NULL,
+						`username` varchar(50) DEFAULT NULL,
+						`userid` varchar(50) NOT NULL,
+						`jname` varchar(50) NOT NULL
+					) DEFAULT CHARACTER SET utf8;
+
+					ALTER TABLE `#__jfusion_users`
+ 						ADD PRIMARY KEY (`autoid`), ADD UNIQUE KEY `lookup` (`id`,`jname`);
+
+					ALTER TABLE `#__jfusion_users_plugin`
+						MODIFY `autoid` int(11) NOT NULL AUTO_INCREMENT';
 		$db->setQuery($query);
 		$db->execute();
 

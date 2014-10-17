@@ -68,7 +68,7 @@ class Plugin
         // Get a database connector object
         $db = Factory::getDBO();
         $result['status'] = false;
-        $result['jname'] = null;
+        $result['name'] = null;
         if (!$dir && !is_dir(Path::clean($dir))) {
             $this->installer->abort(Text::_('INSTALL_INVALID_PATH'));
 	        throw new RuntimeException(Text::_('INSTALL_INVALID_PATH'));
@@ -100,7 +100,7 @@ class Plugin
 	            $name = $this->filterInput->clean($name, 'string');
 
 	            if (!$framework || !$version || version_compare($framework->version, $version) >= 0 || $framework->version == 'dev-master') {
-		            $result['jname'] = $name;
+		            $result['name'] = $name;
 		            $this->name = $name;
 
 		            // installation path
@@ -226,16 +226,16 @@ class Plugin
     /**
      * handles JFusion plugin un-installation
      *
-     * @param string $jname name of the JFusion plugin used
+     * @param string $name name of the JFusion plugin used
      *
      * @return array
      */
-    function uninstall($jname)
+    function uninstall($name)
     {
 	    $result = array();
     	$result['status'] = false;
 	    try {
-		    $JFusionAdmin = Factory::getAdmin($jname);
+		    $JFusionAdmin = Factory::getAdmin($name);
 		    if ($JFusionAdmin->isConfigured()) {
 			    //if this plugin had been valid, call its uninstall function if it exists
 			    $success = 0;
@@ -244,15 +244,15 @@ class Plugin
 
 				    $reason = '';
 				    if (is_array($reasons)) {
-					    $reason = implode('</li><li>' . $jname . ': ', $reasons);
+					    $reason = implode('</li><li>' . $name . ': ', $reasons);
 				    } else {
-					    $reason = $jname . ': ' . $reasons;
+					    $reason = $name . ': ' . $reasons;
 				    }
 			    } catch (Exception $e) {
 				    $reason = $e->getMessage();
 			    }
 			    if (!$success) {
-				    throw new RuntimeException(Text::_('PLUGIN') . ' ' . $jname . ' ' . Text::_('UNINSTALL') . ' ' . Text::_('FAILED') . ': ' . $reason);
+				    throw new RuntimeException(Text::_('PLUGIN') . ' ' . $name . ' ' . Text::_('UNINSTALL') . ' ' . Text::_('FAILED') . ': ' . $reason);
 			    }
 		    }
 		    $db = Factory::getDBO();
@@ -260,7 +260,7 @@ class Plugin
 		    $query = $db->getQuery(true)
 			    ->select('name , original_name')
 			    ->from('#__jfusion')
-			    ->where('name = ' . $db->quote($jname));
+			    ->where('name = ' . $db->quote($name));
 
 		    $db->setQuery($query);
 		    $plugin = $db->loadObject();
@@ -268,24 +268,24 @@ class Plugin
 		    // delete raw
 		    $query = $db->getQuery(true)
 			    ->delete('#__jfusion')
-			    ->where('name = ' . $db->quote($jname));
+			    ->where('name = ' . $db->quote($name));
 		    $db->setQuery($query);
 		    $db->execute();
 
 		    $query = $db->getQuery(true)
-			    ->delete('#__jfusion_users_plugin')
-			    ->where('jname = ' . $db->quote($jname));
+			    ->delete('#__jfusion_users')
+			    ->where('jname = ' . $db->quote($name));
 		    $db->setQuery($query);
 		    $db->execute();
 
 		    $event = new Event('onInstallerPluginUninstall');
-		    $event->addArgument('jname', $jname);
+		    $event->addArgument('name', $name);
 		    Factory::getDispatcher()->triggerEvent($event);
 
 		    if ($plugin || !$plugin->original_name) {
-			    $dir = Framework::getPluginPath($jname);
+			    $dir = Framework::getPluginPath($name);
 
-			    if (!$jname || !is_dir(Path::clean($dir))) {
+			    if (!$name || !is_dir(Path::clean($dir))) {
 				    throw new RuntimeException(Text::_('UNINSTALL_ERROR_PATH'));
 			    } else {
 				    /**
@@ -305,16 +305,15 @@ class Plugin
 						    throw new RuntimeException(Text::_('UNINSTALL_ERROR_DELETE'));
 					    } else {
 						    //return success
-						    $msg = Text::_('PLUGIN') . ' ' . $jname . ' ' . Text::_('UNINSTALL') . ': ' . Text::_('SUCCESS');
+						    $msg = Text::_('PLUGIN') . ' ' . $name . ' ' . Text::_('UNINSTALL') . ': ' . Text::_('SUCCESS');
 						    $result['message'] = $msg;
 						    $result['status'] = true;
-						    $result['jname'] = $jname;
 					    }
 				    }
 			    }
 		    }
 	    } catch (Exception $e) {
-		    $result['message'] = $jname . ' ' . $e->getMessage();
+		    $result['message'] = $name . ' ' . $e->getMessage();
 		    $this->installer->abort($e->getMessage());
 	    }
         return $result;
@@ -323,74 +322,78 @@ class Plugin
 	/**
 	 * handles copying JFusion plugins
 	 *
-	 * @param string  $jname     name of the JFusion plugin used
-	 * @param string  $new_jname name of the copied plugin
+	 * @param string  $name     name of the JFusion plugin used
+	 * @param string  $new_name name of the copied plugin
 	 * @param boolean $update    mark if we updating a copied plugin
 	 *
 	 * @throws RuntimeException
 	 * @return boolean
 	 */
-    function copy($jname, $new_jname, $update = false)
-    {
-	    //replace not-allowed characters with _
-	    $new_jname = preg_replace('/([^a-zA-Z0-9_])/', '_', $new_jname);
+	function copy($name, $new_name, $update = false)
+	{
+		//replace not-allowed characters with _
+		$new_name = preg_replace('/([^a-zA-Z0-9_])/', '_', $new_name);
 
-	    //initialise response element
-	    $result = array();
-	    $result['status'] = false;
+		//initialise response element
+		$result = array();
+		$result['status'] = false;
 
-	    //check to see if an integration was selected
-	    $db = Factory::getDBO();
+		if ($name && $new_name) {
+			//check to see if an integration was selected
+			$db = Factory::getDBO();
 
-	    $query = $db->getQuery(true)
-		    ->select('count(*)')
-		    ->from('#__jfusion')
-		    ->where('original_name IS NULL')
-		    ->where('name LIKE ' . $db->quote($jname));
+			$query = $db->getQuery(true)
+				->select('count(*)')
+				->from('#__jfusion')
+				->where('original_name IS NULL')
+				->where('name LIKE ' . $db->quote($name));
 
-	    $db->setQuery($query);
-	    $record = $db->loadResult();
+			$db->setQuery($query);
+			$record = $db->loadResult();
 
-	    $query = $db->getQuery(true)
-		    ->select('id')
-		    ->from('#__jfusion')
-		    ->where('name = ' . $db->quote($new_jname));
+			$query = $db->getQuery(true)
+				->select('id')
+				->from('#__jfusion')
+				->where('name = ' . $db->quote($new_name));
 
-	    $db->setQuery($query);
-	    $exsist = $db->loadResult();
-	    if ($exsist) {
-		    throw new RuntimeException($new_jname . ' ' . Text::_('ALREADY_IN_USE'));
-	    } else if ($jname && $new_jname && $record) {
-		    $JFusionPlugin = Factory::getAdmin($jname);
-		    if ($JFusionPlugin->multiInstance()) {
-			    $db = Factory::getDBO();
-			    if (!$update) {
-				    //add the new entry in the JFusion plugin table
-				    $query = $db->getQuery(true)
-					    ->select('*')
-					    ->from('#__jfusion')
-					    ->where('name = ' . $db->quote($jname));
+			$db->setQuery($query);
+			$exsist = $db->loadResult();
+			if ($exsist) {
+				throw new RuntimeException($new_name . ' ' . Text::_('ALREADY_IN_USE'));
+			} else if ($record) {
+				$JFusionPlugin = Factory::getAdmin($name);
+				if ($JFusionPlugin->multiInstance()) {
+					$db = Factory::getDBO();
+					if (!$update) {
+						//add the new entry in the JFusion plugin table
+						$query = $db->getQuery(true)
+							->select('*')
+							->from('#__jfusion')
+							->where('name = ' . $db->quote($name));
 
-				    $db->setQuery($query);
-				    $plugin_entry = $db->loadObject();
-				    $plugin_entry->name = $new_jname;
-				    $plugin_entry->id = null;
-				    //only change the original name if this is not a copy itself
-				    if (empty($plugin_entry->original_name)) {
-					    $plugin_entry->original_name = $jname;
-				    }
-				    $db->insertObject('#__jfusion', $plugin_entry, 'id');
-			    }
-			    $result['message'] = $new_jname . ': ' . Text::_('PLUGIN') . ' ' . $jname . ' ' . Text::_('COPY') . ' ' . Text::_('SUCCESS');
-			    $result['status'] = true;
-		    } else {
-			    throw new RuntimeException(Text::_('CANT_COPY'));
-		    }
-	    } else {
-		    throw new RuntimeException(Text::_('NONE_SELECTED'));
-	    }
-        return $result;
-    }
+						$db->setQuery($query);
+						$plugin_entry = $db->loadObject();
+						$plugin_entry->name = $new_name;
+						$plugin_entry->id = null;
+						//only change the original name if this is not a copy itself
+						if (empty($plugin_entry->original_name)) {
+							$plugin_entry->original_name = $name;
+						}
+						$db->insertObject('#__jfusion', $plugin_entry, 'id');
+					}
+					$result['message'] = $new_name . ': ' . Text::_('PLUGIN') . ' ' . $name . ' ' . Text::_('COPY') . ' ' . Text::_('SUCCESS');
+					$result['status'] = true;
+				} else {
+					throw new RuntimeException(Text::_('CANT_COPY'));
+				}
+			} else {
+				throw new RuntimeException(Text::_('INVALID_SELECTED'));
+			}
+		} else {
+			throw new RuntimeException(Text::_('NONE_SELECTED'));
+		}
+		return $result;
+	}
 
     /**
      * load manifest file with installation information
@@ -401,11 +404,6 @@ class Plugin
      */
     function getManifest($dir)
     {
-        // Initialize variables
-
-        /**
-         * @TODO DISCUSS if we should allow flexible naming for installation file
-         */
         $file = $dir . '/jfusion.xml';
         $this->installer->setPath('manifest', $file);
         // If we cannot load the xml file return null
@@ -437,16 +435,16 @@ class Plugin
      * get files function
      *
      *  @param string $folder folder name
-     *  @param string $jname  jname
+     *  @param string $name  name
      *
      *  @return array files
      */
-    function getFiles($folder, $jname)
+    function getFiles($folder, $name)
     {
         $filesArray = array();
         $files = Folder::files($folder, null, false, true);
 
-	    $path = Framework::getPluginPath($jname);
+	    $path = Framework::getPluginPath($name);
 
         foreach ($files as $file) {
             $file = str_replace($path . DIRECTORY_SEPARATOR, '', $file);
@@ -456,7 +454,7 @@ class Plugin
         $folders = Folder::folders($folder, null, false, true);
         if (!empty($folders)) {
             foreach ($folders as $f) {
-                $filesArray = array_merge($filesArray, $this->getFiles($f, $jname));
+                $filesArray = array_merge($filesArray, $this->getFiles($f, $name));
             }
         }
         return $filesArray;
