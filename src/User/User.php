@@ -646,7 +646,7 @@ class User
 						//make sure the userinfo is available
 						$master_userinfo = $JFusionMaster->getUser($userinfo);
 					}
-					//update the jfusion_users_plugin table
+					//update the jfusion_users table
 					if ($master_userinfo instanceof Userinfo) {
 						$JFusionMaster->updateLookup($master_userinfo, $userinfo);
 					}
@@ -704,7 +704,7 @@ class User
 								//make sure the userinfo is available
 								$SlaveUserInfo = $JFusionSlave->getUser($userinfo);
 							}
-							//update the jfusion_users_plugin table
+							//update the jfusion_users table
 							if ($SlaveUserInfo instanceof Userinfo) {
 								$JFusionSlave->updateLookup($SlaveUserInfo, $userinfo);
 							}
@@ -778,7 +778,7 @@ class User
 		$db = Factory::getDBO();
 
 		$query = $db->getQuery(true)
-			->delete('#__jfusion_users_plugin')
+			->delete('#__jfusion_users')
 			->where('userid = ' . $db->quote($userinfo->userid));
 		$db->setQuery($query);
 

@@ -1125,8 +1125,8 @@ class User extends Plugin
 
 			$query = $db->getQuery(true)
 				->select('b.userid, b.username, b.email')
-				->from('#__jfusion_users_plugin AS a')
-				->innerJoin('#__jfusion_users_plugin AS b ON a.id = b.id')
+				->from('#__jfusion_users AS a')
+				->innerJoin('#__jfusion_users AS b ON a.id = b.id')
 				->where('b.jname = ' . $db->quote($this->getJname()))
 				->where('a.jname = ' . $db->quote($exsistinginfo->getJname()));
 
@@ -1172,7 +1172,7 @@ class User extends Plugin
 			try {
 				$query = $db->getQuery(true)
 					->select('*')
-					->from('#__jfusion_users_plugin')
+					->from('#__jfusion_users')
 					->where('( userid = ' . $db->quote($exsistinginfo->userid) . ' AND ' . 'jname = ' . $db->quote($exsistinginfo->getJname()) . ' )', 'OR')
 					->where('( email = ' . $db->quote($userinfo->email) . ' AND ' . 'jname = ' . $db->quote($exsistinginfo->getJname()) . ' )', 'OR');
 				if ($jname != $exsistinginfo->getJname()) {
@@ -1189,10 +1189,10 @@ class User extends Plugin
 					$first->userid = $exsistinginfo->userid;
 					$first->email = $exsistinginfo->email;
 					$first->jname = $exsistinginfo->getJname();
-					$db->insertObject('#__jfusion_users_plugin', $first, 'autoid');
+					$db->insertObject('#__jfusion_users', $first, 'autoid');
 
 					$first->id = $first->autoid;
-					$db->updateObject('#__jfusion_users_plugin', $first, 'autoid');
+					$db->updateObject('#__jfusion_users', $first, 'autoid');
 					if ($jname != $exsistinginfo->getJname()) {
 						$second = new stdClass();
 						$second->id = $first->id;
@@ -1200,7 +1200,7 @@ class User extends Plugin
 						$second->userid = $userinfo->userid;
 						$second->email = $userinfo->email;
 						$second->jname = $jname;
-						$db->insertObject('#__jfusion_users_plugin', $second);
+						$db->insertObject('#__jfusion_users', $second);
 					}
 				} else if (!isset($list[$exsistinginfo->getJname()])) {
 					$first = new stdClass();
@@ -1209,7 +1209,7 @@ class User extends Plugin
 					$first->userid = $exsistinginfo->userid;
 					$first->email = $exsistinginfo->email;
 					$first->jname = $exsistinginfo->getJname();
-					$db->insertObject('#__jfusion_users_plugin', $first, 'autoid');
+					$db->insertObject('#__jfusion_users', $first, 'autoid');
 				} else if (!isset($list[$jname])) {
 					$first = new stdClass();
 					$first->id = $list[$exsistinginfo->getJname()]->id;
@@ -1217,13 +1217,13 @@ class User extends Plugin
 					$first->userid = $userinfo->userid;
 					$first->userid = $userinfo->userid;
 					$first->jname = $jname;
-					$db->insertObject('#__jfusion_users_plugin', $first, 'autoid');
+					$db->insertObject('#__jfusion_users', $first, 'autoid');
 				} else {
 					$first = $list[$jname];
 					$first->username = $userinfo->username;
 					$first->userid = $userinfo->userid;
 					$first->email = $userinfo->email;
-					$db->updateObject('#__jfusion_users_plugin', $first, 'autoid');
+					$db->updateObject('#__jfusion_users', $first, 'autoid');
 				}
 				return true;
 			} catch (Exception $e) {
@@ -1249,7 +1249,7 @@ class User extends Plugin
 
 			try {
 				$query = $db->getQuery(true)
-					->delete('#__jfusion_users_plugin')
+					->delete('#__jfusion_users')
 					->where('userid = ' . $db->quote($userinfo->userid))
 					->where('jname = ' . $db->quote($this->getJname()));
 

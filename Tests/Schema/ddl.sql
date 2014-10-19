@@ -18,7 +18,7 @@ CREATE TABLE `jos_jfusion` (
   `ordering` INTEGER DEFAULT '0'
 );
 
-CREATE TABLE `jos_jfusion_users_plugin` (
+CREATE TABLE `jos_jfusion_users` (
   `autoid` INTEGER PRIMARY KEY AUTOINCREMENT,
   `id` INTEGER NOT NULL,
   `email` TEXT DEFAULT NULL,

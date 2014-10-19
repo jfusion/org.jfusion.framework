@@ -112,7 +112,7 @@
         </row>
     </table>
 
-    <table name="jos_jfusion_users_plugin">
+    <table name="jos_jfusion_users">
         <column>autoid</column>
         <column>id</column>
         <column>email</column>

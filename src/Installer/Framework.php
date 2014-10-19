@@ -43,7 +43,7 @@ class Framework
 					ALTER TABLE `#__jfusion_users`
  						ADD PRIMARY KEY (`autoid`), ADD UNIQUE KEY `lookup` (`id`,`jname`);
 
-					ALTER TABLE `#__jfusion_users_plugin`
+					ALTER TABLE `#__jfusion_users`
 						MODIFY `autoid` int(11) NOT NULL AUTO_INCREMENT';
 		$db->setQuery($query);
 		$db->execute();
