@@ -277,7 +277,7 @@ class User extends Plugin
 		$changed = false;
 		//check for advanced usergroup sync
 		if (!$userinfo->block && empty($userinfo->activation)) {
-			if (Framework::updateUsergroups($this->getJname())) {
+			if (Groups::isUpdate($this->getJname())) {
 				try {
 					$usergroup_updated = $this->executeUpdateUsergroup($userinfo, $existinguser);
 					if ($usergroup_updated) {
