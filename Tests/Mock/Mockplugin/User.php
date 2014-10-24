@@ -113,6 +113,9 @@ class User extends \JFusion\Plugin\User
 	 */
 	function validateUser(Userinfo $userinfo)
 	{
+		if (strpos($userinfo->username, '%') !== false) {
+			throw new RuntimeException('Useranme Has Invalid Character: %');
+		}
 		return true;
 	}
 

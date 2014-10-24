@@ -9,7 +9,6 @@
  * @link       http://www.jfusion.org
  */
 use JFusion\Factory;
-use JFusion\Framework;
 
 use JFusion\User\Groups;
 use stdClass;

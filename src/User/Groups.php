@@ -7,15 +7,10 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-use JFusion\Application\Application;
-use JFusion\Debugger\Debugger;
 use JFusion\Factory;
 use JFusion\Framework;
 
-use Joomla\Language\Text;
-
 use Joomla\Registry\Registry;
-use Psr\Log\LogLevel;
 
 use stdClass;
 
