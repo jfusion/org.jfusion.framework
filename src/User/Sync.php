@@ -61,11 +61,11 @@ class Sync
 	 *
 	 * @return Registry
 	 */
-	public static function initSyncData($syncid, $action)
+	public static function initData($syncid, $action)
 	{
 		if ($syncid) {
 			//clear sync in progress catch in case we manually stopped the sync so that the sync will continue
-			self::changeSyncStatus($syncid, 0);
+			self::changeStatus($syncid, 0);
 		}
 
 		$syncdata = new Registry();
@@ -92,7 +92,7 @@ class Sync
 	{
 		$syncid = $syncdata->get('syncid');
 		$action = $syncdata->get('action');
-		if (!self::getSyncStatus($syncid)) {
+		if (!self::getStatus($syncid)) {
 			//sync has not started, lets get going :)
 			$master_plugin = Framework::getMaster();
 			$master = $master_plugin->name;
@@ -136,9 +136,9 @@ class Sync
 				$syncdata->set('slave_data', $slave_data);
 
 				//save the submitted syncdata in order for AJAX updates to work
-				self::saveSyncdata($syncdata);
+				self::saveData($syncdata);
 				//start the usersync
-				self::syncExecute($syncdata, $action, 0, 0);
+				self::execute($syncdata, $action, 0, 0);
 			}
 		}
 	}
@@ -209,7 +209,7 @@ class Sync
 	 *
 	 * @return string nothing
 	 */
-	public static function saveSyncdata(Registry $syncdata)
+	public static function saveData(Registry $syncdata)
 	{
 		$db = Factory::getDBO();
 		$data = new stdClass;
@@ -226,7 +226,7 @@ class Sync
 	 *
 	 * @param Registry &$syncdata the actual syncdata
 	 */
-	public static function updateSyncdata(Registry $syncdata)
+	public static function updateData(Registry $syncdata)
 	{
 		//find out if the syncid already exists
 		$db = Factory::getDBO();
@@ -247,7 +247,7 @@ class Sync
 	 *
 	 * @return Registry
 	 */
-	public static function getSyncdata($syncid)
+	public static function getData($syncid)
 	{
 		if ($syncid) {
 			$db = Factory::getDBO();
@@ -402,7 +402,7 @@ class Sync
 	 *
 	 * @return string nothing
 	 */
-	public static function syncExecute(&$syncdata, $action, $plugin_offset, $user_offset)
+	public static function execute(&$syncdata, $action, $plugin_offset, $user_offset)
 	{
 		self::init();
 		try {
@@ -413,11 +413,11 @@ class Sync
 				$MasterUser = Factory::getUser($syncdata['master']);
 
 				$syncid = $syncdata['syncid'];
-				$sync_active = static::getSyncStatus($syncid);
+				$sync_active = static::getStatus($syncid);
 				$db = Factory::getDBO();
 				if (!$sync_active) {
 					//tell JFusion a sync is in progress
-					static::changeSyncStatus($syncid, 1);
+					static::changeStatus($syncid, 1);
 					//only store syncdata every 20 users for better performance
 					$store_interval = 20;
 					$user_count = 1;
@@ -544,7 +544,7 @@ class Sync
 											$syncdata['plugin_offset'] += 1;
 											$syncdata['user_offset'] = 0;
 										}
-										static::updateSyncdata(new Registry($syncdata));
+										static::updateData(new Registry($syncdata));
 										//update counters
 										$user_count = 1;
 										$user_batch--;
@@ -564,9 +564,9 @@ class Sync
 											$syncdata['plugin_offset'] += 1;
 											$syncdata['user_offset'] = 0;
 										}
-										static::updateSyncdata(new Registry($syncdata));
+										static::updateData(new Registry($syncdata));
 										//tell Joomla the batch has completed
-										static::changeSyncStatus($syncid, 0);
+										static::changeStatus($syncid, 0);
 										return;
 									}
 								}
@@ -577,7 +577,7 @@ class Sync
 					if ($syncdata['synced_users'] == $syncdata['total_to_sync']) {
 						//end of sync, save the final data
 						$syncdata['completed'] = true;
-						static::updateSyncdata(new Registry($syncdata));
+						static::updateData(new Registry($syncdata));
 
 						//update the finish time
 						$db = Factory::getDBO();
@@ -590,8 +590,8 @@ class Sync
 						$db->setQuery($query);
 						$db->execute();
 					}
-					static::updateSyncdata(new Registry($syncdata));
-					static::changeSyncStatus($syncid, 0);
+					static::updateData(new Registry($syncdata));
+					static::changeStatus($syncid, 0);
 				}
 			}
 		} catch (Exception $e) {
@@ -604,7 +604,7 @@ class Sync
 	 * @param $syncid
 	 * @param $status
 	 */
-	public static function changeSyncStatus($syncid, $status) {
+	public static function changeStatus($syncid, $status) {
 		$db = Factory::getDBO();
 
 		$query = $db->getQuery(true)
@@ -622,7 +622,7 @@ class Sync
 	 *
 	 * @return int|mixed
 	 */
-	public static function getSyncStatus($syncid) {
+	public static function getStatus($syncid) {
 		if (!empty($syncid)) {
 			$db = Factory::getDBO();
 
