@@ -240,29 +240,20 @@ class Admin extends Plugin
 	    //get registration status
 	    $new_registration = $this->allowRegistration();
 
-	    //get the data about the JFusion plugins
-	    $db = Factory::getDBO();
-
-	    $query = $db->getQuery(true)
-		    ->select('*')
-		    ->from('#__jfusion')
-		    ->where('name = ' . $db->quote($jname));
-
-	    $db->setQuery($query);
-	    $plugin = $db->loadObject();
-	    //output a warning to the administrator if the allowRegistration setting is wrong
-	    /**
-	     * TODO: slave is removed
-	     */
-	    if ($new_registration && $plugin->slave == 1) {
-		    Framework::raise(LogLevel::NOTICE, Text::_('DISABLE_REGISTRATION'), $jname);
+	    if ($new_registration) {
+		    $plugins = Framework::getSlaves();
+		    foreach ($plugins as $plugin) {
+			    if ($plugin->name == $jname) {
+				    Framework::raise(LogLevel::NOTICE, Text::_('DISABLE_REGISTRATION'), $jname);
+			    }
+		    }
+	    } else {
+		    $master = Framework::getMaster();
+		    if ($master->name == $jname) {
+			    Framework::raise(LogLevel::NOTICE, Text::_('ENABLE_REGISTRATION'), $jname);
+		    }
 	    }
-	    /**
-	     * TODO: master is removed
-	     */
-	    if (!$new_registration && $plugin->master == 1) {
-		    Framework::raise(LogLevel::NOTICE, Text::_('ENABLE_REGISTRATION'), $jname);
-	    }
+
 	    //most dual login problems are due to incorrect cookie domain settings
 	    //therefore we should check it and output a warning if needed.
 

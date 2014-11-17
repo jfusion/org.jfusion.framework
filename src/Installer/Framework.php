@@ -71,6 +71,7 @@ class Framework
 						action varchar(255),
 						`message` text,
 						data longblob,
+						`type` varchar(255) DEFAULT NULL,
 						PRIMARY KEY  (id)
 				    );';
 		$db->setQuery($query);
@@ -263,6 +264,17 @@ class Framework
 			$db->execute();
 			//remove master
 			$query = 'ALTER TABLE #__jfusion DROP column slave';
+			$db->setQuery($query);
+			$db->execute();
+		}
+
+		//add a active column for user sync
+		$query = 'SHOW COLUMNS FROM #__jfusion_sync';
+		$db->setQuery($query);
+		$columns = $db->loadColumn();
+		if (!in_array('type', $columns)) {
+			$query = 'ALTER TABLE #__jfusion_sync
+					ADD COLUMN `type` VARCHAR(50) NOT null DEFAULT NULL';
 			$db->setQuery($query);
 			$db->execute();
 		}

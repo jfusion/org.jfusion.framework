@@ -84,8 +84,9 @@ class Sync
 
 	/**
 	 * @param Registry $syncdata
-	 * @param array $slaves
+	 * @param array    $slaves
 	 *
+	 * @return Registry
 	 * @throws \RuntimeException
 	 */
 	public static function initiate($syncdata, $slaves)
@@ -104,27 +105,27 @@ class Sync
 				$slave_data = array();
 				//lets find out which slaves need to be imported into the Master
 				foreach ($slaves as $jname => $slave) {
-					if ($slave['perform_sync'] == $jname) {
-						$temp_data = array();
-						$temp_data['jname'] = $jname;
+					if ($slave == $jname) {
+						$temp_data = new stdClass();
+						$temp_data->jname = $jname;
 						$JFusionPlugin = Factory::getAdmin($jname);
 						if ($action == 'master') {
-							$temp_data['total'] = $JFusionPlugin->getUserCount();
+							$temp_data->total = $JFusionPlugin->getUserCount();
 						} else {
-							$temp_data['total'] = $JFusionMaster->getUserCount();
+							$temp_data->total = $JFusionMaster->getUserCount();
 						}
 						$total_to_sync = $syncdata->get('total_to_sync', 0);
 
-						$total_to_sync += $temp_data['total'];
+						$total_to_sync += $temp_data->total;
 						$syncdata->set('total_to_sync', $total_to_sync);
 
 						//this doesn't change and used by usersync when limiting the number of users to grab at a time
-						$temp_data['total_to_sync'] = $temp_data['total'];
-						$temp_data['created'] = 0;
-						$temp_data['deleted'] = 0;
-						$temp_data['updated'] = 0;
-						$temp_data['error'] = 0;
-						$temp_data['unchanged'] = 0;
+						$temp_data->total_to_sync = $temp_data->total;
+						$temp_data->created = 0;
+						$temp_data->deleted = 0;
+						$temp_data->updated = 0;
+						$temp_data->error = 0;
+						$temp_data->unchanged = 0;
 						//save the data
 						$slave_data[] = $temp_data;
 						//reset the variables
@@ -137,10 +138,12 @@ class Sync
 
 				//save the submitted syncdata in order for AJAX updates to work
 				self::saveData($syncdata);
+
 				//start the usersync
-				self::execute($syncdata, $action, 0, 0);
+				self::execute($syncdata, $action);
 			}
 		}
+		return $syncdata;
 	}
 
 	/**
@@ -153,7 +156,7 @@ class Sync
 	 * @param string $sort
 	 * @param string $dir
 	 *
-	 * @return string nothing
+	 * @return stdClass[] nothing
 	 */
 	public static function getLogData($syncid, $type = 'all', $limitstart = null, $limit = null, $sort = 'id', $dir = 'ASC')
 	{
@@ -245,7 +248,7 @@ class Sync
 	 *
 	 * @param string $syncid the usersync id
 	 *
-	 * @return Registry
+	 * @return Registry|null
 	 */
 	public static function getData($syncid)
 	{
@@ -258,10 +261,12 @@ class Sync
 				->where('syncid = ' . $db->quote($syncid));
 
 			$db->setQuery($query);
-			return new Registry($db->loadResult());
-		} else {
-			return new Registry();
+			$data = $db->loadResult();
+			if ($data) {
+				return new Registry($data);
+			}
 		}
+		return null;
 	}
 
 	/**
@@ -272,24 +277,22 @@ class Sync
 	 *
 	 * @param        $limitstart
 	 * @param        $limit
-	 * @param        $sort
-	 * @param        $dir
 	 *
 	 * @return string nothing
 	 */
-	public static function syncError($syncid, $syncError, $limitstart, $limit, $sort, $dir)
+	public static function resolveError($syncid, $syncError, $limitstart, $limit)
 	{
-		$synclog = static::getLogData($syncid, 'error', $limitstart, $limit, $sort, $dir);
+		$synclog = static::getLogData($syncid, 'error', $limitstart, $limit);
 		foreach ($syncError as $id => $error) {
 			try {
 				if (isset($error['action']) && isset($synclog[$id]) && $error['action']) {
-					$data = unserialize($synclog[$id]->data);
+					$data = json_decode($synclog[$id]->data);
 
-					$conflictuserinfo = $data['conflict']['userinfo'];
-					$useruserinfo = $data['user']['userinfo'];
+					$conflictuserinfo = $data->conflict->userinfo;
+					$useruserinfo = $data->user->userinfo;
 
-					$conflictjname = $data['conflict']['jname'];
-					$userjname = $data['user']['jname'];
+					$conflictjname = $data->conflict->jname;
+					$userjname = $data->user->jname;
 					if ($conflictuserinfo instanceof Userinfo && $useruserinfo instanceof Userinfo) {
 						switch ($error['action']) {
 							case '1':
@@ -336,15 +339,15 @@ class Sync
 								global $JFusionActive;
 								$JFusionActive = 1;
 
-								$userPlugin = Factory::getUser($error['user_jname']);
+								$userPlugin = Factory::getUser($data->user->jname);
 								$userPlugin->deleteUser($useruserinfo);
 
 								$status = $userPlugin->debugger->get();
 								if (!empty($status[LogLevel::ERROR])) {
-									Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $error['user_jname'] . ' ' . Text::_('USER_DELETION_ERROR') . ': ' . $error['user_username']);
+									Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $data->user->jname . ' ' . Text::_('USER_DELETION_ERROR') . ': ' . $data->user->username);
 								} else {
 									static::markResolved($id);
-									Framework::raise(LogLevel::INFO, Text::_('SUCCESS') . ' ' . Text::_('DELETING') . ' ' . Text::_('USER') . ' ' . $error['user_username'], $error['user_jname']);
+									Framework::raise(LogLevel::INFO, Text::_('SUCCESS') . ' ' . Text::_('DELETING') . ' ' . Text::_('USER') . ' ' . $data->user->username, $data->user->jname);
 									$userPlugin->deleteLookup($useruserinfo);
 								}
 								break;
@@ -353,15 +356,15 @@ class Sync
 								//prevent Joomla from deleting all the slaves via the user plugin if it is set as master
 								global $JFusionActive;
 								$JFusionActive = 1;
-								$userPlugin = Factory::getUser($error['conflict_jname']);
+								$userPlugin = Factory::getUser($data->conflict->jname);
 								$userPlugin->deleteUser($conflictuserinfo);
 
 								$status = $userPlugin->debugger->get();
 								if (!empty($status[LogLevel::ERROR])) {
-									Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $error['conflict_jname'] . ' ' . Text::_('USER_DELETION_ERROR') . ': ' . $error['conflict_username']);
+									Framework::raise(LogLevel::ERROR, $status[LogLevel::ERROR], $data->conflict->jname . ' ' . Text::_('USER_DELETION_ERROR') . ': ' . $data->conflict->username);
 								} else {
 									static::markResolved($id);
-									Framework::raise(LogLevel::INFO, Text::_('SUCCESS') . ' ' . Text::_('DELETING') . ' ' . Text::_('USER') . ' ' . $error['user_username'], $error['conflict_jname']);
+									Framework::raise(LogLevel::INFO, Text::_('SUCCESS') . ' ' . Text::_('DELETING') . ' ' . Text::_('USER') . ' ' . $data->conflict->username, $data->conflict->jname);
 									$userPlugin->deleteLookup($conflictuserinfo);
 								}
 								break;
@@ -396,69 +399,74 @@ class Sync
 	 * Save log data
 	 *
 	 * @param Registry &$syncdata     the actual syncdata
-	 * @param string $action        the type of sync action required
-	 * @param int    $plugin_offset the plugin offset
-	 * @param int    $user_offset   the user offset
 	 *
 	 * @return string nothing
 	 */
-	public static function execute(&$syncdata, $action, $plugin_offset, $user_offset)
+	public static function execute(&$syncdata)
 	{
 		self::init();
 		try {
-			$syncdata = $syncdata->toArray();
-			if (empty($syncdata['completed'])) {
-				//setup some variables
-				$MasterPlugin = Factory::getAdmin($syncdata['master']);
-				$MasterUser = Factory::getUser($syncdata['master']);
+			$action = $syncdata->get('action');
+			$completed = $syncdata->get('completed');
+			if (empty($completed)) {
+				$master = $syncdata->get('master');
+				$syncid = $syncdata->get('syncid');
+				$userbatch = $syncdata->get('userbatch', 500);
 
-				$syncid = $syncdata['syncid'];
-				$sync_active = static::getStatus($syncid);
+				//setup some variables
+				$MasterPlugin = Factory::getAdmin($master);
+				$MasterUser = Factory::getUser($master);
+
 				$db = Factory::getDBO();
-				if (!$sync_active) {
+				if (!static::getStatus($syncid)) {
 					//tell JFusion a sync is in progress
 					static::changeStatus($syncid, 1);
-					//only store syncdata every 20 users for better performance
-					$store_interval = 20;
 					$user_count = 1;
 					//going to die every x users so that apache doesn't time out
-					if (!isset($syncdata['userbatch'])) {
-						$syncdata['userbatch'] = 500;
-					}
-					$user_batch = $syncdata['userbatch'];
 					//we should start with the import of slave users into the master
-					if ($syncdata['slave_data']) {
-						for ($i = $plugin_offset; $i < count($syncdata['slave_data']); $i++) {
-							$syncdata['plugin_offset'] = $i;
+
+					/**
+					 * should be reset at end.
+					 */
+					$slave_data = $syncdata->get('slave_data', array());
+					$plugin_offset = $syncdata->get('plugin_offset', 0);
+					if (!empty($slave_data)) {
+						for ($i = $plugin_offset; $i < count($slave_data); $i++) {
+							$syncdata->set('plugin_offset', $i);
+
+							$user_offset = $syncdata->get('user_offset', 0);
 							//get a list of users
-							$jname = $syncdata['slave_data'][$i]['jname'];
+							$jname = $slave_data[$i]->jname;
 							if ($jname) {
 								$SlavePlugin = Factory::getAdmin($jname);
 								$SlaveUser = Factory::getUser($jname);
 								if ($action == 'master') {
-									$userlist = $SlavePlugin->getUserList($user_offset, $syncdata['userbatch']);
+									$userlist = $SlavePlugin->getUserList($user_offset, $userbatch);
 									$action_name = $jname;
-									$action_reverse_name = $syncdata['master'];
+									$action_reverse_name = $master;
 								} else {
-									$userlist = $MasterPlugin->getUserList($user_offset, $syncdata['userbatch']);
-									$action_name = $syncdata['master'];
+									$userlist = $MasterPlugin->getUserList($user_offset, $userbatch);
+									$action_name = $master;
 									$action_reverse_name = $jname;
 								}
 
 								//catch to determine if the plugin supports limiting users for sync performance
-								if (count($userlist) != $syncdata['slave_data'][$i]['total_to_sync']) {
+								if (count($userlist) != $slave_data[$i]->total_to_sync) {
 									//the userlist has already been limited so just start with the first one from the retrieved results
 									$user_offset = 0;
 								}
 								//perform the actual sync
-								for ($j = $user_offset;$j < count($userlist); $j++) {
-									$syncdata['user_offset']++;
+								for ($j = $user_offset; $j < count($userlist); $j++) {
+									$syncdata->set('user_offset', $syncdata->get('user_offset', 0) + 1);
+
 									$status = array();
-									$userinfo = null;
+									$userinfo = new Userinfo(null);
+									$userinfo->bind($userlist[$j]);
+
 									$UpdateUserInfo = null;
 									try {
 										if ($action == 'master') {
-											$userinfo = $SlaveUser->getUser($userlist[$j]);
+											$userinfo = $SlaveUser->getUser($userinfo);
 											if ($userinfo instanceof Userinfo) {
 												$MasterUser->resetDebugger();
 												if ($MasterUser->validateUser($userinfo)) {
@@ -473,7 +481,7 @@ class Sync
 												}
 											}
 										} else {
-											$userinfo = $MasterUser->getUser($userlist[$j]);
+											$userinfo = $MasterUser->getUser($userinfo);
 											if ($userinfo instanceof Userinfo) {
 												$SlaveUser->resetDebugger();
 												if ($MasterUser->validateUser($userinfo)) {
@@ -494,7 +502,7 @@ class Sync
 									}
 
 									$sync_log = new stdClass;
-									$sync_log->syncid = $syncdata['syncid'];
+									$sync_log->syncid = $syncid;
 									$sync_log->jname = $jname;
 									$sync_log->message = '';
 									$sync_log->data = '';
@@ -505,16 +513,26 @@ class Sync
 									if (!$userinfo instanceof Userinfo || !empty($status[LogLevel::ERROR])) {
 										$status['action'] = 'error';
 										$sync_log->message = (is_array($status[LogLevel::ERROR])) ? implode('; ', $status[LogLevel::ERROR]) : $status[LogLevel::ERROR];
-										$error = array();
-										$error['conflict']['userinfo'] = $UpdateUserInfo;
-										$error['conflict']['error'] = $status[LogLevel::ERROR];
-										$error['conflict']['debug'] = (!empty($status[LogLevel::DEBUG])) ? $status[LogLevel::DEBUG] : '';
-										$error['conflict']['jname'] = $action_reverse_name;
-										$error['user']['jname'] = $action_name;
-										$error['user']['userinfo'] = $userinfo;
-										$error['user']['userlist'] = $userlist[$j];
-										$sync_log->data = serialize($error);
-										$syncdata['sync_errors']++;
+										$error = new stdClass();
+										$error->conflict = new stdClass();
+										$error->conflict->userinfo = $UpdateUserInfo;
+										$error->conflict->error = $status[LogLevel::ERROR];
+										$error->conflict->debug = (!empty($status[LogLevel::DEBUG])) ? $status[LogLevel::DEBUG] : '';
+										$error->conflict->jname = $action_reverse_name;
+										$error->user = new stdClass();
+										$error->user->jname = $action_name;
+										$error->user->userinfo = $userinfo;
+										$error->user->userlist = $userlist[$j];
+
+										$sync_log->type = 'ERROR';
+										if (!empty($error->conflict->userinfo->username) && ($error->user->userinfo->username != $error->conflict->userinfo->username)) {
+											$sync_log->type = 'USERNAME';
+										} else if (!empty($error->conflict->userinfo->email) && $error->user->userinfo->email != $error->conflict->userinfo->email) {
+											$sync_log->type = 'EMAIL';
+										}
+
+										$sync_log->data = json_encode($error);
+										$syncdata->set('sync_errors', $syncdata->get('sync_errors', 0) + 1);
 									} else {
 										//usersync loggin enabled
 										$sync_log->username = isset($UpdateUserInfo->username) ? $UpdateUserInfo->username : $userinfo->username;
@@ -534,37 +552,39 @@ class Sync
 									$db->insertObject('#__jfusion_sync_details', $sync_log);
 
 									//update the counters
-									$syncdata['slave_data'][$i][$status['action']]+= 1;
-									$syncdata['slave_data'][$i]['total']-= 1;
-									$syncdata['synced_users']+= 1;
-									//update the database
-									if ($user_count >= $store_interval) {
-										if ($syncdata['slave_data'][$i]['total'] == 0) {
+									$slave_data[$i]->{$status['action']} += 1;
+									$slave_data[$i]->total -= 1;
+
+									$syncdata->set('slave_data', $slave_data);
+
+									$syncdata->set('synced_users', $syncdata->get('synced_users', 0) + 1);
+									//update the database, only store syncdata every 20 users for better performance
+									if ($user_count >= 20) {
+										if ($slave_data[$i]->total == 0) {
 											//will force the next plugin and first user of that plugin on resume
-											$syncdata['plugin_offset'] += 1;
-											$syncdata['user_offset'] = 0;
+											$syncdata->set('plugin_offset', $syncdata->get('plugin_offset', 0) + 1);
+											$syncdata->set('user_offset', 0);
 										}
-										static::updateData(new Registry($syncdata));
+										static::updateData($syncdata);
 										//update counters
 										$user_count = 1;
-										$user_batch--;
 									} else {
 										//update counters
 										$user_count++;
-										$user_batch--;
 									}
+									$userbatch--;
 
-									if ($syncdata['synced_users'] == $syncdata['total_to_sync']) {
+									if ($syncdata->get('synced_users', 0) == $syncdata->get('total_to_sync', 0)) {
 										break;
-									} elseif ($user_batch == 0 || $syncdata['slave_data'][$i]['total'] == 0) {
+									} elseif ($userbatch == 0 || $slave_data[$i]->total == 0) {
 										//exit the process to prevent an apache timeout; it will resume on the next ajax call
 										//save the syncdata before exiting
-										if ($syncdata['slave_data'][$i]['total'] == 0) {
+										if ($slave_data[$i]->total == 0) {
 											//will force  the next plugin and first user of that plugin on resume
-											$syncdata['plugin_offset'] += 1;
-											$syncdata['user_offset'] = 0;
+											$syncdata->set('plugin_offset', $syncdata->get('plugin_offset', 0) + 1);
+											$syncdata->set('user_offset', 0);
 										}
-										static::updateData(new Registry($syncdata));
+										static::updateData($syncdata);
 										//tell Joomla the batch has completed
 										static::changeStatus($syncid, 0);
 										return;
@@ -574,10 +594,12 @@ class Sync
 						}
 					}
 
-					if ($syncdata['synced_users'] == $syncdata['total_to_sync']) {
+					$syncdata->set('slave_data', $slave_data);
+					if ($syncdata->get('synced_users', 0) == $syncdata->get('total_to_sync', 0)) {
 						//end of sync, save the final data
-						$syncdata['completed'] = true;
-						static::updateData(new Registry($syncdata));
+
+						$syncdata->set('completed', true);
+						static::updateData($syncdata);
 
 						//update the finish time
 						$db = Factory::getDBO();
@@ -585,12 +607,12 @@ class Sync
 						$query = $db->getQuery(true)
 							->update('#__jfusion_sync')
 							->set('time_end = ' . $db->quote(time()))
-							->where('syncid = ' . $db->quote($syncdata['syncid']));
+							->where('syncid = ' . $db->quote($syncid));
 
 						$db->setQuery($query);
 						$db->execute();
 					}
-					static::updateData(new Registry($syncdata));
+					static::updateData($syncdata);
 					static::changeStatus($syncid, 0);
 				}
 			}
@@ -635,5 +657,29 @@ class Sync
 			return (int)$db->loadResult();
 		}
 		return 0;
+	}
+
+	/**
+	 * @static
+	 * @param string $syncid
+	 *
+	 * @return boolean
+	 */
+	public static function exsists($syncid) {
+		if (!empty($syncid)) {
+			$db = Factory::getDBO();
+
+			$query = $db->getQuery(true)
+				->select('syncid')
+				->from('#__jfusion_sync')
+				->where('syncid = ' . $db->quote($syncid));
+
+			$db->setQuery($query);
+
+			if ($db->loadResult()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
