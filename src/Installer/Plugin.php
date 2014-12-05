@@ -447,7 +447,8 @@ class Plugin
 	    $path = Framework::getPluginPath($name);
 
         foreach ($files as $file) {
-            $file = str_replace($path . DIRECTORY_SEPARATOR, '', $file);
+            $file = str_replace($path . '/', '', $file);
+	        $file = str_replace($path . '\\', '', $file);
             $data = file_get_contents($file);
             $filesArray[] = array('name' => $file, 'data' => $data);
         }

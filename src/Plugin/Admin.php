@@ -279,7 +279,7 @@ class Admin extends Plugin
 
 	    //also check the cookie path as it can interfere with frameless
 	    $cookie_path = $this->params->get('cookie_path',-1);
-	    if ($cookie_path!==-1) {
+	    if ($cookie_path !== -1) {
 		    if ($cookie_path != '/' && !$this->allowEmptyCookiePath()) {
 			    Framework::raise(LogLevel::NOTICE, Text::_('BEST_COOKIE_PATH') . ' /', $jname);
 		    }
@@ -412,9 +412,8 @@ JS;
 
 				if (isset($post['source_url'])) {
 					//check for trailing slash in URL, in order for us not to worry about it later
-					if (substr($post['source_url'], -1) != '/') {
-						$post['source_url'] .= '/';
-					}
+					$post['source_path'] = rtrim($post['source_path'], '/\\');
+					$post['source_path'] .= '/';
 
 					//now also check to see that the url starts with http:// or https://
 					if (substr($post['source_url'], 0, 7) != 'http://' && substr($post['source_url'], 0, 8) != 'https://') {
@@ -425,9 +424,9 @@ JS;
 				}
 				if (isset($post['source_path'])) {
 					if (!empty($post['source_path'])) {
-						if (substr($post['source_path'], -1) != DIRECTORY_SEPARATOR) {
-							$post['source_path'] .= DIRECTORY_SEPARATOR;
-						}
+						$post['source_path'] = rtrim($post['source_path'], '/\\');
+						$post['source_path'] .= '/';
+
 						if (!is_dir($post['source_path'])) {
 							Framework::raise(LogLevel::WARNING, Text::_('SOURCE_PATH_NOT_FOUND'));
 						}

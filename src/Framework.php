@@ -375,7 +375,7 @@ class Framework
 	public static function getPluginPath($name = null)
 	{
 		$params = Factory::getConfig();
-		$path = $params->get('plugin-path');
+		$path = $params->get('plugin.path');
 		if ($name != null) {
 			$path = $path . '/' . $name;
 		}

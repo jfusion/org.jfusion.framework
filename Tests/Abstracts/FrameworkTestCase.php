@@ -50,7 +50,7 @@ abstract class FrameworkTestCase extends \PHPUnit_Extensions_Database_TestCase
 
 		$conf->set('uri.base.full', 'http://localhost/path/to/framework');
 
-		$conf->set('plugin-path', '/fake/path/to/plugins');
+		$conf->set('plugin.path', '/fake/path/to/plugins');
 
 		$usergroups = new \stdClass();
 		$usergroups->mockplugin = array(array(1), array(1, 2), array(3));

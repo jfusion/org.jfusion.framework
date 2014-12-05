@@ -227,12 +227,9 @@ class Plugin
 			$error = 1;
 			$reason = Text::_('SET_PATH_FIRST');
 		}
-		//check for trailing slash and generate file path
-		if (substr($path, -1) == DIRECTORY_SEPARATOR) {
-			$mod_file = $path . $filename;
-		} else {
-			$mod_file = $path . DIRECTORY_SEPARATOR . $filename;
-		}
+
+		$mod_file = $path . $filename;
+
 		//see if the file exists
 		if (!file_exists($mod_file) && $error == 0) {
 			$error = 1;
