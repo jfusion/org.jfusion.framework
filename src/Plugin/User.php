@@ -330,7 +330,7 @@ class User extends Plugin
 			//check if the password needs to be updated
 			try {
 				$model = Factory::getAuth($this->getJname());
-				if (!$model->checkPassword($existinguser)) {
+				if ($model->checkPassword($existinguser) !== true) {
 					try {
 						$this->updatePassword($userinfo, $existinguser);
 						$changed = true;

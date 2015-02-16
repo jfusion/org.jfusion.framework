@@ -170,7 +170,7 @@ class Authentication
 
 										$check = $authPlugin->checkPassword($authUserinfo);
 
-										if ($check) {
+										if ($check === true) {
 											//found a match
 											$debugger->addDebug($plugin->name . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK') . ': ' . Text::_('SUCCESS'));
 											$response->status = Authentication::STATUS_SUCCESS;
@@ -208,7 +208,7 @@ class Authentication
 
 										$authPlugin = Factory::getAuth($plugin->name);
 										$check = $authPlugin->checkPassword($authUserinfo2);
-										if (!$check) {
+										if ($check !== true) {
 											$userPlugin->resetDebugger();
 
 											$userPlugin->doUpdatePassword($userinfo, $authUserinfo2);
