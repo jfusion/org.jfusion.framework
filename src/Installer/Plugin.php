@@ -13,7 +13,7 @@
  */
 
 use JFusion\Factory;
-use JFusion\Framework;
+use JFusion\Framework as JFusionFramework;
 
 use Joomla\Filesystem\Folder;
 use Joomla\Event\Event;
@@ -83,7 +83,7 @@ class Plugin
             } else {
                 $this->manifest = $manifest;
 
-	            $framework = Framework::getComposerInfo();
+	            $framework = JFusionFramework::getComposerInfo();
 
 	            $version = $this->getAttribute($this->manifest, 'version');
 
@@ -104,7 +104,7 @@ class Plugin
 		            $this->name = $name;
 
 		            // installation path
-		            $this->installer->setPath('extension_root', Framework::getPluginPath($name));
+		            $this->installer->setPath('extension_root', JFusionFramework::getPluginPath($name));
 		            // get files to copy
 
 		            /**
@@ -283,7 +283,7 @@ class Plugin
 		    Factory::getDispatcher()->triggerEvent($event);
 
 		    if ($plugin || !$plugin->original_name) {
-			    $dir = Framework::getPluginPath($name);
+			    $dir = JFusionFramework::getPluginPath($name);
 
 			    if (!$name || !is_dir(Path::clean($dir))) {
 				    throw new RuntimeException(Text::_('UNINSTALL_ERROR_PATH'));
@@ -408,7 +408,7 @@ class Plugin
         $this->installer->setPath('manifest', $file);
         // If we cannot load the xml file return null
 
-	    $xml = Framework::getXml($file);
+	    $xml = JFusionFramework::getXml($file);
 
 		if (!($xml instanceof SimpleXMLElement) || ($xml->getName() != 'extension')) {
             // Free up xml parser memory and return null
@@ -444,7 +444,7 @@ class Plugin
         $filesArray = array();
         $files = Folder::files($folder, null, false, true);
 
-	    $path = Framework::getPluginPath($name);
+	    $path = JFusionFramework::getPluginPath($name);
 
         foreach ($files as $file) {
             $file = str_replace($path . '/', '', $file);

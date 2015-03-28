@@ -8,7 +8,7 @@
  */
 
 use JFusion\Factory;
-use JFusion\Framework;
+use JFusion\Framework as JFusionFramework;
 
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
@@ -98,7 +98,7 @@ class Installer
 	 * @return null
 	 */
 	private function log($level, $message) {
-		Framework::raise($level, $message);
+		JFusionFramework::raise($level, $message);
 	}
 
 	/**
