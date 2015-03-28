@@ -178,7 +178,7 @@ class Framework
 		$columns = $db->loadColumn();
 		if (!in_array('type', $columns)) {
 			$query = 'ALTER TABLE #__jfusion_sync
-					ADD COLUMN `type` VARCHAR(50) NOT null DEFAULT NULL';
+					ADD COLUMN `type` VARCHAR(50) DEFAULT NULL';
 			$db->setQuery($query);
 			$db->execute();
 		}
