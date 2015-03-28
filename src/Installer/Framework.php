@@ -38,13 +38,17 @@ class Framework
 						`username` varchar(50) DEFAULT NULL,
 						`userid` varchar(50) NOT NULL,
 						`jname` varchar(50) NOT NULL
-					) DEFAULT CHARACTER SET utf8;
+					) DEFAULT CHARACTER SET utf8;';
+		$db->setQuery($query);
+		$db->execute();
 
-					ALTER TABLE `#__jfusion_users`
- 						ADD PRIMARY KEY (`autoid`), ADD UNIQUE KEY `lookup` (`id`,`jname`);
+		$query = 'ALTER TABLE `#__jfusion_users`
+ 						ADD PRIMARY KEY (`autoid`), ADD UNIQUE KEY `lookup` (`id`,`jname`);';
+		$db->setQuery($query);
+		$db->execute();
 
-					ALTER TABLE `#__jfusion_users`
-						MODIFY `autoid` int(11) NOT NULL AUTO_INCREMENT';
+		$query = 'ALTER TABLE `#__jfusion_users`
+						MODIFY `autoid` int(11) NOT NULL AUTO_INCREMENT;';
 		$db->setQuery($query);
 		$db->execute();
 
