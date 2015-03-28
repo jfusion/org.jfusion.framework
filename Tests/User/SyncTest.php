@@ -57,33 +57,33 @@ class SyncTest extends FrameworkTestCase
 		$this->assertSame(1, $count);
 	}
 
-	public function test_saveSyncdata() {
+	public function test_saveData() {
 		$sync = new Registry();
 
 		$sync->set('syncid', 'foobaa');
 		$sync->set('action', 'lol');
 
-		Sync::saveSyncdata($sync);
+		Sync::saveData($sync);
 
-		$data = Sync::getSyncdata('foobaa');
+		$data = Sync::getData('foobaa');
 
 		$this->assertSame('foobaa', $data->get('syncid', null));
 	}
 
-	public function test_updateSyncdata() {
-		$data = Sync::getSyncdata('asdf125');
+	public function test_updateData() {
+		$data = Sync::getData('asdf125');
 
 		$data->set('data', 'World');
 
-		Sync::updateSyncdata($data);
+		Sync::updateData($data);
 
-		$data = Sync::getSyncdata('asdf125');
+		$data = Sync::getData('asdf125');
 
 		$this->assertSame('World', $data->get('data', null));
 	}
 
-	public function test_getSyncdata() {
-		$data = Sync::getSyncdata('asdf125');
+	public function test_getData() {
+		$data = Sync::getData('asdf125');
 		$this->assertSame('asdf125', $data->get('syncid', null));
 	}
 
@@ -106,18 +106,18 @@ class SyncTest extends FrameworkTestCase
 		$this->markTestSkipped();
 	}
 
-	public function test_changeSyncStatus() {
-		$status = Sync::getSyncStatus('asdf125');
+	public function test_changeStatus() {
+		$status = Sync::getStatus('asdf125');
 		$this->assertSame(1, $status);
 
-		Sync::changeSyncStatus('asdf125', 0);
+		Sync::changeStatus('asdf125', 0);
 
-		$status = Sync::getSyncStatus('asdf125');
+		$status = Sync::getStatus('asdf125');
 		$this->assertSame(0, $status);
 	}
 
-	public function test_getSyncStatus() {
-		$status = Sync::getSyncStatus('asdf125');
+	public function test_getStatus() {
+		$status = Sync::getStatus('asdf125');
 		$this->assertSame(1, $status);
 	}
 }

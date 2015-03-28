@@ -139,12 +139,6 @@ class FactoryTest extends FrameworkTestCase
 		$this->markTestSkipped();
 	}
 
-	public function test_getConfig() {
-		$config = Factory::getConfig();
-
-		$this->assertSame('sqlite', $config->get('database.driver'));
-	}
-
 	public function test_getLanguage() {
 		$this->markTestIncomplete();
 		/**

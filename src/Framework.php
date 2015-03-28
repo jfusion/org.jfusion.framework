@@ -331,7 +331,7 @@ class Framework
 	 */
 	public static function getHash($seed)
 	{
-		return md5(Factory::getConfig()->get('secret') . $seed);
+		return md5(Config::get()->get('secret') . $seed);
 	}
 
 	/**
@@ -360,8 +360,7 @@ class Framework
 	 */
 	public static function getNodeID()
 	{
-		$params = Factory::getConfig();
-		$url = $params->get('uri.base.full');
+		$url = Config::get()->get('uri.base.full');
 		return strtolower(rtrim(parse_url($url, PHP_URL_HOST) . parse_url($url, PHP_URL_PATH), '/'));
 	}
 
@@ -374,8 +373,7 @@ class Framework
 	 */
 	public static function getPluginPath($name = null)
 	{
-		$params = Factory::getConfig();
-		$path = $params->get('plugin.path');
+		$path = Config::get()->get('plugin.path');
 		if ($name != null) {
 			$path = $path . '/' . $name;
 		}

@@ -12,7 +12,6 @@
  * @link      http://www.jfusion.org
  */
 
-use Exception;
 use JFusion\Authentication\Cookies;
 use JFusion\Application\Application;
 use JFusion\Plugin\Plugin;
@@ -72,14 +71,6 @@ class Factory
 	 * @since  11.1
 	 */
 	public static $application = null;
-
-	/**
-	 * Global configuration object
-	 *
-	 * @var    Registry
-	 * @since  11.1
-	 */
-	public static $config = null;
 
 	/**
 	 * Global language object
@@ -372,7 +363,7 @@ class Factory
 				}
 
 				//get the debug configuration setting
-				$db->setDebug(self::getConfig()->get('debug'));
+				$db->setDebug(Config::get()->get('debug'));
 			}
 			$instances[$jname] = $db;
 		}
@@ -497,7 +488,7 @@ class Factory
 		static $instance;
 		//only create a new plugin instance if it has not been created before
 		if (!isset($instance)) {
-			$instance = new Cookies(self::getConfig()->get('apikey'));
+			$instance = new Cookies(Config::get()->get('apikey'));
 		}
 		return $instance;
 	}
@@ -514,15 +505,14 @@ class Factory
 		if (!self::$database)
 		{
 			//get config values
-			$conf = self::getConfig();
 
-			$host = $conf->get('database.host');
-			$user = $conf->get('database.user');
-			$password = $conf->get('database.password');
-			$database = $conf->get('database.name');
-			$prefix = $conf->get('database.prefix');
-			$driver = $conf->get('database.driver');
-			$debug = $conf->get('database.debug');
+			$host = Config::get()->get('database.host');
+			$user = Config::get()->get('database.user');
+			$password = Config::get()->get('database.password');
+			$database = Config::get()->get('database.name');
+			$prefix = Config::get()->get('database.prefix');
+			$driver = Config::get()->get('database.driver');
+			$debug = Config::get()->get('database.debug');
 
 			//added extra code to prevent error when $driver is incorrect
 
@@ -531,57 +521,9 @@ class Factory
 			self::$database = DatabaseFactory::getInstance()->getDriver($driver, $options);
 
 			//get the debug configuration setting
-			self::$database->setDebug(self::getConfig()->get('debug'));
+			self::$database->setDebug(Config::get()->get('debug'));
 		}
 		return self::$database;
-	}
-
-	/**
-	 * Get a configuration object
-	 *
-	 * Returns the global {@link Registry} object, only creating it if it doesn't already exist.
-	 *
-	 * @throws \RuntimeException
-	 * @return  Registry
-	 *
-	 * @see     Registry
-	 * @since   11.1
-	 */
-	public static function getConfig()
-	{
-		if (!self::$config instanceof Registry) {
-			throw new RuntimeException('NO_CONFIG');
-		}
-		return self::$config;
-	}
-
-	/**
-	 * @param bool $overwrite
-	 */
-	public static function loadSettings($overwrite = true)
-	{
-		if (!self::$config instanceof Registry) {
-			throw new RuntimeException('NO_CONFIG');
-		} else {
-			try {
-				$db = self::getDbo();
-
-				$query = $db->getQuery(true)
-					->select('*')
-					->from('#__jfusion_settings');
-
-				$db->setQuery($query);
-				$settings = $db->loadObjectList();
-
-				foreach ($settings as $setting) {
-					if (!self::$config->exists($setting->key) || $overwrite) {
-						$value = json_decode($setting->value);
-						self::$config->set($setting->key, $value);
-					}
-				}
-			} catch (Exception $e) {
-			}
-		}
 	}
 
 	/**
@@ -598,9 +540,8 @@ class Factory
 	{
 		if (!self::$language)
 		{
-			$conf = self::getConfig();
-			$locale = $conf->get('language.language');
-			$debug = $conf->get('language.debug');
+			$locale = Config::get()->get('language.language');
+			$debug = Config::get()->get('language.debug');
 			self::$language = Language::getInstance($locale, $debug);
 
 			Text::setLanguage(self::$language);

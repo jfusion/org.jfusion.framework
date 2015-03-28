@@ -6,6 +6,7 @@
  * Time: 15:16
  */
 
+use JFusion\Config;
 use JFusion\Factory;
 use JFusion\Tests\Helper\TestHelper;
 use JFusion\Tests\Mock\Hook;
@@ -65,7 +66,7 @@ abstract class FrameworkTestCase extends \PHPUnit_Extensions_Database_TestCase
 //		$conf->set('updateusergroups', $updateusergroups);
 //		echo json_encode($updateusergroups); die();
 
-		Factory::$config = $conf;
+		Config::set($conf);
 
 		try
 		{

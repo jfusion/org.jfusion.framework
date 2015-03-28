@@ -11,6 +11,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link      http://www.jfusion.org
  */
+use JFusion\Config;
 use JFusion\Factory;
 
 use stdClass;
@@ -98,7 +99,7 @@ class Platform extends Plugin
 	 */
 	final public function getUrl()
 	{
-		$plugin_url = Factory::getConfig('plugin-url');
+		$plugin_url = Config::get()->get('plugin.url');
 
 		return $plugin_url . '/' . $this->getName() . '/';
 	}

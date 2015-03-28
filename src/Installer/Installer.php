@@ -7,7 +7,7 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-use JFusion\Factory;
+use JFusion\Config;
 use JFusion\Framework as JFusionFramework;
 
 use Joomla\Filesystem\File;
@@ -270,7 +270,7 @@ class Installer
 			$step = array_pop($this->stepStack);
 		}
 
-		$debug = Factory::getConfig()->get('debug');
+		$debug = Config::get()->get('debug');
 
 		if ($debug) {
 			throw new RuntimeException('Installation unexpectedly terminated: ' . $msg, 500);
