@@ -272,12 +272,12 @@ class User
 			$options['mask'] = true;
 		}
 
+		//allow for the detection of external mods to exclude jfusion plugins
+		global $JFusionActivePlugin;
+
 		if (!empty($JFusionActivePlugin)) {
 			$options['skipplugin'][] = $JFusionActivePlugin;
 		}
-
-		//allow for the detection of external mods to exclude jfusion plugins
-		global $JFusionActivePlugin;
 
 		if (isset($options['nodeid']) && !empty($options['nodeid'])) {
 			$JFusionActivePlugin = $options['nodeid'];
@@ -293,7 +293,7 @@ class User
 			if (!in_array($plugin->name, $options['skipplugin'])) {
 				if ($plugin->dual_login == 1) {
 					$userPlugin = Factory::getUser($plugin->name);
-					$userlookup = $userPlugin->lookupUser($userinfo);
+					$userlookup = static::search($userinfo);
 					$this->debugger->set('userlookup', $userlookup);
 					if ($userlookup instanceof Userinfo) {
 						$details = null;
