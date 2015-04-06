@@ -166,8 +166,16 @@ class Framework
 			$query = 'ALTER TABLE #__jfusion DROP column master';
 			$db->setQuery($query);
 			$db->execute();
-			//remove master
+			//remove slave
 			$query = 'ALTER TABLE #__jfusion DROP column slave';
+			$db->setQuery($query);
+			$db->execute();
+			//remove search
+			$query = 'ALTER TABLE #__jfusion DROP column search';
+			$db->setQuery($query);
+			$db->execute();
+			//remove discussion
+			$query = 'ALTER TABLE #__jfusion DROP column discussion';
 			$db->setQuery($query);
 			$db->execute();
 		}
