@@ -215,55 +215,51 @@ class User extends Plugin
      */
     function updateUser(Userinfo $userinfo, $overwrite = 0)
     {
-	    try {
-			//get the user
-		    $existinguser = $this->getUser($userinfo);
-		    if ($existinguser instanceof Userinfo) {
-			    $changed = false;
-			    //a matching user has been found
-			    $this->debugger->addDebug(Text::_('USER_DATA_FOUND'));
+	    //get the user
+	    $existinguser = $this->getUser($userinfo);
+	    if ($existinguser instanceof Userinfo) {
+		    $changed = false;
+		    //a matching user has been found
+		    $this->debugger->addDebug(Text::_('USER_DATA_FOUND'));
 
-			    if($this->doUpdateEmail($userinfo, $existinguser, $overwrite)) {
-				    $changed = true;
-			    }
-
-			    if($this->doUpdatePassword($userinfo, $existinguser)) {
-				    $changed = true;
-			    }
-
-			    if ($this->doUpdateBlock($userinfo, $existinguser, $overwrite)) {
-				    $changed = true;
-			    }
-
-			    if($this->doUpdateActivate($userinfo, $existinguser, $overwrite)) {
-				    $changed = true;
-			    }
-
-			    if($this->doUpdateUsergroup($userinfo, $existinguser)) {
-				    $changed = true;
-			    }
-
-			    if($this->doUserLanguage($userinfo, $existinguser)) {
-				    $changed = true;
-			    }
-
-			    if ($this->debugger->isEmpty('error')) {
-				    if ($changed == true) {
-					    $this->debugger->set('action', 'updated');
-					    //let's get updated information
-					    return $this->getUser($userinfo);
-				    } else {
-					    $this->debugger->set('action', 'unchanged');
-					    return $existinguser;
-				    }
-			    }
-		    } else {
-			    return $this->createUser($userinfo);
+		    if($this->doUpdateEmail($userinfo, $existinguser, $overwrite)) {
+			    $changed = true;
 		    }
-	    } catch (Exception $e) {
-		    $this->debugger->addError($e->getMessage());
+
+		    if($this->doUpdatePassword($userinfo, $existinguser)) {
+			    $changed = true;
+		    }
+
+		    if ($this->doUpdateBlock($userinfo, $existinguser, $overwrite)) {
+			    $changed = true;
+		    }
+
+		    if($this->doUpdateActivate($userinfo, $existinguser, $overwrite)) {
+			    $changed = true;
+		    }
+
+		    if($this->doUpdateUsergroup($userinfo, $existinguser)) {
+			    $changed = true;
+		    }
+
+		    if($this->doUserLanguage($userinfo, $existinguser)) {
+			    $changed = true;
+		    }
+
+		    if ($this->debugger->isEmpty('error')) {
+			    if ($changed == true) {
+				    $this->debugger->set('action', 'updated');
+				    //let's get updated information
+				    $existinguser = $this->getUser($userinfo);
+			    } else {
+				    $this->debugger->set('action', 'unchanged');
+			    }
+		    }
+	    } else {
+		    $existinguser = $this->createUser($userinfo);
+		    $this->debugger->set('action', 'created');
 	    }
-        return null;
+        return $existinguser;
     }
 
 	/**

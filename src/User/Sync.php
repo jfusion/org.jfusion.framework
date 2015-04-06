@@ -510,7 +510,10 @@ class Sync
 									$sync_log->username = $userlist[$j]->username;
 									$sync_log->email = $userlist[$j]->email;
 
-									if (!$userinfo instanceof Userinfo || !empty($status[LogLevel::ERROR])) {
+									if (!isset($status['action'])) {
+										$status['action'] = 'error';
+									}
+									if (!$userinfo instanceof Userinfo || !$UpdateUserInfo instanceof Userinfo || !empty($status[LogLevel::ERROR])) {
 										$status['action'] = 'error';
 										$sync_log->message = (is_array($status[LogLevel::ERROR])) ? implode('; ', $status[LogLevel::ERROR]) : $status[LogLevel::ERROR];
 										$error = new stdClass();
