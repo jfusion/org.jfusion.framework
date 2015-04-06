@@ -192,7 +192,7 @@ class User
 						}
 					}
 				}
-				if (!$authUserinfo->canLogin()) {
+				if ($authUserinfo->canLogin()) {
 					foreach ($plugins as $plugin) {
 						if (!in_array($plugin->name, $options['skipplugin']) && $plugin->dual_login == 1) {
 							$userPlugin = Factory::getUser($plugin->name);

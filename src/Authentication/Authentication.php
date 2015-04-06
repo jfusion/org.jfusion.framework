@@ -126,7 +126,7 @@ class Authentication
 	 * Finds out if a set of login credentials are valid by asking all observing
 	 * objects to run their respective authentication routines.
 	 *
-	 * @param   Userinfo  $userinfo  Array holding the user credentials.
+	 * @param   Userinfo  $user  Array holding the user credentials.
 	 * @param   array  $options      Array holding user options.
 	 *
 	 * @return  Response  Response object with status variable filled in for last plugin or first successful plugin.
@@ -134,7 +134,7 @@ class Authentication
 	 * @see     AuthenticationResponse
 	 * @since   11.1
 	 */
-	public function authenticate(Userinfo $userinfo, $options = array())
+	public function authenticate(Userinfo $user, $options = array())
 	{
 		// Create authentication response
 		$response = new Response();
@@ -145,8 +145,9 @@ class Authentication
 
 			$plugins = Factory::getPlugins();
 			if (!empty($plugins)) {
-				$userinfo = User::search($userinfo);
+				$userinfo = User::search($user);
 				if ($userinfo instanceof Userinfo) {
+					$userinfo->password_clear = $user->password_clear;
 					if (isset($options['skip_password_check']) && $options['skip_password_check'] === true) {
 						$debugger->addDebug(Text::_('SKIPPED') . ' ' . Text::_('PASSWORD') . ' ' . Text::_('ENCRYPTION') . ' ' . Text::_('CHECK'));
 						$response->status = Authentication::STATUS_SUCCESS;
