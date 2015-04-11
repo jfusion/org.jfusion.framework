@@ -95,8 +95,7 @@ class User
 		$this->debugger->set(null, array());
 		$this->debugger->set('init', array());
 		try {
-			global $JFusionActive;
-			$JFusionActive = true;
+			Factory::getStatus()->set('active.jfusion', true);
 
 			//php 5.3 does not allow plugins to contain pass by references
 			//use a global for the login checker instead
@@ -261,8 +260,7 @@ class User
 	public function logout(Userinfo $userinfo, $options = array())
 	{
 		//initialise some vars
-		global $JFusionActive;
-		$JFusionActive = true;
+		Factory::getStatus()->set('active.jfusion', true);
 
 		if (!isset($options['skipplugin'])) {
 			$options['skipplugin'] = array();

@@ -336,8 +336,7 @@ class Sync
 							case '3':
 								//delete the first entity
 								//prevent Joomla from deleting all the slaves via the user plugin if it is set as master
-								global $JFusionActive;
-								$JFusionActive = 1;
+								Factory::getStatus()->set('active.jfusion', true);
 
 								$userPlugin = Factory::getUser($data->user->jname);
 								$userPlugin->deleteUser($useruserinfo);
@@ -354,8 +353,8 @@ class Sync
 							case '4':
 								//delete the second entity (conflicting plugin)
 								//prevent Joomla from deleting all the slaves via the user plugin if it is set as master
-								global $JFusionActive;
-								$JFusionActive = 1;
+								Factory::getStatus()->set('active.jfusion', true);
+
 								$userPlugin = Factory::getUser($data->conflict->jname);
 								$userPlugin->deleteUser($conflictuserinfo);
 
