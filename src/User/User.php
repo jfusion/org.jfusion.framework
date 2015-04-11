@@ -95,8 +95,7 @@ class User
 		$this->debugger->set(null, array());
 		$this->debugger->set('init', array());
 		try {
-			global $JFusionActive, $JFusionLoginCheckActive;
-
+			global $JFusionActive;
 			$JFusionActive = true;
 
 			//php 5.3 does not allow plugins to contain pass by references
