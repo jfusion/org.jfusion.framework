@@ -97,6 +97,14 @@ class Factory
 	public static $dispatcher = null;
 
 	/**
+	 * Container for Registry instances
+	 *
+	 * @var    Registry
+	 * @since  11.3
+	 */
+	public static $status = null;
+
+	/**
 	 * Gets an Fusion front object
 	 *
 	 * @param string $instance name of the JFusion plugin used
@@ -618,5 +626,19 @@ class Factory
 			self::$dispatcher = new Dispatcher();
 		}
 		return self::$dispatcher;
+	}
+
+	/**
+	 * Registry object use to store framework flags
+	 *
+	 * @return Registry
+	 */
+	public static function getStatus()
+	{
+		if (!self::$status)
+		{
+			self::$status = new Registry();
+		}
+		return self::$status;
 	}
 }

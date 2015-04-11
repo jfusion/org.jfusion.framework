@@ -95,7 +95,7 @@ class User
 		$this->debugger->set(null, array());
 		$this->debugger->set('init', array());
 		try {
-			global $JFusionActive, $JFusionLoginCheckActive, $JFusionActivePlugin;
+			global $JFusionActive, $JFusionLoginCheckActive;
 
 			$JFusionActive = true;
 
@@ -112,13 +112,13 @@ class User
 				$options['mask'] = true;
 			}
 
-			if (!empty($JFusionActivePlugin)) {
-				$options['skipplugin'][] = $JFusionActivePlugin;
+			if (Factory::getStatus()->get('active.plugin')) {
+				$options['skipplugin'][] = Factory::getStatus()->get('active.plugin');
 			}
 
 			//allow for the detection of external mods to exclude jfusion plugins
 			if (isset($options['nodeid']) && !empty($options['nodeid'])) {
-				$JFusionActivePlugin = $options['nodeid'];
+				Factory::getStatus()->set('active.plugin', $options['nodeid']);
 				$options['skipplugin'][] = $options['nodeid'];
 			}
 
@@ -273,14 +273,12 @@ class User
 		}
 
 		//allow for the detection of external mods to exclude jfusion plugins
-		global $JFusionActivePlugin;
-
-		if (!empty($JFusionActivePlugin)) {
-			$options['skipplugin'][] = $JFusionActivePlugin;
+		if (Factory::getStatus()->get('active.plugin')) {
+			$options['skipplugin'][] = Factory::getStatus()->get('active.plugin');
 		}
 
 		if (isset($options['nodeid']) && !empty($options['nodeid'])) {
-			$JFusionActivePlugin = $options['nodeid'];
+			Factory::getStatus()->set('active.plugin', $options['nodeid']);
 			$options['skipplugin'][] = $options['nodeid'];
 		}
 
