@@ -237,7 +237,7 @@ class User
 			Framework::raise(LogLevel::ERROR, $e);
 			$this->debugger->addError($e->getMessage());
 		}
-	    return ($success === 1);
+		return ($success === 1);
 	}
 
 	/**
@@ -282,15 +282,16 @@ class User
 		//prevent any output by the plugins (this could prevent cookies from being passed to the header)
 		//logout from the JFusion plugins if done through frontend
 
-		$plugins = Factory::getPlugins();
-		foreach ($plugins as $plugin)
-		{
-			if (!in_array($plugin->name, $options['skipplugin'])) {
-				if ($plugin->dual_login == 1) {
-					$userPlugin = Factory::getUser($plugin->name);
-					$userlookup = static::search($userinfo);
-					$this->debugger->set('userlookup', $userlookup);
-					if ($userlookup instanceof Userinfo) {
+		$userlookup = static::search($userinfo);
+
+		if ($userlookup instanceof Userinfo) {
+			$this->debugger->set('userlookup', $userlookup->toObject());
+
+			$plugins = Factory::getPlugins();
+			foreach ($plugins as $plugin) {
+				if (!in_array($plugin->name, $options['skipplugin'])) {
+					if ($plugin->dual_login == 1) {
+						$userPlugin = Factory::getUser($plugin->name);
 						$details = null;
 						try {
 							$pluginuser = $userPlugin->getUser($userlookup);
@@ -327,12 +328,12 @@ class User
 	}
 
 	/**
-     * Delete user
-     *
-     * @param Userinfo $userinfo
-     *
-     * @return boolean
-     */
+	 * Delete user
+	 *
+	 * @param Userinfo $userinfo
+	 *
+	 * @return boolean
+	 */
 	public function delete(Userinfo $userinfo)
 	{
 		$result = false;
