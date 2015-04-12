@@ -285,7 +285,11 @@ class User
 		$userlookup = static::search($userinfo);
 
 		if ($userlookup instanceof Userinfo) {
-			$this->debugger->set('userlookup', $userlookup->toObject());
+			if ($options['mask']) {
+				$this->debugger->set('userlookup', $userlookup->getAnonymizeed());
+			} else {
+				$this->debugger->set('userlookup', $userlookup->toObject());
+			}
 
 			$plugins = Factory::getPlugins();
 			foreach ($plugins as $plugin) {

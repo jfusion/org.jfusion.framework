@@ -184,12 +184,12 @@ abstract class FrameworkTestCase extends \PHPUnit_Extensions_Database_TestCase
 	{
 		if (!is_null(Factory::$database))
 		{
-			return $this->createDefaultDBConnection(Factory::$database->getConnection(), ':memory:');
+			$pdo = Factory::$database->getConnection();
+			if ($pdo instanceof \PDO) {
+				return $this->createDefaultDBConnection($pdo, ':memory:');
+			}
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 
 	/**

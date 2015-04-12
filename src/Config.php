@@ -139,7 +139,6 @@ class Config
 				$db->updateObject('#__jfusion_settings', $entry, 'key');
 			} else {
 				$db->insertObject('#__jfusion_settings', $entry, 'key');
-
 			}
 		}
 	}
