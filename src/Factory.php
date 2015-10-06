@@ -482,7 +482,7 @@ class Factory
 	public static function getPluginNameFromNodeId($jnode_id) {
 		$result = '';
 		//$jid = $jnode_id;
-		$plugins = static::getPlugins('both', false);
+		$plugins = static::getPlugins('both');
 		foreach($plugins as $plugin) {
 			$id = rtrim(static::getPluginNodeId($plugin->name), '/');
 			if (strcasecmp($jnode_id, $id) == 0) {
