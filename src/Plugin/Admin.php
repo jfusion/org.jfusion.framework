@@ -204,9 +204,6 @@ class Admin extends Plugin
 			    }
 		    }
 	    }
-	    $status = array();
-	    $status['config'] = 1;
-	    $status['message'] = Text::_('GOOD_CONFIG');
         return true;
     }
 

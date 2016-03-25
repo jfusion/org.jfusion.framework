@@ -34,7 +34,7 @@ class Base {
 		} else if ($encrypt && isset($_POST['jfpayload'])) {
 			$payload = Api::decrypt($this->key , $_POST['jfpayload']);
 		}
-		if (isset($payload) && is_array($payload) ) {
+		if (isset($payload) && is_array($payload)) {
 			$this->payload = $payload;
 			return true;
 		}

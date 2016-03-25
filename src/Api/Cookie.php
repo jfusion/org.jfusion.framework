@@ -26,8 +26,8 @@ class Cookie extends Base {
 			$session = Api::getSession('cookie', true);
 
 			if ( isset($session['cookies']) && count($session['cookies']) && is_array($session['cookies']) ) {
-				foreach($session['cookies'] as $value ) {
-					header('Set-Cookie: ' . $value, false);
+				foreach($session['cookies'] as $cookie ) {
+					setcookie($cookie['name'], $cookie['value'], $cookie['expire'], $cookie['path'], $cookie['domain'], $cookie['secure'], $cookie['httponly']);
 				}
 			}
 

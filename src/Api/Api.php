@@ -121,7 +121,7 @@ class Api {
 		$type = strtolower($this->read('jftype'));
 		$task = ucfirst(strtolower($this->read('jftask')));
 
-		$data=array();
+		$data = new stdClass();
 		$encrypt = false;
 		//controller for when api gets called externally
 		if ($type) {
@@ -322,7 +322,7 @@ class Api {
 	{
 		if (isset($keyinfo->secret) && isset($keyinfo->hash) && function_exists('mcrypt_decrypt')) {
 			ob_start();
-			$decrypted = json_decode(trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $keyinfo->secret, base64_decode($payload), MCRYPT_MODE_NOFB, $keyinfo->hash)));
+			$decrypted = json_decode(trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $keyinfo->secret, base64_decode($payload), MCRYPT_MODE_NOFB, $keyinfo->hash)), true);
 			ob_end_clean();
 		} else {
 			$decrypted = false;
@@ -380,21 +380,21 @@ class Api {
 	}
 
 	/**
-	 * @param $output
+	 * @param stdClass $output
 	 * @param bool $encrypt
 	 *
 	 * @return void
 	 */
 	private function doOutput($output, $encrypt = false)
 	{
-		$output['PHPSESSID'] = $this->sid;
-		$output['error'] = $this->error;
-		$output['debug'] = $this->debug;
+		$output->PHPSESSID = $this->sid;
+		$output->error = $this->error;
+		$output->debug = $this->debug;
 		$result = null;
 		if ($encrypt) {
 			$result = Api::encrypt($this->createkey() , $output);
 			if ($result == null) {
-				$output['error'] = 'Encryption failed';
+				$output->error = 'Encryption failed';
 			}
 		}
 		if ($result == null) {
@@ -414,7 +414,7 @@ class Api {
 		$return = Api::decrypt($this->createkey() , $input);
 		if (!is_array($return)) {
 			ob_start();
-			$return = json_decode(trim(base64_decode($input)));
+			$return = json_decode(trim(base64_decode($input)), true);
 			ob_end_clean();
 		}
 		if (!is_array($return)) {
