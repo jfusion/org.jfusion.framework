@@ -129,7 +129,7 @@ class Api {
 			if ($class) {
 				$function = $type . $task;
 				if (method_exists($class, $function)) {
-					$data['payload'] = $class->$function();
+					$data->payload = $class->$function();
 
 					$this->error = $class->error;
 					$this->debug = $class->debug;
