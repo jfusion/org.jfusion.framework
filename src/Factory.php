@@ -12,6 +12,7 @@
  * @link      http://www.jfusion.org
  */
 
+use Exception;
 use JFusion\Authentication\Cookies;
 use JFusion\Application\Application;
 use JFusion\Plugin\Plugin;
@@ -392,20 +393,25 @@ class Factory
 		if (!isset($instances)) {
 			$instances = array();
 		}
-		//only create a new parameter instance if it has not been created before
-		if (!isset($instances[$jname]) || $reset) {
-			$db = self::getDBO();
 
-			$query = $db->getQuery(true)
-				->select('params')
-				->from('#__jfusion')
-				->where('name = ' . $db->quote($jname));
+		try {
+			//only create a new parameter instance if it has not been created before
+			if (!isset($instances[$jname]) || $reset) {
+				$db = self::getDBO();
 
-			$db->setQuery($query);
-			$params = $db->loadResult();
-			$instances[$jname] = new Registry($params);
+				$query = $db->getQuery(true)
+					->select('params')
+					->from('#__jfusion')
+					->where('name = ' . $db->quote($jname));
+
+				$db->setQuery($query);
+				$params = $db->loadResult();
+				$instances[$jname] = new Registry($params);
+			}
+			return $instances[$jname];
+		} catch (Exception $e) {
+			return new Registry();
 		}
-		return $instances[$jname];
 	}
 
 	/**
@@ -476,7 +482,7 @@ class Factory
 	public static function getPluginNameFromNodeId($jnode_id) {
 		$result = '';
 		//$jid = $jnode_id;
-		$plugins = static::getPlugins('both', false);
+		$plugins = static::getPlugins('both');
 		foreach($plugins as $plugin) {
 			$id = rtrim(static::getPluginNodeId($plugin->name), '/');
 			if (strcasecmp($jnode_id, $id) == 0) {
