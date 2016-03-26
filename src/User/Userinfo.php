@@ -147,6 +147,7 @@ class Userinfo {
 					$value = (int)$value;
 					break;
 			}
+			$this->userinfo->$name = $value;
 			return $this->userinfo->$name;
 		}
 		return null;
