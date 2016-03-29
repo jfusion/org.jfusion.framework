@@ -1,6 +1,7 @@
 <?php namespace JFusion\Api;
 use JFusion\Factory;
 use JFusion\User\Userinfo;
+use stdClass;
 
 /**
  *
@@ -81,8 +82,14 @@ class User extends Base {
 	public function executeRegister()
 	{
 		if ($this->payload) {
-			if (isset($this->payload['userinfo']) && get_class($this->payload['userinfo']) == 'stdClass') {
-
+			$userinfo = null;
+			if (isset($this->payload['userinfo']) && is_array($this->payload['userinfo'])) {
+				$userinfo = new stdClass();
+				foreach ($this->payload['userinfo'] as $key => $value){
+					$userinfo->$key = $value;
+				}
+			}
+			if ($userinfo instanceof stdClass) {
 				$joomla = Platform::getInstance();
 
 				if (isset($userinfo['plugin'])) {
@@ -95,7 +102,7 @@ class User extends Base {
 					$overwrite = 0;
 				}
 
-				$joomla->register($this->payload['userinfo'], $overwrite);
+				$joomla->register($userinfo, $overwrite);
 
 				$this->error = $joomla->error;
 				$this->debug = $joomla->debug;
