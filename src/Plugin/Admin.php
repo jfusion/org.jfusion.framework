@@ -246,7 +246,7 @@ class Admin extends Plugin
 		    }
 	    } else {
 		    $master = Framework::getMaster();
-		    if ($master->name == $jname) {
+		    if ($master && $master->name == $jname) {
 			    Framework::raise(LogLevel::NOTICE, Text::_('ENABLE_REGISTRATION'), $jname);
 		    }
 	    }

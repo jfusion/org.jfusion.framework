@@ -95,12 +95,13 @@ class Sync
 		$action = $syncdata->get('action');
 		if (!self::getStatus($syncid)) {
 			//sync has not started, lets get going :)
-			$master_plugin = Framework::getMaster();
-			$master = $master_plugin->name;
-			$JFusionMaster = Factory::getAdmin($master);
-			if (empty($slaves)) {
+			$master = Framework::getMaster();
+			if (!$master) {
+				throw new RuntimeException(Text::_('SYNC_NOMAMASTER'));
+			} else if (empty($slaves)) {
 				throw new RuntimeException(Text::_('SYNC_NODATA'));
 			} else {
+				$JFusionMaster = Factory::getAdmin($master->name);
 				//initialise the slave data array
 				$slave_data = array();
 				//lets find out which slaves need to be imported into the Master
@@ -133,7 +134,7 @@ class Sync
 					}
 				}
 				//format the syncdata for storage in the JFusion sync table
-				$syncdata->set('master', $master);
+				$syncdata->set('master', $master->name);
 				$syncdata->set('slave_data', $slave_data);
 
 				//save the submitted syncdata in order for AJAX updates to work

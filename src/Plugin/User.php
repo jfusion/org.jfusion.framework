@@ -1057,23 +1057,25 @@ class User extends Plugin
 		$group = array();
 
 		$master = Framework::getMaster();
-		if ($master->name == $jname) {
-			$group = Groups::get($master->name, true);
-		} else {
-			$slavegroups = Groups::get($jname);
+		if ($master) {
+			if ($master->name == $jname) {
+				$group = Groups::get($master->name, true);
+			} else {
+				$slavegroups = Groups::get($jname);
 
-			$user = Factory::getUser($master->name);
-			$index = $user->getUserGroupIndex($userinfo);
+				$user = Factory::getUser($master->name);
+				$index = $user->getUserGroupIndex($userinfo);
 
-			if (isset($slavegroups[$index])) {
-				$group = $slavegroups[$index];
-			}
+				if (isset($slavegroups[$index])) {
+					$group = $slavegroups[$index];
+				}
 
-			if ($group === null && isset($slavegroups[0])) {
-				$group =  $slavegroups[0];
+				if ($group === null && isset($slavegroups[0])) {
+					$group =  $slavegroups[0];
+				}
 			}
 		}
-
+		
 		if (!is_array($group)) {
 			if ($group !==  null) {
 				$group = array($group);

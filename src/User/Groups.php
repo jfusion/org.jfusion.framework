@@ -159,7 +159,7 @@ class Groups
 		$advanced = false;
 		if (isset($updateusergroups->{$jname}) && $updateusergroups->{$jname}) {
 			$master = Framework::getMaster();
-			if ($master->name != $jname) {
+			if ($master && $master->name != $jname) {
 				$advanced = true;
 			}
 		}

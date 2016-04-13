@@ -455,6 +455,8 @@ class Factory
 				case 'master':
 					if (isset($list[0])) {
 						$list = $list[0];
+					} else {
+						$list = null;
 					}
 					break;
 			}
