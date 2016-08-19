@@ -21,6 +21,8 @@ class Status extends Base {
 			$iv .= chr(mt_rand(0, 255));
 		}
 
+		$iv = md5($iv);
+
 		Api::setSession('hash', $iv);
 		return $iv;
 	}
