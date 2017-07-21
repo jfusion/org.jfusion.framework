@@ -410,7 +410,8 @@ class Factory
 			}
 			return $instances[$jname];
 		} catch (Exception $e) {
-			return new Registry();
+			$registry = new Registry();
+			return $registry;
 		}
 	}
 
